@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CHANAKYA Regulator Feed",
+  "description": "Machine-readable, versioned SupTech feed of obligations with causal provenance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["feed_version", "source", "regulator", "generated_as_of", "circular", "obligations"],
+  "properties": {
+    "feed_version": { "type": "string" },
+    "source": { "type": "string" },
+    "regulator": { "type": "string" },
+    "generated_as_of": { "type": "string" },
+    "circular": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "issued_on"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "issued_on": { "type": "string" }
+      }
+    },
+    "obligations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "clause_ref", "bearer", "deontic_type", "threshold", "status", "valid_from", "provenance"],
+        "properties": {
+          "id": { "type": "string" },
+          "clause_ref": { "type": "string" },
+          "bearer": { "type": "string" },
+          "deontic_type": { "type": "string", "enum": ["MUST", "MUST_NOT", "MAY"] },
+          "condition": { "type": "string" },
+          "threshold": { "type": "object" },
+          "deadline": { "type": "string" },
+          "status": { "type": "string", "enum": ["pending", "needs_review", "approved", "rejected"] },
+          "valid_from": { "type": "string" },
+          "provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_clause_ref", "source_sentence", "extractor_confidence"],
+            "properties": {
+              "source_clause_ref": { "type": "string" },
+              "source_sentence": { "type": "string" },
+              "extractor_confidence": { "type": "number" },
+              "signoff": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["action", "signed_by", "obligation_hash"],
+                "properties": {
+                  "action": { "type": "string" },
+                  "signed_by": { "type": "string" },
+                  "obligation_hash": { "type": "string" },
+                  "signature": { "type": "string" },
+                  "public_key": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

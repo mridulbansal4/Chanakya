@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ObligationExtraction",
+  "description": "The ONLY output shape the LLM (or offline extractor) may produce. It is pure DATA validated against this strict schema before anything enters the graph. It never contains code and never enforces anything (safety invariant #1). This same document is used as the Anthropic tool input_schema for strict tool use.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["obligations"],
+  "properties": {
+    "obligations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["bearer", "deontic_type", "source_clause_ref", "source_sentence", "confidence"],
+        "properties": {
+          "bearer": {
+            "type": "string",
+            "description": "Who the duty falls on, e.g. 'investment adviser'."
+          },
+          "deontic_type": {
+            "type": "string",
+            "enum": ["MUST", "MUST_NOT", "MAY"],
+            "description": "Modal force of the obligation."
+          },
+          "condition": {
+            "type": "string",
+            "description": "The triggering condition, if any."
+          },
+          "threshold": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Structured numeric threshold, when the clause states one.",
+            "properties": {
+              "metric": {"type": "string"},
+              "operator": {"type": "string"},
+              "value": {"type": "number"},
+              "unit": {"type": "string"},
+              "kind": {
+                "type": "string",
+                "enum": ["trigger", "requirement"],
+                "description": "'trigger': crossing the threshold triggers the duty (e.g. >=300 clients -> must register). 'requirement': the threshold IS the duty the firm must meet (e.g. retain records for >=5 years). Defaults to 'trigger'."
+              }
+            }
+          },
+          "deadline": {
+            "type": "string",
+            "description": "Deadline, ideally ISO-8601 duration (e.g. P30D)."
+          },
+          "penalty": {
+            "type": "string",
+            "description": "Stated penalty for breach, if any."
+          },
+          "source_clause_ref": {
+            "type": "string",
+            "description": "MANDATORY. The clause id this obligation was extracted from."
+          },
+          "source_sentence": {
+            "type": "string",
+            "description": "MANDATORY. The EXACT sentence from the clause text that supports this obligation. Must be a verbatim substring of the clause."
+          },
+          "confidence": {
+            "type": "number",
+            "description": "Extractor confidence in [0,1]. Low-confidence extractions are routed to human review, never auto-trusted."
+          }
+        }
+      }
+    }
+  }
+}

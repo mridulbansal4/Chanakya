@@ -1,0 +1,90 @@
+{
+  "circular": {
+    "id": "SEBI/IA/MC/2024",
+    "title": "Master Circular for Investment Advisers",
+    "regulator": "SEBI",
+    "issued_on": "2024-05-15",
+    "source_url": "https://www.sebi.gov.in/legal/master-circulars/ia-2024"
+  },
+  "entity": {
+    "id": "ent_acme_advisers",
+    "kind": "investment_adviser",
+    "name": "Acme Investment Advisers Pvt. Ltd.",
+    "pan": "AAECA1234F",
+    "meta_json": "{\"registration_no\":\"INA000009999\",\"clients\":412,\"annual_fees_inr\":38500000}"
+  },
+  "clauses": [
+    {
+      "clause_ref": "1",
+      "parent": null,
+      "heading": "Preliminary",
+      "text": "This Master Circular consolidates the directions issued to Investment Advisers registered with the Board and shall be read with the SEBI (Investment Advisers) Regulations, 2013."
+    },
+    {
+      "clause_ref": "1.1",
+      "parent": "1",
+      "heading": "Applicability",
+      "text": "The provisions of this circular apply to every person registered as an Investment Adviser and to every person carrying on the activity of providing investment advice for consideration."
+    },
+    {
+      "clause_ref": "1.2",
+      "parent": "1",
+      "heading": "Definitions",
+      "text": "For the purposes of this circular, 'client' means any person who receives investment advice for consideration, and 'fees' means the consideration charged for such advice in a financial year."
+    },
+    {
+      "clause_ref": "3",
+      "parent": null,
+      "heading": "Registration of Investment Advisers",
+      "text": "No person shall act as an investment adviser or hold itself out as an investment adviser unless it has obtained a certificate of registration from the Board under these provisions."
+    },
+    {
+      "clause_ref": "3.1",
+      "parent": "3",
+      "heading": "Threshold for registration",
+      "text": "A person providing investment advice to 300 or more clients, or charging fees exceeding INR 3,00,00,000 (Rupees three crore) in a financial year, must apply for registration as a non-individual investment adviser."
+    },
+    {
+      "clause_ref": "3.2",
+      "parent": "3",
+      "heading": "Application timeline",
+      "text": "An investment adviser who crosses the threshold specified in clause 3.1 shall submit a complete application for registration within 30 days of crossing such threshold."
+    },
+    {
+      "clause_ref": "4",
+      "parent": null,
+      "heading": "Conduct of Business",
+      "text": "Every investment adviser shall act in a fiduciary capacity towards its clients and shall maintain an arm's length relationship between its advisory and any distribution activities."
+    },
+    {
+      "clause_ref": "4.1",
+      "parent": "4",
+      "heading": "Disclosure of fees",
+      "text": "An investment adviser must disclose to the client, in writing and before charging any fee, the complete fee schedule including the basis of computation and any conflicts of interest."
+    },
+    {
+      "clause_ref": "4.2",
+      "parent": "4",
+      "heading": "Client-level segregation",
+      "text": "An investment adviser must not provide both advisory and distribution services to the same client, and shall maintain client-level segregation of advisory and distribution at all times."
+    },
+    {
+      "clause_ref": "5",
+      "parent": null,
+      "heading": "Records and Reporting",
+      "text": "Every investment adviser shall maintain records of investment advice provided and interactions with clients in a manner that supports audit and inspection by the Board."
+    },
+    {
+      "clause_ref": "5.1",
+      "parent": "5",
+      "heading": "Record retention",
+      "text": "An investment adviser must retain all records of investment advice, client agreements, and risk profiling for a period of 5 years from the date of the relevant interaction."
+    },
+    {
+      "clause_ref": "5.2",
+      "parent": "5",
+      "heading": "Client notification duty",
+      "text": "An investment adviser must notify each affected client in writing within 7 days of any material change to the fee structure, conflicts of interest, or the adviser's registration status."
+    }
+  ]
+}

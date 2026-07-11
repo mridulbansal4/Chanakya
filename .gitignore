@@ -36,6 +36,17 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# CHANAKYA SQLite system-of-record (created on first run) + WAL sidecars
+chanakya.db
+chanakya.db-shm
+chanakya.db-wal
+*.db-shm
+*.db-wal
+
+# Ed25519 sign-off key (demo signing authority; created on first run)
+chanakya_signing.key
 
 # vercel
 .vercel

@@ -8,7 +8,40 @@
 @source "../**/*.{ts,tsx}";
 
 @theme inline {
-    --font-heading: var(--font-sans);
+    /* CHANAKYA "Editorial" — high-contrast serif display, Inter UI, mono figures. */
+    --font-heading: var(--font-display);
+    --font-display: var(--font-display);
+    --font-sans: var(--font-sans);
+    --font-mono: var(--font-mono);
+
+    /* Editorial palette — exposed as Tailwind utilities (bg-ink, text-on-ink,
+       bg-cream, border-line-dark, text-ok, bg-lavender, …). */
+    --color-ink: var(--ink);
+    --color-ink-800: var(--ink-800);
+    --color-cream: var(--cream);
+    --color-cream-200: var(--cream-200);
+    --color-surface: var(--surface);
+    --color-surface-2: var(--surface-2);
+    --color-line: var(--line);
+    --color-line-dark: var(--line-dark);
+    --color-text-dim: var(--text-dim);
+    --color-on-ink: var(--on-ink);
+    --color-on-ink-dim: var(--on-ink-dim);
+    --color-lavender: var(--lavender);
+
+    /* Status — used ONLY for state, never decoration. */
+    --color-ok: var(--ok);
+    --color-warn: var(--warn);
+    --color-risk: var(--risk);
+    /* Back-compat aliases (existing components use verified/danger/brand). */
+    --color-verified: var(--verified);
+    --color-verified-foreground: var(--verified-foreground);
+    --color-warn-foreground: var(--warn-foreground);
+    --color-danger: var(--danger);
+    --color-danger-foreground: var(--danger-foreground);
+    --color-brand: var(--brand);
+    --color-brand-foreground: var(--brand-foreground);
+
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -50,73 +83,83 @@
     --font-sans: var(--font-sans);
 }
 
+/*
+ * CHANAKYA "Editorial" — a single locked light palette: warm cream app
+ * background, near-white data surfaces, near-black (--ink) nav/hero/feature
+ * panels and primary buttons, ONE restrained soft-lavender accent. Colour is
+ * either ink (brand/interactive), a neutral (cream/surface/line), or a status:
+ * ok (green), warn (amber), risk (red). No blue/teal/neon, no gradients.
+ */
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
-}
+    /* Editorial palette (locked) */
+    --ink: #141414;            /* near-black: nav/hero panels, dark cards, primary buttons */
+    --ink-800: #1E1E1E;        /* raised dark surfaces */
+    --cream: #EEEAE1;          /* warm cream: primary app background */
+    --cream-200: #E4DFD4;      /* cream borders / subtle fills on light */
+    --surface: #FAF8F4;        /* near-white data surfaces (tables, dense panels) */
+    --line: #DAD5CA;           /* hairline borders on light */
+    --line-dark: #2A2A2A;      /* hairline borders on dark panels */
+    --text: #141414;           /* primary text on light */
+    --text-dim: #6B675F;       /* secondary text on light */
+    --on-ink: #EEEAE1;         /* text on dark panels */
+    --on-ink-dim: #9A968D;     /* secondary text on dark panels */
+    --lavender: #C9C2F0;       /* soft lavender — the single, rare accent */
 
-.dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    /* Status — state only */
+    --ok: #3F7D5B;             /* satisfied / approved / signed */
+    --warn: #A66A12;           /* pending / needs-review */
+    --risk: #B4432E;           /* gap / prohibited / breach */
+
+    /* Surface + status back-compat aliases used across components */
+    --surface-2: var(--cream-200);
+    --verified: var(--ok);
+    --verified-foreground: #FFFFFF;
+    --warn-foreground: #FFFFFF;
+    --danger: var(--risk);
+    --danger-foreground: #FFFFFF;
+    --brand: var(--ink);
+    --brand-foreground: var(--on-ink);
+
+    /* Single soft card lift — never a heavy shadow or glow. */
+    --shadow-card: 0 1px 2px rgba(20, 20, 20, 0.05);
+
+    /* shadcn semantic tokens → editorial */
+    --background: var(--cream);
+    --foreground: var(--ink);
+    --card: var(--surface);
+    --card-foreground: var(--ink);
+    --popover: var(--surface);
+    --popover-foreground: var(--ink);
+    --primary: var(--ink);
+    --primary-foreground: var(--on-ink);
+    --secondary: var(--cream-200);
+    --secondary-foreground: var(--ink);
+    --muted: var(--cream-200);
+    --muted-foreground: var(--text-dim);
+    --accent: var(--cream-200);      /* shadcn hover fill = cream, NOT lavender */
+    --accent-foreground: var(--ink);
+    --destructive: var(--risk);
+    --border: var(--line);
+    --input: var(--line);
+    --ring: var(--ink);
+
+    /* Graph / chart ramp — ink + status neutrals, no neon. */
+    --chart-1: var(--ink);
+    --chart-2: var(--ok);
+    --chart-3: var(--warn);
+    --chart-4: var(--risk);
+    --chart-5: var(--text-dim);
+
+    --radius: 0.75rem;         /* 12px — the one radius */
+
+    --sidebar: var(--ink);
+    --sidebar-foreground: var(--on-ink);
+    --sidebar-primary: var(--on-ink);
+    --sidebar-primary-foreground: var(--ink);
+    --sidebar-accent: var(--ink-800);
+    --sidebar-accent-foreground: var(--on-ink);
+    --sidebar-border: var(--line-dark);
+    --sidebar-ring: var(--on-ink);
 }
 
 @layer base {
@@ -125,5 +168,93 @@
     }
   body {
     @apply bg-background text-foreground;
+    /* Density over whitespace where it counts; crisp text rendering. */
+    font-feature-settings: "cv01", "ss01";
     }
+  /* Editorial serif display for headings — large, generous, high-contrast. */
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+    }
+  /* Clause ids, PAN, deadlines, figures: mono with TABULAR figures so
+     columns of numbers align. Apply with class="font-mono" or .tnum. */
+  .font-mono, code, kbd, samp, pre {
+    font-variant-numeric: tabular-nums;
+    }
+  .tnum {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    }
+  /* Hairline utility — 1px lines, near-flat. */
+  .hairline {
+    border: 1px solid var(--line);
+    }
+  /* Small ALL-CAPS Inter section eyebrow. */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    line-height: 1;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    }
+}
+
+/*
+ * Accessibility (unlayered so these beat Tailwind's layered utilities, including
+ * `outline-none` on custom-styled controls).
+ */
+
+/* Always show a visible focus ring for keyboard users. */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Respect the user's reduced-motion preference — kills the blast-radius edge
+   animation, ping/spin, and transitions. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * React Flow zoom / fit-view controls. The library's default styling is a
+ * light chip with near-black icons; restyle into visible hairline surface
+ * buttons that read on our editorial canvas. Unlayered + !important so these
+ * beat the imported @xyflow/react/dist/style.css.
+ */
+.react-flow__controls {
+  border: 1px solid var(--line) !important;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card) !important;
+}
+.react-flow__controls-button {
+  width: 28px !important;
+  height: 28px !important;
+  background: var(--surface) !important;
+  border-bottom: 1px solid var(--line) !important;
+  color: var(--ink) !important;
+}
+.react-flow__controls-button:last-child {
+  border-bottom: none !important;
+}
+.react-flow__controls-button:hover {
+  background: var(--cream-200) !important;
+}
+.react-flow__controls-button svg {
+  fill: var(--ink) !important;
+  max-width: 14px;
+  max-height: 14px;
+}
+.react-flow__controls-button:disabled svg {
+  fill: var(--text-dim) !important;
 }
