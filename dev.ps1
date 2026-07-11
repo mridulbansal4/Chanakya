@@ -33,10 +33,10 @@ Start-Process powershell -ArgumentList @(
     "Set-Location '$root'; `$env:Path='$env:Path'; Write-Host 'BACKEND :8080' -ForegroundColor Green; go run ./backend/cmd/api"
 )
 
-# Web: npm run dev  (turbo dev → next dev on :3000)
+# Web: npm run dev  (turbo dev → next dev on :3000) — runs from ./frontend
 Start-Process powershell -ArgumentList @(
     "-NoExit", "-Command",
-    "Set-Location '$root'; Write-Host 'WEB :3000' -ForegroundColor Green; npm run dev"
+    "Set-Location '$root\frontend'; Write-Host 'WEB :3000' -ForegroundColor Green; npm run dev"
 )
 
 Write-Host "Backend:  http://localhost:8080/health" -ForegroundColor Yellow

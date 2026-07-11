@@ -54,3 +54,6 @@ chanakya_signing.key
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.claude/
+.claude
