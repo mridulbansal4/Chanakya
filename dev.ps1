@@ -28,16 +28,10 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
 Write-Host "CHANAKYA dev — starting backend + web..." -ForegroundColor Cyan
 
 # Backend: go run ./backend/cmd/api  (uses go.work at repo root)
-Start-Process powershell -ArgumentList @(
-    "-NoExit", "-Command",
-    "Set-Location '$root'; `$env:Path='$env:Path'; Write-Host 'BACKEND :8080' -ForegroundColor Green; go run ./backend/cmd/api"
-)
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "go run ./backend/cmd/api" -WorkingDirectory $root
 
 # Web: npm run dev  (turbo dev → next dev on :3000) — runs from ./frontend
-Start-Process powershell -ArgumentList @(
-    "-NoExit", "-Command",
-    "Set-Location '$root\frontend'; Write-Host 'WEB :3000' -ForegroundColor Green; npm run dev"
-)
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "npm run dev" -WorkingDirectory "$root\frontend"
 
 Write-Host "Backend:  http://localhost:8080/health" -ForegroundColor Yellow
 Write-Host "Web app:  http://localhost:3000" -ForegroundColor Yellow

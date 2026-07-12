@@ -206,6 +206,9 @@
     text-transform: uppercase;
     color: var(--text-dim);
     }
+  button, a, [role="button"], [role="link"], select, input[type="submit"], input[type="button"], input[type="reset"] {
+    cursor: pointer;
+  }
 }
 
 /*
