@@ -111,10 +111,10 @@ export default function RegisterPage() {
           description="Every obligation CHANAKYA extracted from the regulation, with its exact source. Click a row to inspect the citation."
         />
         {/* Filter bar */}
-        <div className="flex items-center gap-2 border-b border-line px-6 py-2.5 text-sm">
+        <div className="flex items-center gap-2.5 border-b border-line px-7 py-3 text-sm">
           <Select value={deontic} onChange={(v) => setDeontic(v as DeonticType | "")} options={DEONTIC_OPTIONS} />
           <Select value={status} onChange={(v) => setStatus(v as ObligationStatus | "")} options={STATUS_OPTIONS} />
-          <span className="tnum ml-auto text-xs text-muted-foreground">
+          <span className="tnum ml-auto text-sm text-muted-foreground">
             {query.data?.count ?? 0} obligations
           </span>
         </div>
@@ -136,7 +136,7 @@ export default function RegisterPage() {
                     {hg.headers.map((h) => (
                       <th
                         key={h.id}
-                        className="px-6 py-2 text-left text-[11px] font-medium tracking-wide text-muted-foreground uppercase"
+                        className="px-7 py-3 text-left text-xs font-medium tracking-wide text-muted-foreground uppercase"
                       >
                         {flexRender(h.column.columnDef.header, h.getContext())}
                       </th>
@@ -158,7 +158,7 @@ export default function RegisterPage() {
                       }`}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="px-6 py-2.5 align-top">
+                        <td key={cell.id} className="px-7 py-3.5 align-top">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       ))}
@@ -204,7 +204,7 @@ function Select({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="hairline rounded-md bg-surface px-2.5 py-1.5 text-xs text-foreground outline-none [color-scheme:light]"
+      className="hairline rounded-md bg-surface px-3 py-2 text-sm text-foreground outline-none [color-scheme:light]"
     >
       {options.map((o) => (
         <option key={o.value} value={o.value}>

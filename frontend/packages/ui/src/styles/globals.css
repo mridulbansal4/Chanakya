@@ -166,10 +166,17 @@
   * {
     @apply border-border outline-ring/50;
     }
+  /* Projector scale — the whole design system is rem-based, so lifting the root
+     size scales type, spacing, paddings and component sizing together (~+12.5%),
+     keeping every proportion identical but comfortably readable from 8–10 ft. */
+  html {
+    font-size: 112.5%;
+    }
   body {
     @apply bg-background text-foreground;
     /* Density over whitespace where it counts; crisp text rendering. */
     font-feature-settings: "cv01", "ss01";
+    line-height: 1.55;
     }
   /* Editorial serif display for headings — large, generous, high-contrast. */
   h1, h2, h3 {
@@ -192,9 +199,10 @@
   /* Small ALL-CAPS Inter section eyebrow. */
   .eyebrow {
     font-family: var(--font-sans);
-    font-size: 11px;
+    font-size: 0.72rem;
+    font-weight: 500;
     line-height: 1;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.13em;
     text-transform: uppercase;
     color: var(--text-dim);
     }

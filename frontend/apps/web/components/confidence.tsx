@@ -13,8 +13,8 @@ export function ConfidenceMeter({ value }: { value: number }) {
       title={confidenceHelp(pct)}
       className="inline-flex items-center gap-1.5 align-middle"
     >
-      <span className="tnum text-xs text-foreground">{pct}%</span>
-      <span className="relative h-1.5 w-10 overflow-hidden rounded-full bg-surface-2">
+      <span className="tnum text-sm text-foreground">{pct}%</span>
+      <span className="relative h-2 w-16 overflow-hidden rounded-full bg-surface-2">
         <span
           className={`absolute inset-y-0 left-0 rounded-full ${tone}`}
           style={{ width: `${pct}%` }}

@@ -113,7 +113,7 @@ export default function AmendmentsPage() {
             type="button"
             onClick={() => blast.mutate()}
             disabled={!ref || !text.trim() || blast.isPending}
-            className="hairline inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
+            className="hairline inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-base font-semibold text-primary-foreground disabled:opacity-50"
           >
             <Zap className="size-4" />
             {blast.isPending ? "Computing…" : "Compute blast radius"}

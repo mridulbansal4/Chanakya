@@ -19,7 +19,7 @@ export function DeonticBadge({ deontic }: { deontic: DeonticType }) {
   return (
     <span
       title={`${meta.label} (${meta.code}) — ${meta.help}`}
-      className={`inline-flex items-center rounded border px-2 py-0.5 text-[11px] font-medium ${DEONTIC_STYLE[deontic]}`}
+      className={`inline-flex items-center rounded border px-2.5 py-1 text-xs font-medium ${DEONTIC_STYLE[deontic]}`}
     >
       {meta.label}
     </span>
@@ -37,7 +37,7 @@ const STATUS_STYLE: Record<ObligationStatus, string> = {
 export function StatusBadge({ status }: { status: ObligationStatus }) {
   return (
     <span
-      className={`inline-flex rounded border bg-surface px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLE[status]}`}
+      className={`inline-flex rounded border bg-surface px-2.5 py-1 text-xs font-medium ${STATUS_STYLE[status]}`}
     >
       {STATUS_LABEL[status]}
     </span>

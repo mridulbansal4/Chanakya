@@ -20,6 +20,7 @@ const OFFICER = { name: "Priya Menon", role: "Compliance Officer", firm: "Acme I
 
 const NAV = [
   { href: "/", label: "Overview", hint: "Your compliance dashboard at a glance." },
+  { href: "/regulatory-feed", label: "Regulatory Feed", hint: "New SEBI circulars, detected and processed end to end." },
   { href: "/register", label: "Register", hint: "Every obligation extracted from the regulation, with its source." },
   { href: "/amendments", label: "Blast Radius", hint: "See everything a regulation change affects." },
   { href: "/evidence", label: "Evidence & Gaps", hint: "Which obligations are backed by evidence, and where the gaps are." },
@@ -32,6 +33,7 @@ const NAV = [
 // Plain-language purpose of each screen, shown as a dismissible banner.
 const BANNER: Record<string, ReactNode> = {
   "/": "Your compliance posture at a glance. Start with what needs your attention, then explore the live obligation graph below.",
+  "/regulatory-feed": "CHANAKYA monitors SEBI for new circulars. Process the new MITC amendment to see the full lifecycle — diff, obligations, blast radius, workflows, approval, evidence, and an audit pack.",
   "/register": "Every obligation CHANAKYA extracted from the regulation, with the exact source text behind each one. Click a row to see its citation.",
   "/amendments": "Preview what a regulation change would affect before you accept it. Pick a clause, edit its text, and compute the impact.",
   "/evidence": "Which obligations are backed by evidence from your firm's systems, and where the gaps are. Each gap becomes a draft remediation ticket.",

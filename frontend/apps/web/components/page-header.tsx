@@ -17,12 +17,12 @@ export function PageHeader({
   actions?: ReactNode
 }) {
   return (
-    <div className="flex shrink-0 items-start justify-between gap-4 border-b border-line px-6 py-4">
+    <div className="flex shrink-0 items-start justify-between gap-4 border-b border-line px-7 py-5">
       <div className="min-w-0">
-        <div className="eyebrow mb-1">{eyebrow}</div>
-        <h1 className="font-display text-2xl leading-tight tracking-tight">{title}</h1>
+        <div className="eyebrow mb-1.5">{eyebrow}</div>
+        <h1 className="font-display text-3xl leading-tight tracking-tight">{title}</h1>
         {description && (
-          <p className="mt-1 max-w-2xl text-sm text-text-dim">{description}</p>
+          <p className="mt-1.5 max-w-2xl text-[15px] text-text-dim">{description}</p>
         )}
       </div>
       {actions && <div className="shrink-0">{actions}</div>}

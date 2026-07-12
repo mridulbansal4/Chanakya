@@ -93,14 +93,14 @@ export default function OverviewPage() {
       {/* Thin posture strip */}
       <section className="grid grid-cols-2 gap-px border-b border-line bg-line sm:grid-cols-3 lg:grid-cols-5">
         {postureMetrics(posture.data).map((m) => (
-          <div key={m.label} className="bg-surface px-5 py-3">
-            <div className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+          <div key={m.label} className="bg-surface px-6 py-4">
+            <div className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
               {m.label}
             </div>
             {m.empty ? (
-              <div className="mt-2 text-xs text-muted-foreground">{m.empty}</div>
+              <div className="mt-2 text-sm text-muted-foreground">{m.empty}</div>
             ) : (
-              <div className={`tnum mt-1 text-2xl ${TONE[m.tone ?? "default"]}`}>
+              <div className={`tnum mt-1.5 text-4xl ${TONE[m.tone ?? "default"]}`}>
                 {m.value}
               </div>
             )}
@@ -186,18 +186,18 @@ function ViewToggle({
   onChange: (v: OverviewView) => void
 }) {
   const opts: Array<{ v: OverviewView; label: string; icon: ReactNode }> = [
-    { v: "list", label: "List", icon: <ListTree className="size-3.5" /> },
-    { v: "graph", label: "Graph", icon: <Network className="size-3.5" /> },
+    { v: "list", label: "List", icon: <ListTree className="size-4" /> },
+    { v: "graph", label: "Graph", icon: <Network className="size-4" /> },
   ]
   return (
-    <div className="inline-flex rounded-full border border-line p-0.5 text-xs">
+    <div className="inline-flex rounded-full border border-line bg-surface p-1 text-sm shadow-[var(--shadow-card)]">
       {opts.map((o) => (
         <button
           key={o.v}
           type="button"
           onClick={() => onChange(o.v)}
           aria-pressed={value === o.v}
-          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-medium transition-colors ${
+          className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-semibold transition-colors ${
             value === o.v
               ? "bg-ink text-on-ink"
               : "text-text-dim hover:text-foreground"
@@ -218,10 +218,8 @@ function NeedsAttention({ posture }: { posture?: Posture }) {
   const allClear = posture != null && needsReview === 0 && gaps === 0 && pending === 0
 
   return (
-    <section className="flex flex-wrap items-center gap-3 border-b border-line px-6 py-3">
-      <span className="text-[11px] tracking-wide text-muted-foreground uppercase">
-        Needs your attention
-      </span>
+    <section className="flex flex-wrap items-center gap-3 border-b border-line px-7 py-4">
+      <span className="eyebrow">Needs your attention</span>
 
       {allClear ? (
         <span className="text-sm text-verified">All clear — nothing needs action today.</span>
@@ -253,9 +251,9 @@ function NeedsAttention({ posture }: { posture?: Posture }) {
 
       <Link
         href="/review"
-        className="hairline ml-auto inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground"
+        className="hairline ml-auto inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-base font-semibold text-primary-foreground"
       >
-        Start review <ArrowRight className="size-3.5" />
+        Start review <ArrowRight className="size-4" />
       </Link>
     </section>
   )
@@ -279,7 +277,7 @@ function ActionChip({
   return (
     <Link
       href={href}
-      className="hairline inline-flex items-center gap-1.5 rounded-md bg-surface px-2.5 py-1.5 text-xs hover:bg-surface-2"
+      className="hairline inline-flex items-center gap-2 rounded-md bg-surface px-3.5 py-2 text-sm hover:bg-surface-2"
     >
       <span className={color}>{icon}</span>
       <span className="tnum text-foreground">{count}</span>

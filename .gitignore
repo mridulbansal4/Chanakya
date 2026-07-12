@@ -55,5 +55,9 @@ chanakya_signing.key
 *.tsbuildinfo
 next-env.d.ts
 
+# Large source circular (16.5 MB public SEBI PDF) — kept on disk, not in git.
+# The generated demo documents in Documents/ are committed; this source is not.
+Documents/IA_Master_Circular_2025.pdf
+
 .claude/
 .claude

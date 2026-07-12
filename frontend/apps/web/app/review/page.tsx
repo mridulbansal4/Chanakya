@@ -64,9 +64,9 @@ export default function ReviewPage() {
         </p>
       )}
 
-      <ul className="space-y-3">
+      <ul className="space-y-4">
         {items.map((o) => (
-          <li key={o.id} className="hairline rounded-md bg-surface p-4">
+          <li key={o.id} className="hairline rounded-md bg-surface p-5">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
@@ -75,14 +75,14 @@ export default function ReviewPage() {
                   <StatusBadge status={o.status} />
                   <ConfidenceMeter value={o.confidence} />
                 </div>
-                <div className="mt-1 text-sm font-medium">{o.clause_heading}</div>
+                <div className="mt-1.5 text-base font-medium">{o.clause_heading}</div>
                 <blockquote className="mt-1.5 border-l-2 border-line pl-3 text-sm leading-relaxed text-muted-foreground">
                   {o.source_sentence}
                 </blockquote>
               </div>
               <button
                 onClick={() => setSelected(o)}
-                className="hairline shrink-0 rounded-md bg-surface-2 px-3 py-1.5 text-sm hover:bg-accent"
+                className="hairline shrink-0 rounded-md bg-surface-2 px-4 py-2.5 text-base font-medium hover:bg-accent"
               >
                 Review &amp; sign
               </button>
