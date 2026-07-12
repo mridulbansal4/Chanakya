@@ -1,0 +1,25 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+
+        <!-- Outer C -->
+        <path d="
+            M365 118
+            A170 170 0 1 0 365 394"></path>
+
+        <!-- Graph -->
+        <line x1="170" y1="170" x2="255" y2="150"></line>
+        <line x1="255" y1="150" x2="330" y2="210"></line>
+        <line x1="170" y1="170" x2="190" y2="270"></line>
+        <line x1="190" y1="270" x2="300" y2="320"></line>
+        <line x1="300" y1="320" x2="330" y2="210"></line>
+        <line x1="190" y1="270" x2="255" y2="150"></line>
+
+        <!-- Nodes -->
+        <circle cx="170" cy="170" r="10" fill="#FFFFFF"></circle>
+        <circle cx="255" cy="150" r="10" fill="#FFFFFF"></circle>
+        <circle cx="330" cy="210" r="10" fill="#FFFFFF"></circle>
+        <circle cx="300" cy="320" r="10" fill="#FFFFFF"></circle>
+        <circle cx="190" cy="270" r="10" fill="#FFFFFF"></circle>
+
+    </g>
+</svg>

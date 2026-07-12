@@ -83,12 +83,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-svh flex-col overflow-hidden">
       <header className="grid h-14 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 bg-ink px-6 text-on-ink">
-        <div className="flex items-center">
-          <Link
-            href="/"
-            className="font-display text-xl leading-none tracking-tight text-on-ink"
-          >
-            CHANAKYA
+        <div className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
+            <img src="/logo.svg" alt="CHANAKYA Logo" className="h-6 w-auto" />
+            <span className="font-display text-xl leading-none tracking-tight text-on-ink">
+              CHANAKYA
+            </span>
           </Link>
         </div>
         <nav className="flex items-center justify-center gap-1 text-sm">
