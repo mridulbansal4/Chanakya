@@ -32,9 +32,21 @@ causal citation behind every claim and an auditable trail as of any date.
 > JSON schema.** A human cryptographically signs each one, and a deterministic policy engine — not
 > the model — decides compliance. Nothing is blocked before a human promotes it.
 
-> **Note on screenshots.** Figures below are captured from the running app. They live in
-> [`docs/screenshots/`](docs/screenshots/) — drop your PNGs there (see that folder's README for the
-> expected filenames). No mockups; every screen is real and backed by the Go API.
+> **Note on screenshots.** Every figure below is captured live from the running app via
+> [`scripts/capture_screenshots.py`](scripts/capture_screenshots.py) — no mockups; the graphs are
+> real React Flow, and each data screen is backed by the Go API.
+
+### See it in action — a SEBI amendment, end to end
+
+CHANAKYA detects a real SEBI circular (the MITC amendment, 17 Feb 2025), computes its operational
+impact, routes it through a human sign-off, and produces an audit-ready pack — one continuous flow.
+
+| | |
+|---|---|
+| ![Regulatory Feed — new circular detected](docs/screenshots/sim-inbox.png) | ![Blast radius — operational impact](docs/screenshots/sim-blast.png) |
+| **1 · Detect** — the new MITC circular arrives in the Regulatory Feed | **2 · Blast radius** — one clause change, mapped across the firm |
+| ![Human review & approval](docs/screenshots/sim-approval.png) | ![Audit-ready pack](docs/screenshots/sim-audit.png) |
+| **3 · Human gate** — the officer reviews and approves; nothing runs before this | **4 · Audit pack** — Reg 19(3) compliant, full evidence bundle |
 
 ---
 
