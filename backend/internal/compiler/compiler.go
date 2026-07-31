@@ -148,13 +148,20 @@ func (c *Compiler) CompileClause(ctx context.Context, clause domain.Clause) (Cla
 // the causal-citation and domain invariants. A non-empty reason means the
 // candidate was rejected and must not enter the graph.
 func (c *Compiler) buildObligation(clause domain.Clause, cand candidate) (domain.Obligation, string) {
-	// Causal citation, part 1: the cited clause ref must be THIS clause.
-	if cand.SourceClauseRef != clause.ClauseRef {
+	// Causal citation, part 1: the obligation must be attributed to THIS clause.
+	// We compile one clause at a time, so the provenance is known by construction;
+	// the extractor's returned ref is only a sanity check. We tolerate cosmetic
+	// formatting (e.g. an LLM returning "Clause 3" or "§3.1" for clause "3"/"3.1")
+	// but still reject a ref that points at a genuinely different clause. The
+	// STORED ref is always the canonical clause ref, never the extractor's string.
+	if cand.SourceClauseRef != "" && !clauseRefMatches(cand.SourceClauseRef, clause.ClauseRef) {
 		return domain.Obligation{}, fmt.Sprintf(
 			"citation clause ref %q does not match clause %q", cand.SourceClauseRef, clause.ClauseRef)
 	}
-	// Causal citation, part 2: the cited sentence must be a verbatim substring
-	// of the clause text. This rejects hallucinated or paraphrased citations.
+	cand.SourceClauseRef = clause.ClauseRef
+	// Causal citation, part 2 (the real safety gate): the cited sentence must be a
+	// verbatim substring of the clause text. This rejects hallucinated or
+	// paraphrased citations and is NOT relaxed.
 	if cand.SourceSentence == "" {
 		return domain.Obligation{}, "missing source_sentence"
 	}
@@ -214,4 +221,28 @@ func containsNormalized(haystack, needle string) bool {
 
 func normalizeWS(s string) string {
 	return strings.Join(strings.Fields(s), " ")
+}
+
+// clauseRefMatches reports whether an extractor-returned clause reference refers
+// to the same clause as want, tolerating cosmetic labels/formatting so that
+// "Clause 3", "cl. 3", "§3", and "3" are all treated as the same ref. This does
+// not weaken the citation guarantee: the verbatim source-sentence check is what
+// proves the obligation came from this clause; this only normalises the label.
+func clauseRefMatches(got, want string) bool {
+	return normalizeClauseRef(got) == normalizeClauseRef(want)
+}
+
+// normalizeClauseRef lowercases, strips a single leading label token
+// ("clause"/"cl"/"§"/"para"/"paragraph"/"point"/"regulation"/"reg"), and removes
+// spaces and a trailing period, leaving just the numbering (e.g. "3.1").
+func normalizeClauseRef(s string) string {
+	s = strings.ToLower(strings.TrimSpace(s))
+	for _, p := range []string{"clause", "regulation", "paragraph", "para", "point", "reg.", "reg", "cl.", "cl", "§"} {
+		if strings.HasPrefix(s, p) {
+			s = strings.TrimSpace(strings.TrimPrefix(s, p))
+			break
+		}
+	}
+	s = strings.ReplaceAll(s, " ", "")
+	return strings.TrimSuffix(s, ".")
 }

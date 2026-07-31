@@ -61,3 +61,6 @@ Documents/IA_Master_Circular_2025.pdf
 
 .claude/
 .claude
+
+# Local DB backups (created during Gemini regeneration)
+backups/

@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"chanakya/internal/compiler"
@@ -177,20 +178,46 @@ func wireControls(ctx context.Context, st *store.Store, validFrom string, res *C
 	return nil
 }
 
-// EnsureSeeded seeds + compiles the fixture only if the store is empty (no
-// circular). Returns whether it bootstrapped. Uses the deterministic offline
-// extractor so startup needs no API key.
+// EnsureSeeded seeds + compiles the fixture when the store is not yet fully
+// bootstrapped, and reports whether it did any work. It is idempotent and
+// self-healing: it (re)runs the compile step whenever the circular is seeded but
+// no obligations exist yet — e.g. after a prior run seeded the data but failed
+// partway through compilation (more likely now that compilation may call a real
+// LLM over the network).
+//
+// The extractor is chosen by llm.SelectExtractor: Gemini (GEMINI_API_KEY) →
+// Anthropic (CHANAKYA_LLM_API_KEY) → the deterministic offline extractor. With no
+// key set, startup stays fully offline and needs no network — the default.
 func EnsureSeeded(ctx context.Context, st *store.Store) (bool, error) {
-	if _, err := st.FirstCircularID(ctx); err == nil {
-		return false, nil // already seeded
-	} else if !errors.Is(err, store.ErrNotFound) {
+	_, err := st.FirstCircularID(ctx)
+	seededData := err == nil
+	if err != nil && !errors.Is(err, store.ErrNotFound) {
 		return false, fmt.Errorf("check seeded: %w", err)
 	}
+
 	now := time.Now()
-	if _, err := Seed(ctx, st, now); err != nil {
-		return false, err
+	if !seededData {
+		if _, err := Seed(ctx, st, now); err != nil {
+			return false, err
+		}
 	}
-	if _, err := Compile(ctx, st, llm.NewOfflineExtractor(), now); err != nil {
+
+	// If obligations already exist, the store is fully bootstrapped — nothing to
+	// do. Otherwise (fresh, or a prior partial seed) run the compile step.
+	obls, err := st.ListObligations(ctx, store.ObligationQuery{AsOf: now})
+	if err != nil {
+		return false, fmt.Errorf("check obligations: %w", err)
+	}
+	if seededData && len(obls) > 0 {
+		return false, nil
+	}
+
+	extractor, err := llm.SelectExtractor(compiler.SchemaJSON)
+	if err != nil {
+		return false, fmt.Errorf("select extractor: %w", err)
+	}
+	log.Printf("chanakya: bootstrap compiling with %s extractor", extractor.Name())
+	if _, err := Compile(ctx, st, extractor, now); err != nil {
 		return false, err
 	}
 	return true, nil

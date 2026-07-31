@@ -15,7 +15,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"chanakya/internal/bootstrap"
@@ -62,20 +61,11 @@ func run() error {
 	return nil
 }
 
-// chooseExtractor picks the Anthropic extractor when a key is present, else the
-// offline one.
+// chooseExtractor selects the extractor by which API key is configured, in
+// precedence order: Gemini (GEMINI_API_KEY) → Anthropic (CHANAKYA_LLM_API_KEY) →
+// the deterministic offline extractor (no key, the default). The same selection
+// is used by the API server's first-run bootstrap. Whichever is chosen, its
+// output is DATA re-validated by the compiler against the strict schema.
 func chooseExtractor() (llm.Extractor, error) {
-	key := os.Getenv("CHANAKYA_LLM_API_KEY")
-	if key == "" {
-		return llm.NewOfflineExtractor(), nil
-	}
-	ex, err := llm.NewAnthropicExtractor(llm.AnthropicConfig{
-		APIKey: key,
-		Model:  os.Getenv("CHANAKYA_LLM_MODEL"),
-		Schema: compiler.SchemaJSON,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("build anthropic extractor: %w", err)
-	}
-	return ex, nil
+	return llm.SelectExtractor(compiler.SchemaJSON)
 }

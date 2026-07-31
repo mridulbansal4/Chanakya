@@ -24,11 +24,17 @@ type Config struct {
 }
 
 // Load resolves configuration from the process environment, first attempting to
-// hydrate os.Environ from a .env file in the working directory if one exists.
-// It never returns an error for a missing .env; that file is optional.
+// hydrate os.Environ from a .env file if one exists. It looks in the working
+// directory (./.env) AND in ./backend/.env, so the app finds its configuration
+// whether it is run from the repo root (the documented `go run ./backend/cmd/api`)
+// or from within backend/. Values already set in the real environment always win,
+// and an earlier file wins over a later one (loadDotEnv never overrides). A
+// missing file is not an error.
 func Load() (Config, error) {
-	if err := loadDotEnv(".env"); err != nil {
-		return Config{}, fmt.Errorf("load .env: %w", err)
+	for _, path := range []string{".env", "backend/.env"} {
+		if err := loadDotEnv(path); err != nil {
+			return Config{}, fmt.Errorf("load %s: %w", path, err)
+		}
 	}
 
 	cfg := Config{
