@@ -16,8 +16,8 @@ export interface LegendItem {
 export function GraphLegend({ items }: { items: LegendItem[] }) {
   return (
     <Panel position="top-left" className="!m-0 !mt-16 !ml-6">
-      <div className="w-56 rounded-2xl border border-white/15 bg-[#12141C]/95 px-4 py-3 text-xs text-white shadow-2xl backdrop-blur-2xl space-y-2">
-        <div className="text-[10px] font-mono font-bold tracking-widest text-slate-400 uppercase">
+      <div className="w-56 rounded-2xl border border-line bg-surface/95 px-4 py-3 text-xs text-foreground shadow-2xl backdrop-blur-2xl space-y-2">
+        <div className="text-[10px] font-mono font-bold tracking-widest text-muted-foreground uppercase">
           Graph Legend
         </div>
         <ul className="space-y-1.5">

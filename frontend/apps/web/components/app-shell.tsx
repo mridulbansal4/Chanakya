@@ -14,6 +14,7 @@ import { WelcomeModal } from "@/components/welcome-modal"
 import { GlossaryModal } from "@/components/glossary-modal"
 import { CommandPalette } from "@/components/command-palette"
 import { PageTransition } from "@/components/page-transition"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { useAsOf } from "@/components/as-of-provider"
 import { getReviewQueue } from "@/lib/api"
 import { cn } from "@workspace/ui/lib/utils"
@@ -80,19 +81,19 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex h-svh flex-col overflow-hidden bg-background text-foreground">
-      <header className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 bg-[#090A0F]/95 px-4 lg:px-6 text-white shadow-xl backdrop-blur-xl z-30 gap-2">
+      <header className="flex h-16 shrink-0 items-center justify-between border-b border-line bg-background/95 px-4 lg:px-6 text-foreground shadow-xl backdrop-blur-xl z-30 gap-2">
         {/* Brand wordmark - Clean CHANAKYA Logo without SUPTECH badge */}
         <div className="flex items-center gap-2 shrink-0">
           <Link href="/" className="flex items-center gap-2.5 group">
             <img src="/logo.svg" alt="CHANAKYA Logo" className="h-7 w-auto transition-transform group-hover:scale-105" />
-            <span className="font-display text-2xl lg:text-[26px] leading-none tracking-tight text-white font-extrabold">
+            <span className="font-display text-2xl lg:text-[26px] leading-none tracking-tight text-foreground font-extrabold">
               CHANAKYA
             </span>
           </Link>
         </div>
 
         {/* Navigation Tabs - Perfectly fitted */}
-        <nav className="flex min-w-0 flex-1 items-center justify-center gap-1 text-xs lg:text-[13px] overflow-x-auto no-scrollbar py-1 px-1">
+        <nav className="flex min-w-0 flex-1 items-center justify-center gap-1 text-sm lg:text-[15px] overflow-x-auto no-scrollbar py-1 px-1">
           {NAV.map((item) => {
             const active =
               item.href === "/"
@@ -108,22 +109,22 @@ export function AppShell({ children }: { children: ReactNode }) {
                 href={item.href}
                 title={item.hint}
                 className={cn(
-                  "relative inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs lg:text-[13px] font-semibold transition-all duration-150 whitespace-nowrap shrink-0",
+                  "relative inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm lg:text-[15px] font-bold transition-all duration-150 whitespace-nowrap shrink-0",
                   active
-                    ? "text-white"
-                    : "text-slate-300 hover:text-white hover:bg-white/10"
+                    ? "text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-foreground/10"
                 )}
               >
                 {active && (
                   <motion.div
                     layoutId="activeNavTab"
-                    className="absolute inset-0 rounded-full bg-blue-600/40 border border-blue-400/60 shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                    className="absolute inset-0 rounded-full bg-primary/90 border border-primary/40 shadow-[0_0_15px_rgba(var(--primary),0.3)]"
                     transition={{ type: "spring", stiffness: 380, damping: 30 }}
                   />
                 )}
                 <span className="relative z-10">{item.label}</span>
                 {badge != null && (
-                  <span className="relative z-10 tnum inline-flex min-w-4 items-center justify-center rounded-full bg-amber-400 px-1.5 py-0.2 text-[10px] font-extrabold text-black shadow-sm">
+                  <span className="relative z-10 tnum inline-flex min-w-4 items-center justify-center rounded-full bg-amber-500 px-1.5 py-0.2 text-[10px] font-extrabold text-black shadow-sm">
                     {badge}
                   </span>
                 )}
@@ -136,15 +137,16 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="flex items-center justify-end gap-2 shrink-0">
           <CommandPalette />
           <AsOfControl />
+          <ThemeToggle />
           <HelpMenu
             onTour={() => setWelcomeOpen(true)}
             onGlossary={() => setGlossaryOpen(true)}
           />
           <div
             title={`${OFFICER.name} · ${OFFICER.role} · ${OFFICER.firm}`}
-            className="hidden size-8 place-items-center rounded-full border border-white/20 bg-white/10 md:grid shadow-inner cursor-pointer hover:border-white/50 transition-all"
+            className="hidden size-8 place-items-center rounded-full border border-line bg-surface md:grid shadow-inner cursor-pointer hover:border-foreground/30 transition-all"
           >
-            <span className="grid size-7 place-items-center rounded-full bg-white/15 text-[11px] font-bold text-white">
+            <span className="grid size-7 place-items-center rounded-full bg-foreground/10 text-[11px] font-bold text-foreground">
               {OFFICER.name
                 .split(" ")
                 .map((w) => w[0])

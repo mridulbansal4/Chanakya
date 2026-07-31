@@ -73,7 +73,7 @@ export function ExecutiveKpiHeader({ posture, isLoading }: ExecutiveKpiHeaderPro
     <section
       role="region"
       aria-label="Executive Mission Control"
-      className="relative w-full border-b border-white/10 bg-[#0B0D13] text-foreground shadow-2xl selection:bg-blue-600/30 overflow-hidden"
+      className="relative w-full border-b border-border bg-background text-foreground shadow-2xl selection:bg-primary/30 overflow-hidden"
       style={{
         backgroundImage: `url("${NOISE_BG}")`,
       }}
@@ -82,9 +82,8 @@ export function ExecutiveKpiHeader({ posture, isLoading }: ExecutiveKpiHeaderPro
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
 
       {/* 1. TOP METADATA TICKER STRIP */}
-      <div className="flex h-8 items-center justify-between border-b border-white/10 px-6 text-[11px] font-mono tracking-wider uppercase text-slate-400 bg-white/[0.015]">
+      <div className="flex h-8 items-center justify-between border-b border-border px-6 text-[11px] font-mono tracking-wider uppercase text-muted-foreground bg-white/[0.015]">
         <div className="flex items-center gap-3">
-          <span className="font-semibold text-slate-200">CHANAKYA</span>
           <span className="text-slate-600">//</span>
           <span className="text-slate-400">REGULATORY OS</span>
           <span className="text-slate-600">|</span>
@@ -203,10 +202,10 @@ function MetricColumn({
 
   return (
     <div
-      className={`group relative flex flex-col justify-between p-4.5 rounded-xl border border-white/10 bg-[#12141E] transition-all duration-200 ease-out hover:border-white/25 hover:bg-[#181B28] hover:-translate-y-[1px] hover:shadow-lg hover:shadow-black/40 overflow-hidden cursor-default ${className}`}
+      className={`group relative flex flex-col justify-between p-4.5 rounded-xl border border-line bg-surface transition-all duration-200 ease-out hover:border-foreground/20 hover:bg-surface-2 hover:-translate-y-[1px] hover:shadow-lg hover:shadow-black/10 overflow-hidden cursor-default ${className}`}
     >
       {/* Top Border Illumination on Hover */}
-      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-foreground/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
 
       {/* Level 1: Label (11px Mono) */}
       <div className="flex items-center justify-between gap-2">
@@ -252,7 +251,7 @@ function OperationsQueue({ posture }: { posture?: Posture }) {
   const allClear = needsReview === 0 && pending === 0 && gaps === 0
 
   return (
-    <div className="flex flex-col border-t border-white/10 bg-[#08090F] lg:flex-row lg:items-center lg:justify-between px-6 py-3 gap-3">
+    <div className="flex flex-col border-t border-border bg-background lg:flex-row lg:items-center lg:justify-between px-6 py-3 gap-3">
       {/* QUEUE TITLE & ITEMS */}
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
         <div className="flex items-center gap-2 text-[11px] font-mono tracking-widest uppercase text-slate-400 font-medium shrink-0">

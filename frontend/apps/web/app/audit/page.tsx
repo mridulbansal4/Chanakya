@@ -58,12 +58,12 @@ export default function AuditPage() {
         </div>
       )}
 
-      {/* Persistent column headers */}
-      <div className="grid grid-cols-6 border-b border-line bg-surface/90 backdrop-blur-md shadow-2xs">
+      {/* Persistent column headers - Rounded Cards with Spacing */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 p-3.5 border-b border-line bg-surface/50">
         {ORDER.map((t) => (
           <div
             key={t}
-            className="border-r border-line/60 px-4 py-3 text-center last:border-r-0"
+            className="rounded-xl border border-line bg-surface p-3.5 text-center transition-all duration-200 hover:border-foreground/20 hover:bg-surface-2 shadow-sm"
           >
             <div className="eyebrow">{COLUMN[t]}</div>
             <div className="tnum font-display mt-1 text-base font-bold text-foreground">

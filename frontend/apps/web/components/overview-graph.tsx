@@ -62,20 +62,20 @@ function OverviewNode({ data, selected }: NodeProps) {
       <div
         className={`rounded-2xl border px-4 py-3 text-xs shadow-xl transition-all duration-300 hover:-translate-y-0.5 ${
           selected
-            ? "border-blue-400 bg-[#1A2238] ring-4 ring-blue-500/80 shadow-[0_0_35px_rgba(59,130,246,0.8)] scale-105 z-50"
-            : "border-white/10 bg-[#12141D] hover:border-blue-400/60"
+            ? "border-primary bg-primary/10 ring-4 ring-primary/80 shadow-[0_0_35px_rgba(59,130,246,0.8)] scale-105 z-50"
+            : "border-line bg-surface hover:border-primary/60"
         }`}
       >
-        <Handle type="target" position={Position.Left} className="!bg-[#64748B] !w-1.5 !h-1.5 !border-none" />
+        <Handle type="target" position={Position.Left} className="!bg-muted-foreground !w-1.5 !h-1.5 !border-none" />
         <div className="flex items-center gap-2.5">
-          <span className="tnum font-bold text-white bg-white/10 px-2 py-0.5 rounded-md font-mono text-xs border border-white/10">
+          <span className="tnum font-bold text-foreground bg-foreground/10 px-2 py-0.5 rounded-md font-mono text-xs border border-line">
             Clause {d.ref}
           </span>
-          <span title={d.sublabel} className="max-w-[180px] truncate text-slate-300 font-semibold text-xs">
+          <span title={d.sublabel} className="max-w-[180px] truncate text-muted-foreground font-semibold text-xs">
             {d.sublabel}
           </span>
         </div>
-        <Handle type="source" position={Position.Right} className="!bg-[#64748B] !w-1.5 !h-1.5 !border-none" />
+        <Handle type="source" position={Position.Right} className="!bg-muted-foreground !w-1.5 !h-1.5 !border-none" />
       </div>
     )
   }
@@ -84,26 +84,30 @@ function OverviewNode({ data, selected }: NodeProps) {
     <div
       className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-xs shadow-xl transition-all duration-300 hover:-translate-y-0.5 ${
         selected
-          ? "border-blue-400 bg-[#1A2238] ring-4 ring-blue-500/80 shadow-[0_0_35px_rgba(59,130,246,0.8)] scale-105 z-50"
+          ? "border-primary bg-primary/10 ring-4 ring-primary/80 shadow-[0_0_35px_rgba(59,130,246,0.8)] scale-105 z-50"
           : isApproved
-          ? "border-emerald-500/40 bg-[#12141D] hover:border-emerald-400"
+          ? "border-emerald-500/40 bg-surface hover:border-emerald-400"
           : isReview
-          ? "border-amber-500/40 bg-[#12141D] hover:border-amber-400"
+          ? "border-amber-500/40 bg-surface hover:border-amber-400"
           : isRisk
-          ? "border-red-500/40 bg-[#12141D] hover:border-red-400"
-          : "border-white/10 bg-[#12141D] hover:border-blue-400/60"
+          ? "border-red-500/40 bg-surface hover:border-red-400"
+          : "border-line bg-surface hover:border-primary/60"
       }`}
     >
-      <Handle type="target" position={Position.Left} className="!bg-[#64748B] !w-1.5 !h-1.5 !border-none" />
+      <Handle type="target" position={Position.Left} className="!bg-muted-foreground !w-1.5 !h-1.5 !border-none" />
       <span
         className="inline-block size-2.5 shrink-0 rounded-full"
         style={{ background: STATUS_DOT[d.status ?? "pending"] }}
       />
-      <span title={d.label} className="max-w-[200px] truncate font-bold text-white text-xs">
-        {d.label}
-      </span>
-      {d.deontic && <DeonticBadge deontic={d.deontic} />}
-      <Handle type="source" position={Position.Right} className="!bg-[#64748B] !w-1.5 !h-1.5 !border-none" />
+      <div className="flex min-w-0 flex-col">
+        <span className="truncate font-bold text-foreground" title={d.ref}>
+          {d.ref}
+        </span>
+        <span className="mt-0.5 truncate text-muted-foreground" title={d.label}>
+          {d.label}
+        </span>
+      </div>
+      <Handle type="source" position={Position.Right} className="!bg-muted-foreground !w-1.5 !h-1.5 !border-none" />
     </div>
   )
 }
@@ -190,7 +194,7 @@ function layout(payload: GraphPayload): { nodes: Node[]; edges: Edge[] } {
 export function OverviewGraph({ payload }: { payload: GraphPayload }) {
   const { nodes, edges } = React.useMemo(() => layout(payload), [payload])
   return (
-    <div className="h-full w-full relative bg-[#090A0F]">
+    <div className="h-full w-full relative bg-background">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -202,8 +206,8 @@ export function OverviewGraph({ payload }: { payload: GraphPayload }) {
         nodesDraggable={true}
         nodesConnectable={false}
       >
-        <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="#1E2235" />
-        <Controls showInteractive={false} className="!border-white/10 !shadow-2xl" />
+        <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="var(--line-dark)" />
+        <Controls showInteractive={false} className="!border-line !shadow-2xl" />
         <GraphLegend items={OVERVIEW_LEGEND} />
         <GraphSearch placeholder="Find a clause or obligation…" />
       </ReactFlow>

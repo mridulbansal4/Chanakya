@@ -83,8 +83,75 @@
     --shadow-card-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(37, 99, 235, 0.15);
 }
 
+/* Light Mode (Enterprise White/Slate) */
+:root {
+    --ink: #FFFFFF;
+    --ink-800: #F8FAFC;
+    --cream: #FFFFFF;
+    --cream-200: #F1F5F9;
+    --surface: #FFFFFF;
+    --line: #E2E8F0;
+    --line-dark: #CBD5E1;
+    --text: #0F172A;
+    --text-dim: #475569;
+    --on-ink: #0F172A;
+    --on-ink-dim: #64748B;
+    --steel-blue: #2563EB;
+    --lavender: #2563EB;
+
+    /* Psychological Status Indicators */
+    --ok: #10B981;             
+    --warn: #F59E0B;           
+    --risk: #EF4444;           
+
+    --surface-2: var(--cream-200);
+    --verified: var(--ok);
+    --verified-foreground: #FFFFFF;
+    --warn-foreground: #FFFFFF;
+    --danger: var(--risk);
+    --danger-foreground: #FFFFFF;
+    --brand: var(--on-ink);
+    --brand-foreground: var(--ink);
+
+    --background: var(--cream);
+    --foreground: var(--text);
+    --card: var(--surface);
+    --card-foreground: var(--text);
+    --popover: var(--surface);
+    --popover-foreground: var(--text);
+    --primary: #0F172A;
+    --primary-foreground: #FFFFFF;
+    --secondary: var(--cream-200);
+    --secondary-foreground: var(--text);
+    --muted: var(--cream-200);
+    --muted-foreground: var(--text-dim);
+    --accent: var(--cream-200);
+    --accent-foreground: var(--text);
+    --destructive: var(--risk);
+    --border: var(--line);
+    --input: var(--line);
+    --ring: var(--steel-blue);
+
+    --chart-1: var(--primary);
+    --chart-2: var(--ok);
+    --chart-3: var(--warn);
+    --chart-4: var(--risk);
+    --chart-5: var(--text-dim);
+
+    --radius: 0.85rem;
+
+    --sidebar: var(--ink);
+    --sidebar-foreground: var(--on-ink);
+    --sidebar-primary: var(--on-ink);
+    --sidebar-primary-foreground: var(--ink);
+    --sidebar-accent: var(--ink-800);
+    --sidebar-accent-foreground: var(--on-ink);
+    --sidebar-border: var(--line-dark);
+    --sidebar-ring: var(--on-ink);
+}
+
 /* Cosmic Studio 60-30-10 Enterprise Color Psychology (Dark Default) */
-:root, .dark {
+.dark {
     --ink: #08090E;            /* 60% Dominant Obsidian Grounding Base */
     --ink-800: #11131C;        /* 30% Structural Dark Slate Surface */
     --cream: #08090E;          /* Main App Dark Canvas */
@@ -157,7 +224,7 @@
   html {
     font-size: 100%;
     scroll-behavior: smooth;
-    color-scheme: dark;
+    color-scheme: light dark;
   }
   body {
     @apply bg-background text-foreground antialiased;

@@ -109,19 +109,19 @@ export function GraphSearch({ placeholder = "Find a clause or obligation…" }: 
   return (
     <Panel position="top-right" className="!m-4">
       <div
-        className={`flex items-center gap-2.5 rounded-2xl border bg-[#12141C]/95 px-4 py-2.5 shadow-2xl backdrop-blur-2xl transition-all ${
+        className={`flex items-center gap-2.5 rounded-2xl border bg-surface/95 px-4 py-2.5 shadow-2xl backdrop-blur-2xl transition-all ${
           miss
             ? "border-red-500/80 ring-2 ring-red-500/30"
-            : "border-white/15 focus-within:border-blue-500/80 focus-within:ring-2 focus-within:ring-blue-500/30"
+            : "border-line focus-within:border-primary/80 focus-within:ring-2 focus-within:ring-primary/30"
         }`}
       >
-        <Search className="size-4 text-slate-400 shrink-0" aria-hidden />
+        <Search className="size-4 text-muted-foreground shrink-0" aria-hidden />
         <input
           value={q}
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-56 bg-transparent text-xs font-semibold text-white outline-none placeholder:text-slate-400"
+          className="w-56 bg-transparent text-xs font-semibold text-foreground outline-none placeholder:text-muted-foreground"
         />
       </div>
     </Panel>

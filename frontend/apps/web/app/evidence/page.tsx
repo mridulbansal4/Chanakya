@@ -40,8 +40,8 @@ export default function EvidencePage() {
           description="Real-time map linking regulatory obligations to read-only enterprise data connectors. Evidence gaps automatically generate remediation tickets."
         />
 
-        {/* Summary strip */}
-        <section className="grid grid-cols-3 gap-px border-b border-line bg-line">
+        {/* Summary strip - Rounded Cards with Spacing */}
+        <section className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 border-b border-line bg-surface/50">
           <Stat label="Satisfied Obligations" value={em?.satisfied ?? "—"} tone="verified" />
           <Stat label="Remediation Gaps" value={em?.gaps ?? "—"} tone={em?.gaps ? "danger" : "default"} />
           <Stat label="Connected Systems" value={em?.sources.length ?? "—"} />
@@ -237,7 +237,7 @@ function Stat({
   const color =
     tone === "verified" ? "text-ok" : tone === "danger" ? "text-risk" : "text-foreground"
   return (
-    <div className="bg-surface px-6 py-4">
+    <div className="rounded-xl border border-line bg-surface p-4.5 transition-all duration-200 hover:border-foreground/20 hover:bg-surface-2 shadow-sm">
       <div className="eyebrow">{label}</div>
       <div className={`tnum font-display mt-1 text-2xl font-bold ${color}`}>{value}</div>
     </div>

@@ -63,7 +63,7 @@ function KindBadge({ kind }: { kind: "new" | "added" | "modified" }) {
 /* ── Screen 1 · Regulatory inbox ─────────────────────────────────────────── */
 export function Inbox_({ onProcess }: { onProcess: () => void }) {
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-4xl">
       <ScreenTitle
         eyebrow="Regulatory Feed"
         title="Recent circulars"
@@ -75,39 +75,39 @@ export function Inbox_({ onProcess }: { onProcess: () => void }) {
           return (
             <Reveal key={c.id} delay={i * 0.08}>
               <div
-                className={`flex items-center gap-3 border-b border-line/60 px-4 py-3 last:border-b-0 ${
+                className={`flex items-center gap-4 border-b border-line/60 px-5 py-4 last:border-b-0 ${
                   isNew ? "bg-warn/5" : ""
                 }`}
               >
                 <span
-                  className={`grid size-8 shrink-0 place-items-center rounded-md ${
+                  className={`grid size-10 shrink-0 place-items-center rounded-lg ${
                     isNew ? "bg-warn/15 text-warn" : "bg-cream-200 text-text-dim"
                   }`}
                 >
-                  {isNew ? <Sparkles className="size-4" /> : <FileText className="size-4" />}
+                  {isNew ? <Sparkles className="size-5" /> : <FileText className="size-5" />}
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     {isNew && (
-                      <span className="rounded bg-warn px-1.5 py-0.5 text-[9px] font-semibold tracking-wide text-white uppercase">
+                      <span className="rounded bg-warn px-2 py-0.5 text-xs font-bold tracking-wide text-white uppercase">
                         New
                       </span>
                     )}
-                    <span className="truncate text-sm font-medium text-foreground">{c.title}</span>
+                    <span className="truncate text-base lg:text-lg font-bold text-foreground">{c.title}</span>
                   </div>
-                  {c.ref && <div className="tnum mt-0.5 text-[11px] text-text-dim">{c.ref}</div>}
+                  {c.ref && <div className="tnum mt-1 text-xs lg:text-sm font-mono text-text-dim">{c.ref}</div>}
                 </div>
                 <div className="shrink-0 text-right">
-                  <div className="tnum text-xs text-text-dim">{c.date}</div>
+                  <div className="tnum text-sm font-semibold text-text-dim">{c.date}</div>
                   <div
-                    className={`text-[11px] font-medium ${isNew ? "text-warn" : "text-ok"}`}
+                    className={`text-xs lg:text-sm font-bold ${isNew ? "text-warn" : "text-ok"}`}
                   >
                     {c.status}
                   </div>
                 </div>
                 {isNew && (
                   <PrimaryButton onClick={onProcess}>
-                    Review &amp; Process <ArrowRight className="size-4" />
+                    Review &amp; Process <ArrowRight className="size-5" />
                   </PrimaryButton>
                 )}
               </div>
@@ -115,8 +115,8 @@ export function Inbox_({ onProcess }: { onProcess: () => void }) {
           )
         })}
       </div>
-      <p className="mt-3 flex items-center gap-1.5 text-xs text-text-dim">
-        <Inbox className="size-3.5" /> No upload needed — the circular is fetched automatically.
+      <p className="mt-4 flex items-center gap-2 text-sm text-text-dim">
+        <Inbox className="size-4" /> No upload needed — the circular is fetched automatically.
       </p>
     </div>
   )

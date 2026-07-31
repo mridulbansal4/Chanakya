@@ -90,39 +90,39 @@ export function OverviewHierarchy({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: idx * 0.05 }}
-            className="card-3d flex min-h-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#111319] shadow-2xl hover:border-indigo-500/40"
+            className="card-3d flex min-h-0 flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl hover:border-ring/40"
           >
-            <header className="flex shrink-0 items-center justify-between border-b border-white/10 bg-white/5 px-6 py-4">
+            <header className="flex shrink-0 items-center justify-between border-b border-line bg-foreground/5 px-6 py-4">
               <div className="flex items-center gap-3 min-w-0">
-                <span className="tnum rounded-md bg-white/10 px-2.5 py-0.5 text-xs font-bold text-white font-mono border border-white/10">
+                <span className="tnum rounded-md bg-foreground/10 px-2.5 py-0.5 text-xs font-bold text-foreground font-mono border border-line">
                   §{sec.ref}
                 </span>
-                <h3 className="truncate font-display text-base font-bold text-white">
+                <h3 className="truncate font-display text-base font-bold text-foreground">
                   {sec.heading}
                 </h3>
               </div>
-              <div className="flex shrink-0 items-center gap-3 text-xs text-slate-400 font-mono">
+              <div className="flex shrink-0 items-center gap-3 text-xs text-muted-foreground font-mono">
                 {SUMMARY_ORDER.filter((s) => sec.counts[s]).map((s) => (
                   <span key={s} className="inline-flex items-center gap-1.5 font-semibold">
                     <StatusDot status={s} />
-                    <span className="tnum font-extrabold text-white">{sec.counts[s]}</span>
+                    <span className="tnum font-extrabold text-foreground">{sec.counts[s]}</span>
                   </span>
                 ))}
-                <span className="tnum text-slate-400 font-medium">· {sec.obligations.length} total</span>
+                <span className="tnum text-muted-foreground font-medium">· {sec.obligations.length} total</span>
               </div>
             </header>
 
-            <ul className="min-h-0 flex-1 overflow-y-auto divide-y divide-white/5">
+            <ul className="min-h-0 flex-1 overflow-y-auto divide-y divide-line">
               {sec.obligations.map((o) => (
                 <li
                   key={o.id}
-                  className="flex items-center gap-3.5 px-6 py-3.5 transition-colors hover:bg-white/5"
+                  className="flex items-center gap-3.5 px-6 py-3.5 transition-colors hover:bg-surface-2"
                 >
                   <StatusDot status={o.status} />
-                  <span className="tnum font-bold text-xs text-indigo-400 font-mono w-10 shrink-0">
+                  <span className="tnum font-bold text-xs text-primary font-mono w-10 shrink-0">
                     {o.clause_ref}
                   </span>
-                  <span className="min-w-0 flex-1 truncate text-xs font-semibold text-slate-200">
+                  <span className="min-w-0 flex-1 truncate text-xs font-semibold text-foreground">
                     {o.clause_heading}
                   </span>
                   <DeonticBadge deontic={o.deontic_type} />
