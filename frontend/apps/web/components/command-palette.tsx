@@ -158,12 +158,12 @@ export function CommandPalette() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="hidden md:inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs text-on-ink-dim hover:text-on-ink hover:bg-white/10 hover:border-white/20 transition-all shadow-inner group"
+        className="hidden md:inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-slate-200 hover:text-white hover:bg-white/15 hover:border-white/30 transition-all shadow-inner group font-medium"
         title="Search operating system (Cmd+K)"
       >
-        <Search className="size-3.5 text-lavender transition-transform group-hover:scale-110" />
-        <span className="font-medium">Search OS…</span>
-        <kbd className="tnum rounded-md bg-white/10 px-1.5 py-0.5 text-[10px] font-mono text-on-ink-dim border border-white/10">
+        <Search className="size-4 text-blue-400 transition-transform group-hover:scale-110" />
+        <span>Search OS…</span>
+        <kbd className="tnum rounded-md bg-white/15 px-2 py-0.5 text-xs font-mono text-slate-200 border border-white/15 font-semibold">
           ⌘K
         </kbd>
       </button>

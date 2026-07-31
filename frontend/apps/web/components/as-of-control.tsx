@@ -14,9 +14,9 @@ export function AsOfControl() {
   return (
     <label
       title="Reconstruct the compliance state as of this date"
-      className="inline-flex items-center gap-2 rounded-md border border-line-dark bg-ink-800 px-2.5 py-1.5 text-xs text-on-ink"
+      className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-3.5 py-2 text-sm text-white font-medium shadow-inner hover:border-white/30 transition-all"
     >
-      <CalendarClock className="size-3.5 text-on-ink-dim" aria-hidden />
+      <CalendarClock className="size-4 text-slate-300" aria-hidden />
       <input
         type="date"
         value={asOf}
