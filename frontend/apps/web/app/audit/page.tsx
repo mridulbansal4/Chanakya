@@ -1,22 +1,23 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
+import { ShieldCheck, Network, HelpCircle } from "lucide-react"
 
 import { useAsOf } from "@/components/as-of-provider"
 import { LineageGraph } from "@/components/lineage-graph"
+import { GraphSkeleton } from "@/components/skeleton"
+import { EmptyState } from "@/components/empty-state"
 import { getLineage } from "@/lib/api"
 
-// The lineage columns, in flow order.
 const ORDER = ["clause", "obligation", "control", "evidence", "signoff", "policy"] as const
 
-// Singular column headers (the eyebrow style uppercases them).
 const COLUMN: Record<string, string> = {
-  clause: "Clause",
-  obligation: "Obligation",
-  control: "Control",
-  evidence: "Evidence",
-  signoff: "Sign-off",
-  policy: "Policy",
+  clause: "Source Clause",
+  obligation: "Extracted Obligation",
+  control: "Mapped Control",
+  evidence: "System Evidence",
+  signoff: "Officer Sign-Off",
+  policy: "Enforceable Policy",
 }
 
 export default function AuditPage() {
@@ -29,60 +30,73 @@ export default function AuditPage() {
   const total = Object.values(counts).reduce((a, b) => a + b, 0)
 
   return (
-    <div className="flex h-full flex-col">
-      {/* Title + caption */}
-      <div className="border-b border-line px-6 py-4">
-        <div className="eyebrow mb-1">Audit</div>
-        <h1 className="font-display text-2xl leading-tight tracking-tight">
-          Compliance lineage
+    <div className="flex h-full flex-col bg-background">
+      {/* Title + caption header */}
+      <div className="border-b border-line bg-surface px-7 py-5 shadow-2xs">
+        <div className="eyebrow mb-1">Audit Trail &amp; Provenance</div>
+        <h1 className="font-display text-2xl font-bold tracking-tight">
+          Compliance Lineage Graph
         </h1>
-        <p className="mt-1 max-w-3xl text-sm text-text-dim">
-          Every obligation traced from its source clause through control,
-          evidence, human sign-off, and enforced policy — as of{" "}
-          <span className="tnum text-foreground">{asOf}</span>.
+        <p className="mt-1 max-w-3xl text-xs text-text-dim leading-relaxed">
+          End-to-end audit reconstruction tracing every obligation from source circular clause through controls, evidence, human approval, and compiled policy enforcement as of{" "}
+          <span className="tnum font-bold text-foreground font-mono bg-cream-200/80 px-2 py-0.5 rounded-md">
+            {asOf}
+          </span>.
         </p>
       </div>
 
       {lineage.data && total > 0 && ((counts.signoff ?? 0) === 0 || (counts.policy ?? 0) === 0) && (
-        <p className="border-b border-line bg-surface px-6 py-2 text-xs text-text-dim">
-          No sign-offs or policies yet as of this date — approve obligations in the{" "}
-          <a href="/review" className="font-medium text-foreground underline">
-            Review Queue
-          </a>{" "}
-          to populate the audit trail.
-        </p>
+        <div className="border-b border-line bg-warn/10 px-7 py-2.5 text-xs text-foreground font-medium flex items-center gap-2">
+          <HelpCircle className="size-4 text-warn shrink-0" />
+          <span>
+            No sign-offs or policies exist yet as of this date. Approve obligations in the{" "}
+            <a href="/review" className="font-bold text-foreground underline">
+              Review Queue
+            </a>{" "}
+            to populate the full lineage trail.
+          </span>
+        </div>
       )}
 
-      {/* Persistent column headers, aligned to the layered graph below. */}
-      <div className="grid grid-cols-6 border-b border-line bg-surface">
+      {/* Persistent column headers */}
+      <div className="grid grid-cols-6 border-b border-line bg-surface/90 backdrop-blur-md shadow-2xs">
         {ORDER.map((t) => (
           <div
             key={t}
-            className="border-r border-line/60 px-4 py-2.5 text-center last:border-r-0"
+            className="border-r border-line/60 px-4 py-3 text-center last:border-r-0"
           >
             <div className="eyebrow">{COLUMN[t]}</div>
-            <div className="tnum mt-0.5 text-sm text-foreground">{counts[t] ?? 0}</div>
+            <div className="tnum font-display mt-1 text-base font-bold text-foreground">
+              {counts[t] ?? 0}
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="relative flex-1">
+      <div className="relative flex-1 bg-cream/40">
+        {lineage.isLoading && (
+          <div className="h-full p-8">
+            <GraphSkeleton />
+          </div>
+        )}
+
         {lineage.isError && (
-          <div className="absolute inset-0 grid place-items-center text-sm text-risk">
-            Backend unreachable — is the API running on :8080?
-          </div>
+          <EmptyState
+            icon="alert"
+            title="Backend Unreachable"
+            description="Could not load lineage audit trail from backend port 8080."
+            primaryAction={{ label: "Retry", onClick: () => lineage.refetch() }}
+          />
         )}
+
         {total === 0 && lineage.data && (
-          <div className="absolute inset-0 grid place-items-center text-center text-sm text-text-dim">
-            <div>
-              Nothing in force as of {asOf}.
-              <br />
-              <span className="text-xs">
-                Pick a date after the circular&apos;s 2024-05-15 issue.
-              </span>
-            </div>
-          </div>
+          <EmptyState
+            icon="inbox"
+            title="No Lineage Recorded"
+            description={`No compliance lineage elements in force as of ${asOf}. Select a date after 2024-05-15.`}
+          />
         )}
+
         {lineage.data && total > 0 && <LineageGraph lineage={lineage.data} />}
       </div>
     </div>

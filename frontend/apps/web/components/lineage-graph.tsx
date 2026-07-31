@@ -17,9 +17,6 @@ import "@xyflow/react/dist/style.css"
 
 import type { Lineage, LineageNode, LineageNodeType } from "@/lib/api"
 
-// The six lineage layers, left → right. Sign-off and policy are distinct
-// columns so the trail reads Clause → Obligation → Control → Evidence →
-// Sign-off → Policy.
 const COLS: LineageNodeType[] = [
   "clause",
   "obligation",
@@ -37,21 +34,20 @@ const LAYER: Record<LineageNodeType, number> = {
   policy: 5,
 }
 
-const COL_GAP = 250
-const ROW_GAP = 80
+const COL_GAP = 280
+const ROW_GAP = 86
 
-// Small type dot — the only colour on an otherwise uniform surface node.
 function typeDot(t: LineageNodeType): string {
   switch (t) {
     case "control":
     case "signoff":
-      return "var(--ok)"
+      return "#10B981"
     case "policy":
-      return "var(--warn)"
+      return "#F59E0B"
     case "obligation":
-      return "var(--ink)"
+      return "#3B82F6"
     default:
-      return "var(--text-dim)"
+      return "#94A3B8"
   }
 }
 
@@ -60,50 +56,47 @@ interface CardData extends LineageNode {
   focused: boolean
 }
 
-// Editorial node: white surface, hairline border, ink label, small type dot.
-// Labels wrap (no truncation) with a title tooltip for the full text.
 function LineageNodeCard({ data }: NodeProps) {
   const d = data as unknown as CardData
   return (
     <div
-      className="w-[184px] rounded-xl border bg-surface px-3 py-2 text-xs transition-opacity"
-      style={{
-        borderColor: d.focused ? "var(--ink)" : "var(--line)",
-        boxShadow: "var(--shadow-card)",
-        opacity: d.dim ? 0.15 : 1,
-      }}
+      className={`w-[200px] rounded-2xl border bg-[#12141D] px-4 py-3 text-xs shadow-xl transition-all duration-200 hover:-translate-y-0.5 ${
+        d.focused
+          ? "border-blue-500 ring-2 ring-blue-500/40 shadow-blue-500/20 opacity-100 scale-105"
+          : d.dim
+          ? "border-white/10 opacity-20"
+          : "border-white/10 hover:border-blue-400/50 opacity-100"
+      }`}
     >
-      <Handle type="target" position={Position.Left} className="!bg-line" />
-      <div className="flex items-center gap-1.5">
+      <Handle type="target" position={Position.Left} className="!bg-[#64748B] !w-1.5 !h-1.5 !border-none" />
+      <div className="flex items-center gap-2">
         <span
-          className="inline-block size-2 shrink-0 rounded-full"
+          className="inline-block size-2.5 shrink-0 rounded-full"
           style={{ background: typeDot(d.type) }}
         />
-        <span className="tnum font-medium text-foreground" title={d.label}>
+        <span className="tnum font-bold text-white truncate" title={d.label}>
           {d.ref ?? d.label}
         </span>
       </div>
       {d.sublabel && (
         <div
           title={d.sublabel}
-          className="mt-0.5 line-clamp-2 leading-snug text-text-dim"
+          className="mt-1 line-clamp-2 leading-snug text-slate-300 text-[11px]"
         >
           {d.sublabel}
         </div>
       )}
-      <Handle type="source" position={Position.Right} className="!bg-line" />
+      <Handle type="source" position={Position.Right} className="!bg-[#64748B] !w-1.5 !h-1.5 !border-none" />
     </div>
   )
 }
 
 const nodeTypes = { lineage: LineageNodeCard }
 
-/** Layered layout with a barycenter crossing-reduction pass (no external dep). */
 function layout(lin: Lineage): Node[] {
   const cols: LineageNode[][] = COLS.map(() => [])
   for (const n of lin.nodes) cols[LAYER[n.type] ?? 0]!.push(n)
 
-  // Undirected adjacency, so ordering considers both neighbour directions.
   const adj = new Map<string, string[]>()
   const link = (a: string, b: string) => {
     if (!adj.has(a)) adj.set(a, [])
@@ -144,7 +137,7 @@ function layout(lin: Lineage): Node[] {
         type: "lineage",
         position: { x: L * COL_GAP, y: i * ROW_GAP - offset },
         data: n as unknown as Record<string, unknown>,
-        draggable: false,
+        draggable: true,
       })
     })
   })
@@ -156,9 +149,6 @@ export function LineageGraph({ lineage }: { lineage: Lineage }) {
 
   const baseNodes = React.useMemo(() => layout(lineage), [lineage])
 
-  // Directed adjacency: out = source→targets (downstream), in = target→sources
-  // (upstream). A lineage chain is the node's ancestors + descendants — NOT the
-  // whole connected component — so sibling obligations don't light up.
   const { outAdj, inAdj } = React.useMemo(() => {
     const out = new Map<string, string[]>()
     const inc = new Map<string, string[]>()
@@ -173,7 +163,6 @@ export function LineageGraph({ lineage }: { lineage: Lineage }) {
     return { outAdj: out, inAdj: inc }
   }, [lineage])
 
-  // The focused node's lineage chain: walk descendants (out) and ancestors (in).
   const chain = React.useMemo(() => {
     if (!focus) return null
     const seen = new Set<string>([focus])
@@ -216,10 +205,11 @@ export function LineageGraph({ lineage }: { lineage: Lineage }) {
           source: e.source,
           target: e.target,
           type: "smoothstep",
+          animated: onChain && !!chain,
           style: {
-            stroke: onChain && chain ? "var(--ink)" : "var(--text-dim)",
-            strokeWidth: onChain && chain ? 2 : 1.25,
-            opacity: chain && !onChain ? 0.12 : 1,
+            stroke: onChain && chain ? "#3B82F6" : "#475569",
+            strokeWidth: onChain && chain ? 2.5 : 1.25,
+            opacity: chain && !onChain ? 0.15 : 1,
           },
         }
       }),
@@ -227,7 +217,7 @@ export function LineageGraph({ lineage }: { lineage: Lineage }) {
   )
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full relative bg-[#090A0F]">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -236,26 +226,26 @@ export function LineageGraph({ lineage }: { lineage: Lineage }) {
         fitViewOptions={{ padding: 0.14 }}
         proOptions={{ hideAttribution: true }}
         minZoom={0.15}
-        nodesDraggable={false}
+        nodesDraggable={true}
         nodesConnectable={false}
         onNodeClick={(_, n) => setFocus((f) => (f === n.id ? null : n.id))}
         onPaneClick={() => setFocus(null)}
       >
-        <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="var(--line)" />
-        <Controls showInteractive={false} className="!border-line" />
+        <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="#1E2235" />
+        <Controls showInteractive={false} className="!border-white/10 !shadow-2xl" />
         {focus ? (
-          <Panel position="top-right" className="!m-2">
+          <Panel position="top-right" className="!m-3">
             <button
               type="button"
               onClick={() => setFocus(null)}
-              className="rounded-2xl border border-white/60 bg-white/35 px-3 py-1.5 text-xs font-medium text-foreground shadow-[0_8px_30px_rgba(20,20,20,0.12)] backdrop-blur-xl backdrop-saturate-150 hover:bg-white/55"
+              className="rounded-xl border border-blue-500/40 bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-lg hover:bg-blue-500 transition-all"
             >
               Clear focus
             </button>
           </Panel>
         ) : (
-          <Panel position="top-right" className="!m-2">
-            <span className="rounded-2xl border border-white/60 bg-white/35 px-2.5 py-1.5 text-[11px] text-text-dim shadow-[0_8px_30px_rgba(20,20,20,0.12)] backdrop-blur-xl backdrop-saturate-150">
+          <Panel position="top-right" className="!m-3">
+            <span className="rounded-xl border border-white/10 bg-[#12141D]/90 px-4 py-2 text-xs font-medium text-slate-300 shadow-2xl backdrop-blur-2xl">
               Click any node to trace its full lineage chain
             </span>
           </Panel>

@@ -2,12 +2,16 @@
 
 import * as React from "react"
 import { useQuery } from "@tanstack/react-query"
+import { ShieldAlert, ShieldCheck, CheckCircle2, ArrowRight } from "lucide-react"
 
 import { useAsOf } from "@/components/as-of-provider"
 import { DeonticBadge, StatusBadge } from "@/components/badges"
 import { ConfidenceMeter } from "@/components/confidence"
 import { SignoffModal } from "@/components/signoff-modal"
-import { durationDays } from "@/lib/format"
+import { Button } from "@workspace/ui/components/button"
+import { CardSkeleton } from "@/components/skeleton"
+import { EmptyState } from "@/components/empty-state"
+import { durationDays, formatDeadline } from "@/lib/format"
 import { getReviewQueue, type Obligation } from "@/lib/api"
 
 export default function ReviewPage() {
@@ -19,8 +23,6 @@ export default function ReviewPage() {
     queryFn: ({ signal }) => getReviewQueue(asOf, signal),
   })
 
-  // Prioritise: lowest AI confidence first, then the nearest deadline — the
-  // items most likely to be wrong and most time-sensitive rise to the top.
   const items = React.useMemo(() => {
     const list = [...(queue.data?.obligations ?? [])]
     list.sort(
@@ -32,60 +34,86 @@ export default function ReviewPage() {
   }, [queue.data])
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-6">
-      <div className="mb-4 flex items-baseline justify-between">
+    <div className="mx-auto max-w-5xl px-6 py-8 space-y-6">
+      {/* Header */}
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6">
         <div>
-          <h1 className="font-display text-2xl">Review Queue — your inbox</h1>
-          <p className="text-sm text-muted-foreground">
-            These obligations need your judgement before CHANAKYA can act on
-            them. Highest priority (least confident, nearest deadline) first.
+          <div className="eyebrow mb-1">Compliance Officer Inbox</div>
+          <h1 className="font-display text-3xl font-bold tracking-tight">Review Queue</h1>
+          <p className="mt-1 text-sm text-text-dim max-w-2xl leading-relaxed">
+            Obligations extracted by CHANAKYA requiring human review and cryptographic sign-off before automated policy enforcement. Priority sorted by AI confidence and deadline.
           </p>
         </div>
-        <span className="tnum text-sm text-muted-foreground">{items.length} awaiting</span>
+        <div className="tnum rounded-full bg-warn/15 border border-warn/30 px-3 py-1 text-xs font-bold text-warn">
+          {items.length} Awaiting Action
+        </div>
       </div>
 
       {queue.isLoading && (
-        <p className="hairline rounded-md bg-surface p-6 text-center text-sm text-muted-foreground">
-          Loading your review queue…
-        </p>
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
+        </div>
       )}
 
       {queue.isError && (
-        <p className="hairline rounded-md bg-surface p-6 text-center text-sm text-danger">
-          Couldn&apos;t reach the backend. Make sure the API is running on port
-          8080, then refresh.
-        </p>
+        <EmptyState
+          icon="alert"
+          title="Review Queue Unavailable"
+          description="Could not connect to the backend server. Make sure API is running on port 8080."
+          primaryAction={{ label: "Retry", onClick: () => queue.refetch() }}
+        />
       )}
 
       {items.length === 0 && !queue.isLoading && !queue.isError && (
-        <p className="hairline rounded-md bg-surface p-6 text-center text-sm text-verified">
-          All caught up — every in-force obligation has been reviewed and signed
-          off.
-        </p>
+        <EmptyState
+          icon="sparkles"
+          title="Inbox Zero — All Caught Up"
+          description={`Every obligation in force as of ${asOf} has been reviewed, approved, and signed off.`}
+        />
       )}
 
       <ul className="space-y-4">
         {items.map((o) => (
-          <li key={o.id} className="hairline rounded-md bg-surface p-5">
-            <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="tnum text-primary">{o.clause_ref}</span>
+          <li
+            key={o.id}
+            className="rounded-2xl border border-line bg-surface p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:border-foreground/30 hover:-translate-y-0.5 space-y-4"
+          >
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="min-w-0 flex-1 space-y-2">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span className="tnum font-bold text-primary bg-cream-200/80 px-2.5 py-1 rounded-lg text-xs">
+                    Clause {o.clause_ref}
+                  </span>
                   <DeonticBadge deontic={o.deontic_type} />
                   <StatusBadge status={o.status} />
                   <ConfidenceMeter value={o.confidence} />
+                  {o.confidence < 0.8 && (
+                    <span className="rounded-full bg-risk/10 border border-risk/30 px-2 py-0.5 text-[10px] font-bold text-risk uppercase">
+                      Low Confidence Flag
+                    </span>
+                  )}
                 </div>
-                <div className="mt-1.5 text-base font-medium">{o.clause_heading}</div>
-                <blockquote className="mt-1.5 border-l-2 border-line pl-3 text-sm leading-relaxed text-muted-foreground">
-                  {o.source_sentence}
+
+                <h3 className="font-display text-lg font-bold text-foreground">
+                  {o.clause_heading}
+                </h3>
+
+                <blockquote className="border-l-2 border-line pl-4 text-xs leading-relaxed text-text-dim italic bg-cream/30 py-2 pr-3 rounded-r-lg">
+                  &quot;{o.source_sentence}&quot;
                 </blockquote>
               </div>
-              <button
+
+              <Button
+                variant="default"
+                size="default"
                 onClick={() => setSelected(o)}
-                className="hairline shrink-0 rounded-md bg-surface-2 px-4 py-2.5 text-base font-medium hover:bg-accent"
+                className="shrink-0 shadow-sm"
               >
-                Review &amp; sign
-              </button>
+                <span>Review &amp; Sign</span>
+                <ArrowRight className="size-4" />
+              </Button>
             </div>
           </li>
         ))}

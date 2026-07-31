@@ -25,83 +25,103 @@ import type {
 } from "@/lib/api"
 
 const OVERVIEW_LEGEND = [
-  { color: "var(--text-dim)", label: "Clause (from the regulation)" },
-  { color: "var(--ink)", label: "Obligation (subject + type)" },
-  { color: "var(--ok)", label: "Approved" },
-  { color: "var(--warn)", label: "Needs review / pending" },
-  { color: "var(--risk)", label: "Rejected" },
-  { color: "var(--ink)", label: "Clause → its obligations", line: true },
+  { color: "#94A3B8", label: "Clause (Regulation source)" },
+  { color: "#F8FAFC", label: "Obligation (Deontic duty)" },
+  { color: "#10B981", label: "Approved" },
+  { color: "#F59E0B", label: "Needs review / pending" },
+  { color: "#EF4444", label: "Rejected" },
+  { color: "#3B82F6", label: "Causal provenance link", line: true },
 ]
 
 const STATUS_DOT: Record<ObligationStatus, string> = {
-  approved: "var(--ok)",
-  needs_review: "var(--warn)",
-  pending: "var(--text-dim)",
-  rejected: "var(--risk)",
+  approved: "#10B981",
+  needs_review: "#F59E0B",
+  pending: "#94A3B8",
+  rejected: "#EF4444",
 }
 
 interface CardData {
   kind: "clause" | "obligation"
-  // searchable fields (GraphSearch reads label/sublabel/ref)
   label: string
   sublabel?: string
   ref?: string
-  // obligation-only
+  rawLabel?: string
+  rawSublabel?: string
   deontic?: DeonticType
   status?: ObligationStatus
 }
 
-// One editorial node: surface + hairline border + ink label. Obligation nodes
-// carry a real subject, a status dot, and a Required/Prohibited/Permitted chip —
-// never a bare "MUST".
-function OverviewNode({ data }: NodeProps) {
+function OverviewNode({ data, selected }: NodeProps) {
   const d = data as unknown as CardData
+  const isApproved = d.status === "approved"
+  const isReview = d.status === "needs_review"
+  const isRisk = d.status === "rejected"
+
   if (d.kind === "clause") {
     return (
-      <div className="rounded-xl border border-line bg-surface px-3 py-2 text-xs shadow-[var(--shadow-card)]">
-        <Handle type="target" position={Position.Left} className="!bg-line" />
-        <div className="flex items-baseline gap-2">
-          <span className="tnum text-foreground">{d.ref}</span>
-          <span title={d.sublabel} className="max-w-[150px] truncate text-text-dim">
+      <div
+        className={`rounded-2xl border px-4 py-3 text-xs shadow-xl transition-all duration-300 hover:-translate-y-0.5 ${
+          selected
+            ? "border-blue-400 bg-[#1A2238] ring-4 ring-blue-500/80 shadow-[0_0_35px_rgba(59,130,246,0.8)] scale-105 z-50"
+            : "border-white/10 bg-[#12141D] hover:border-blue-400/60"
+        }`}
+      >
+        <Handle type="target" position={Position.Left} className="!bg-[#64748B] !w-1.5 !h-1.5 !border-none" />
+        <div className="flex items-center gap-2.5">
+          <span className="tnum font-bold text-white bg-white/10 px-2 py-0.5 rounded-md font-mono text-xs border border-white/10">
+            Clause {d.ref}
+          </span>
+          <span title={d.sublabel} className="max-w-[180px] truncate text-slate-300 font-semibold text-xs">
             {d.sublabel}
           </span>
         </div>
-        <Handle type="source" position={Position.Right} className="!bg-line" />
+        <Handle type="source" position={Position.Right} className="!bg-[#64748B] !w-1.5 !h-1.5 !border-none" />
       </div>
     )
   }
+
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-xs shadow-[var(--shadow-card)]">
-      <Handle type="target" position={Position.Left} className="!bg-line" />
+    <div
+      className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-xs shadow-xl transition-all duration-300 hover:-translate-y-0.5 ${
+        selected
+          ? "border-blue-400 bg-[#1A2238] ring-4 ring-blue-500/80 shadow-[0_0_35px_rgba(59,130,246,0.8)] scale-105 z-50"
+          : isApproved
+          ? "border-emerald-500/40 bg-[#12141D] hover:border-emerald-400"
+          : isReview
+          ? "border-amber-500/40 bg-[#12141D] hover:border-amber-400"
+          : isRisk
+          ? "border-red-500/40 bg-[#12141D] hover:border-red-400"
+          : "border-white/10 bg-[#12141D] hover:border-blue-400/60"
+      }`}
+    >
+      <Handle type="target" position={Position.Left} className="!bg-[#64748B] !w-1.5 !h-1.5 !border-none" />
       <span
-        className="inline-block size-2 shrink-0 rounded-full"
+        className="inline-block size-2.5 shrink-0 rounded-full"
         style={{ background: STATUS_DOT[d.status ?? "pending"] }}
       />
-      <span title={d.label} className="max-w-[150px] truncate font-medium text-foreground">
+      <span title={d.label} className="max-w-[200px] truncate font-bold text-white text-xs">
         {d.label}
       </span>
       {d.deontic && <DeonticBadge deontic={d.deontic} />}
-      <Handle type="source" position={Position.Right} className="!bg-line" />
+      <Handle type="source" position={Position.Right} className="!bg-[#64748B] !w-1.5 !h-1.5 !border-none" />
     </div>
   )
 }
 
 const nodeTypes = { ov: OverviewNode }
 
-const W_CLAUSE = 200
-const W_OBL = 250
-const NODE_H = 44
+const W_CLAUSE = 230
+const W_OBL = 280
+const NODE_H = 52
 
-// Auto-layout (dagre 'layered', left → right) — never hand-placed.
 function layout(payload: GraphPayload): { nodes: Node[]; edges: Edge[] } {
   const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}))
-  g.setGraph({ rankdir: "LR", nodesep: 22, ranksep: 90, marginx: 24, marginy: 24 })
+  g.setGraph({ rankdir: "LR", nodesep: 24, ranksep: 100, marginx: 32, marginy: 32 })
 
   const clauseHeading = new Map<string, string>()
   for (const n of payload.nodes) {
     if (n.type === "clause") clauseHeading.set(n.id, n.sublabel ?? n.label)
   }
-  // Each obligation's subject is its parent clause's heading.
   const parentClause = new Map<string, string>()
   for (const e of payload.edges) {
     if (e.kind === "clause_obligation") parentClause.set(e.target, e.source)
@@ -115,6 +135,8 @@ function layout(payload: GraphPayload): { nodes: Node[]; edges: Edge[] } {
         label: n.ref ?? n.label,
         sublabel: n.sublabel ?? "",
         ref: n.ref,
+        rawLabel: n.label,
+        rawSublabel: n.sublabel,
       })
       g.setNode(n.id, { width: W_CLAUSE, height: NODE_H })
     } else {
@@ -125,6 +147,8 @@ function layout(payload: GraphPayload): { nodes: Node[]; edges: Edge[] } {
         label: subject,
         sublabel: subject,
         ref: n.ref,
+        rawLabel: n.label,
+        rawSublabel: n.sublabel,
         deontic: n.deontic ?? "MUST",
         status: n.status ?? "pending",
       })
@@ -137,12 +161,15 @@ function layout(payload: GraphPayload): { nodes: Node[]; edges: Edge[] } {
 
   const nodes: Node[] = payload.nodes.map((n) => {
     const p = g.node(n.id)
+    const width = n.type === "clause" ? W_CLAUSE : W_OBL
     return {
       id: n.id,
       type: "ov",
       position: { x: p.x - p.width / 2, y: p.y - p.height / 2 },
+      width,
+      height: NODE_H,
       data: data.get(n.id) as unknown as Record<string, unknown>,
-      draggable: false,
+      draggable: true,
     }
   })
 
@@ -151,11 +178,10 @@ function layout(payload: GraphPayload): { nodes: Node[]; edges: Edge[] } {
     source: e.source,
     target: e.target,
     type: "smoothstep",
+    animated: true,
     style: {
-      // ink for the obligation links, text-dim for the clause tree — both are
-      // high-contrast and clearly visible on the light cream canvas.
-      stroke: e.kind === "clause_obligation" ? "var(--ink)" : "var(--text-dim)",
-      strokeWidth: e.kind === "clause_obligation" ? 1.75 : 1.5,
+      stroke: e.kind === "clause_obligation" ? "#3B82F6" : "#475569",
+      strokeWidth: 2,
     },
   }))
   return { nodes, edges }
@@ -164,7 +190,7 @@ function layout(payload: GraphPayload): { nodes: Node[]; edges: Edge[] } {
 export function OverviewGraph({ payload }: { payload: GraphPayload }) {
   const { nodes, edges } = React.useMemo(() => layout(payload), [payload])
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full relative bg-[#090A0F]">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -173,13 +199,13 @@ export function OverviewGraph({ payload }: { payload: GraphPayload }) {
         fitViewOptions={{ padding: 0.15 }}
         proOptions={{ hideAttribution: true }}
         minZoom={0.2}
-        nodesDraggable={false}
+        nodesDraggable={true}
         nodesConnectable={false}
       >
-        <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="var(--line)" />
-        <Controls showInteractive={false} className="!border-line" />
+        <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="#1E2235" />
+        <Controls showInteractive={false} className="!border-white/10 !shadow-2xl" />
         <GraphLegend items={OVERVIEW_LEGEND} />
-        <GraphSearch placeholder="Find a clause…" />
+        <GraphSearch placeholder="Find a clause or obligation…" />
       </ReactFlow>
     </div>
   )

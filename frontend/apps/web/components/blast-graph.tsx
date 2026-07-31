@@ -19,83 +19,88 @@ import { GraphLegend } from "@/components/graph-legend"
 import type { BlastNode, BlastRadius } from "@/lib/api"
 
 const BLAST_LEGEND = [
-  { color: "var(--ink)", label: "Amended / directly affected" },
-  { color: "var(--warn)", label: "Related match (semantic)" },
-  { color: "var(--ok)", label: "Control" },
-  { color: "var(--text-dim)", label: "Evidence" },
-  { color: "var(--warn)", label: "Semantic link", line: true, dashed: true },
+  { color: "#3B82F6", label: "Amended / directly affected" },
+  { color: "#F59E0B", label: "Related match (semantic)" },
+  { color: "#10B981", label: "Control" },
+  { color: "#94A3B8", label: "Evidence" },
+  { color: "#F59E0B", label: "Semantic link", line: true, dashed: true },
 ]
 
-const COL_GAP = 250
-const ROW_GAP = 74
+const COL_GAP = 280
+const ROW_GAP = 82
 
-// Small type dot + tag by kind. Semantic obligations are amber (pulled in by
-// similarity, not a direct structural link) — the interesting propagation.
 function nodeStyle(kind: string): { color: string; tag: string } {
   switch (kind) {
     case "amended":
-      return { color: "var(--ink)", tag: "AMENDED" }
+      return { color: "#3B82F6", tag: "AMENDED" }
     case "direct":
-      return { color: "var(--ink)", tag: "direct" }
+      return { color: "#3B82F6", tag: "DIRECT" }
     case "semantic":
-      return { color: "var(--warn)", tag: "semantic" }
+      return { color: "#F59E0B", tag: "SEMANTIC" }
     case "control":
-      return { color: "var(--ok)", tag: "control" }
+      return { color: "#10B981", tag: "CONTROL" }
     case "evidence":
-      return { color: "var(--text-dim)", tag: "evidence" }
+      return { color: "#94A3B8", tag: "EVIDENCE" }
     default:
-      return { color: "var(--line)", tag: kind }
+      return { color: "#64748B", tag: kind }
   }
 }
 
-// BlastNodeCard animates in with a delay proportional to its layer, so the
-// impact visibly *propagates* clause → obligation → control → evidence. Motion
-// here communicates causation, per the design system.
-function BlastNodeCard({ data }: NodeProps) {
+function BlastNodeCard({ data, selected }: NodeProps) {
   const d = data as unknown as BlastNode
   const { color, tag } = nodeStyle(d.kind)
   const reduce = useReducedMotion()
+
   return (
     <motion.div
-      initial={reduce ? false : { opacity: 0, scale: 0.9, y: 4 }}
+      initial={reduce ? false : { opacity: 0, scale: 0.88, y: 6 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={
         reduce
           ? { duration: 0 }
-          : { delay: d.layer * 0.35, duration: 0.35, ease: "easeOut" }
+          : { delay: d.layer * 0.25, duration: 0.35, ease: [0.16, 1, 0.3, 1] }
       }
-      className="rounded-xl border px-3 py-2 text-xs"
-      style={{
-        borderColor: d.kind === "amended" ? "var(--ink)" : "var(--line)",
-        background: "var(--surface)",
-        boxShadow: "var(--shadow-card)",
-      }}
+      className={`rounded-2xl border px-4 py-3 text-xs shadow-xl transition-all duration-200 hover:-translate-y-0.5 ${
+        d.kind === "amended"
+          ? "border-blue-500 bg-[#12141D] text-white ring-2 ring-blue-500/40 shadow-blue-500/20"
+          : selected
+          ? "border-blue-500 bg-[#12141D] ring-2 ring-blue-500/40"
+          : d.kind === "semantic"
+          ? "border-amber-500/40 bg-[#12141D] hover:border-amber-400"
+          : d.kind === "control"
+          ? "border-emerald-500/40 bg-[#12141D] hover:border-emerald-400"
+          : "border-white/10 bg-[#12141D] hover:border-blue-400/50"
+      }`}
     >
-      <Handle type="target" position={Position.Left} className="!bg-line" />
-      <div className="flex items-center gap-1.5">
+      <Handle type="target" position={Position.Left} className="!bg-[#64748B] !w-1.5 !h-1.5 !border-none" />
+      <div className="flex items-center gap-2.5">
         <span
-          className="inline-block size-2 shrink-0 rounded-full"
+          className="inline-block size-2.5 shrink-0 rounded-full"
           style={{ background: color }}
         />
-        <span title={d.label} className="tnum max-w-[150px] truncate font-medium text-foreground">
+        <span
+          title={d.label}
+          className="tnum max-w-[180px] truncate font-bold text-white"
+        >
           {d.label}
         </span>
         {d.ref && d.type !== "obligation" ? null : (
-          <span className="text-text-dim">{d.sublabel}</span>
+          <span className="text-slate-400 text-xs">
+            {d.sublabel}
+          </span>
         )}
       </div>
-      <div className="mt-0.5 flex items-center gap-1.5 pl-3.5 text-[10px] text-text-dim">
-        <span style={{ color }}>{tag}</span>
+      <div className="mt-1.5 flex items-center gap-2 pl-4 text-[10px] text-slate-400 font-mono">
+        <span className="font-bold tracking-wider" style={{ color }}>
+          {tag}
+        </span>
         {typeof d.similarity === "number" && d.kind === "semantic" && (
-          <span
-            className="tnum"
-            title="Estimated how closely related this obligation is to the amended clause. Higher = more likely to be affected."
-          >
+          <span className="tnum font-medium text-slate-300">
             · {Math.round(d.similarity * 100)}% related
           </span>
         )}
       </div>
-      <Handle type="source" position={Position.Right} className="!bg-line" />
+      <Handle type="source" position={Position.Right} className="!bg-[#64748B] !w-1.5 !h-1.5 !border-none" />
     </motion.div>
   )
 }
@@ -120,6 +125,7 @@ function layout(
         type: "blast",
         position: { x: layer * COL_GAP, y: i * ROW_GAP - offset + 260 },
         data: n as unknown as Record<string, unknown>,
+        draggable: true,
       })
     })
   }
@@ -128,16 +134,16 @@ function layout(
     source: e.source,
     target: e.target,
     type: "smoothstep",
-    animated: !reduce, // moving dashes = the amendment propagating downstream
+    animated: !reduce,
     style: {
       stroke:
         e.kind === "semantic"
-          ? "var(--warn)"
+          ? "#F59E0B"
           : e.kind === "control_evidence"
-            ? "var(--text-dim)"
-            : "var(--ink)",
-      strokeWidth: 1.5,
-      strokeDasharray: e.kind === "semantic" ? "4 3" : undefined,
+            ? "#64748B"
+            : "#3B82F6",
+      strokeWidth: 2,
+      strokeDasharray: e.kind === "semantic" ? "5 4" : undefined,
     },
   }))
   return { nodes, edges }
@@ -156,8 +162,7 @@ export function BlastGraph({
     [payload, reduce],
   )
   return (
-    // key forces a remount per computation so the propagation animation replays.
-    <div key={runKey} className="h-full w-full">
+    <div key={runKey} className="h-full w-full relative bg-[#090A0F]">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -166,11 +171,11 @@ export function BlastGraph({
         fitViewOptions={{ padding: 0.2 }}
         proOptions={{ hideAttribution: true }}
         minZoom={0.2}
-        nodesDraggable={false}
+        nodesDraggable={true}
         nodesConnectable={false}
       >
-        <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="var(--line)" />
-        <Controls showInteractive={false} className="!border-line" />
+        <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="#1E2235" />
+        <Controls showInteractive={false} className="!border-white/10 !shadow-2xl" />
         <GraphLegend items={BLAST_LEGEND} />
       </ReactFlow>
     </div>

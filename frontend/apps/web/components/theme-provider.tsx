@@ -4,8 +4,7 @@ import * as React from "react"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
 
 /**
- * CHANAKYA "Editorial" is a single locked light palette (warm cream + ink). We
- * force one theme so there's no dark/neon variant to drift out of brand.
+ * ThemeProvider configures CHANAKYA Enterprise OS to default to Dark Mode.
  */
 function ThemeProvider({
   children,
@@ -14,7 +13,7 @@ function ThemeProvider({
   return (
     <NextThemesProvider
       attribute="class"
-      forcedTheme="light"
+      defaultTheme="dark"
       enableSystem={false}
       disableTransitionOnChange
       {...props}

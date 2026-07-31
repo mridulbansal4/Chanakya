@@ -10,9 +10,14 @@ import {
   Cpu,
   MinusCircle,
   Play,
+  CheckCircle2,
+  Code2,
+  ShieldCheck,
 } from "lucide-react"
 
 import { useAsOf } from "@/components/as-of-provider"
+import { Button } from "@workspace/ui/components/button"
+import { EmptyState } from "@/components/empty-state"
 import {
   compilePolicy,
   evaluatePolicy,
@@ -41,8 +46,6 @@ const STAGE_EXPLAINER: Record<PolicyStage, string> = {
   hard: "Blocks non-compliant actions.",
 }
 
-// ---- Plain-English rule builders (from the obligation's own fields) --------
-
 const OP_WORD: Record<string, string> = {
   ">=": "at least",
   ">": "more than",
@@ -51,12 +54,10 @@ const OP_WORD: Record<string, string> = {
   "==": "exactly",
 }
 
-/** Trim a trailing ".0" from a crore/lakh figure. */
 function trimNum(n: number): string {
   return Number.isInteger(n) ? String(n) : String(Number(n.toFixed(2)))
 }
 
-/** Rupees in Indian words: 30000000 → "₹3 crore", 300000 → "₹3 lakh". */
 function rupees(v: number): string {
   if (v >= 1e7) return `₹${trimNum(v / 1e7)} crore`
   if (v >= 1e5) return `₹${trimNum(v / 1e5)} lakh`
@@ -71,7 +72,6 @@ interface Threshold {
   kind?: string
 }
 
-/** A plain phrase for a structured threshold, e.g. "300 or more clients". */
 function thresholdPhrase(t: Threshold): string | null {
   if (!t.metric || t.value == null) return null
   const op = OP_WORD[t.operator ?? ">="] ?? t.operator ?? ""
@@ -95,7 +95,6 @@ interface PlainRule {
   source: string
 }
 
-/** Build a plain APPLIES WHEN / THEN IT MUST from the obligation's fields. */
 function plainRule(o: ObligationDetail): PlainRule {
   const t = (o.threshold ?? {}) as Threshold
   const phrase = thresholdPhrase(t)
@@ -105,9 +104,6 @@ function plainRule(o: ObligationDetail): PlainRule {
     ? `the firm ${phrase}.`
     : "every investment adviser, regardless of size."
 
-  // Pull the action straight from the regulator's sentence: the text after the
-  // deontic verb is the duty itself, in plain English. The verb lives in the
-  // "Then it must / must not / may" label, so it's stripped from the value here.
   let action = ""
   const m = /\b(must not|must|shall not|shall|may)\b/i.exec(o.source_sentence ?? "")
   if (m) {
@@ -128,7 +124,6 @@ function plainRule(o: ObligationDetail): PlainRule {
   }
 }
 
-/** Rewrite an OPA deny message into a layman reason (strip IDs/paths). */
 function plainReason(result: PolicyEvalResult): string {
   const raw = result.denies?.[0]
   if (raw) {
@@ -143,8 +138,6 @@ function plainReason(result: PolicyEvalResult): string {
   }
   return "this rule applies to your firm but is not yet attested as satisfied."
 }
-
-// ---- Page ------------------------------------------------------------------
 
 export default function PolicyPage() {
   const { asOf } = useAsOf()
@@ -162,32 +155,36 @@ export default function PolicyPage() {
   }, [candidates, selected])
 
   return (
-    <div className="flex h-full">
-      {/* Left: approved obligations, as plain clause + subject + mode */}
-      <div className="w-[300px] shrink-0 overflow-auto border-r border-line">
-        <div className="border-b border-line px-4 py-3">
-          <div className="eyebrow mb-1">Policy</div>
-          <h1 className="font-display text-xl leading-tight">Automated checks</h1>
+    <div className="flex h-full bg-background">
+      {/* Left: approved obligations list */}
+      <div className="w-[320px] shrink-0 overflow-auto border-r border-line bg-surface/60">
+        <div className="border-b border-line px-5 py-4 bg-surface">
+          <div className="eyebrow mb-1">Automated Enforcement</div>
+          <h1 className="font-display text-xl font-bold">Policy Rules</h1>
           <p className="mt-1 text-xs text-text-dim">
-            Only signed obligations become enforceable checks.
+            Signed obligations compiled into deterministic OPA / Rego code checks.
           </p>
         </div>
         {candidates.length === 0 && !policies.isLoading && (
-          <p className="p-4 text-sm text-text-dim">
-            No approved obligations yet. Sign one off in the Review Queue.
-          </p>
+          <div className="p-6 text-center text-xs text-text-dim">
+            No approved obligations yet. Approve obligations in the Review Queue to generate policies.
+          </div>
         )}
-        <ul>
+        <ul className="divide-y divide-line/60">
           {candidates.map((c) => (
             <li key={c.obligation_id}>
               <button
                 onClick={() => setSelected(c.obligation_id)}
-                className={`flex w-full items-center gap-2 border-b border-line/60 px-4 py-3 text-left ${
-                  selected === c.obligation_id ? "bg-cream-200" : "hover:bg-surface"
+                className={`flex w-full items-center gap-3 px-5 py-3.5 text-left transition-all ${
+                  selected === c.obligation_id
+                    ? "bg-cream-200/90 font-semibold shadow-2xs border-l-4 border-foreground"
+                    : "hover:bg-surface"
                 }`}
               >
-                <div className="min-w-0 flex-1">
-                  <div className="text-sm text-foreground">Clause {c.clause_ref}</div>
+                <div className="min-w-0 flex-1 space-y-0.5">
+                  <div className="tnum text-xs font-bold text-foreground">
+                    Clause {c.clause_ref}
+                  </div>
                   <div className="truncate text-xs text-text-dim">
                     {c.clause_heading}
                   </div>
@@ -195,7 +192,7 @@ export default function PolicyPage() {
                 {c.compiled && c.stage ? (
                   <StageChip stage={c.stage} />
                 ) : (
-                  <span className="text-[10px] text-text-dim">not compiled</span>
+                  <span className="text-[10px] text-text-dim italic">not compiled</span>
                 )}
               </button>
             </li>
@@ -214,9 +211,11 @@ export default function PolicyPage() {
             onChanged={() => qc.invalidateQueries({ queryKey: ["policies"] })}
           />
         ) : (
-          <div className="grid h-full place-items-center text-sm text-text-dim">
-            Select an approved obligation.
-          </div>
+          <EmptyState
+            icon="sparkles"
+            title="Select a Policy"
+            description="Select an approved obligation from the left sidebar to inspect and run its automated check."
+          />
         )}
       </div>
     </div>
@@ -282,52 +281,51 @@ function PolicyDetail({
   const rule = obligation.data ? plainRule(obligation.data) : null
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6 p-6">
+    <div className="mx-auto max-w-4xl space-y-6 p-8">
       <div>
-        <div className="eyebrow mb-1">Clause {candidate?.clause_ref}</div>
-        <h2 className="font-display text-2xl leading-tight tracking-tight">
-          Rule from Clause {candidate?.clause_ref} — {candidate?.clause_heading}
+        <div className="eyebrow mb-1">Clause {candidate?.clause_ref} Policy Rule</div>
+        <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">
+          Rule: Clause {candidate?.clause_ref} — {candidate?.clause_heading}
         </h2>
       </div>
 
       {!compiled ? (
-        <div className="space-y-3">
-          <p className="text-sm text-text-dim">
-            This signed obligation hasn&apos;t been turned into an automated check
-            yet. Compiling it produces deterministic policy code that evaluates
-            your firm&apos;s data.
+        <div className="rounded-2xl border border-line bg-surface p-6 space-y-4 shadow-sm">
+          <p className="text-sm text-text-dim leading-relaxed">
+            This signed obligation has not been compiled into an automated check yet. Compiling it converts regulatory logic into deterministic Open Policy Agent (OPA) code.
           </p>
-          <button
+          <Button
+            variant="default"
+            isLoading={compile.isPending}
+            loadingText="Compiling to Rego OPA Code…"
             onClick={() => compile.mutate()}
-            disabled={compile.isPending}
-            className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-on-ink disabled:opacity-50"
           >
             <Cpu className="size-4" />
-            {compile.isPending ? "Compiling…" : "Compile to automated check"}
-          </button>
+            <span>Compile to Automated Check</span>
+          </Button>
         </div>
       ) : (
         <>
-          {/* 1 — Plain-English rule card (the main content) */}
+          {/* Plain English Rule Card */}
           {rule && (
-            <div className="rounded-2xl border border-line bg-surface p-5 shadow-[var(--shadow-card)]">
-              <RuleLine label="Applies when">{rule.appliesWhen}</RuleLine>
+            <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm space-y-4">
+              <RuleLine label="Applies When">{rule.appliesWhen}</RuleLine>
               <RuleLine label={obligationLabel(candidate?.deontic_type)}>
                 {rule.thenMust}
               </RuleLine>
               {obligation.data?.source_sentence && (
-                <div className="mt-4 border-t border-line pt-3">
-                  <div className="eyebrow mb-1">In the circular&apos;s words</div>
-                  <blockquote className="border-l-2 border-cream-200 pl-3 text-sm leading-relaxed text-foreground">
-                    {obligation.data.source_sentence}
+                <div className="mt-4 border-t border-line pt-4 space-y-1">
+                  <div className="eyebrow">Exact Regulation Source</div>
+                  <blockquote className="border-l-2 border-cream-200 pl-3 text-xs leading-relaxed text-text-dim italic">
+                    &quot;{obligation.data.source_sentence}&quot;
                   </blockquote>
                 </div>
               )}
-              <div className="mt-3 text-xs text-text-dim">{rule.source}</div>
+              <div className="text-xs font-mono text-text-dim">{rule.source}</div>
             </div>
           )}
 
-          {/* 2 — Enforcement mode + human-readable explainer */}
+          {/* Enforcement Mode Selector */}
           {stage && (
             <ModeControl
               stage={stage}
@@ -336,31 +334,30 @@ function PolicyDetail({
             />
           )}
 
-          {/* 3 — Evaluate → plain verdict */}
-          <div>
-            <button
+          {/* Evaluation Action */}
+          <div className="space-y-4">
+            <Button
+              variant="default"
+              size="lg"
+              isLoading={evaluate.isPending}
+              loadingText="Running Policy Engine Check…"
               onClick={() => evaluate.mutate()}
-              disabled={evaluate.isPending}
-              className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-on-ink disabled:opacity-50"
+              className="shadow-md"
             >
               <Play className="size-4" />
-              {evaluate.isPending
-                ? "Checking…"
-                : "Check this rule against your firm"}
-            </button>
+              <span>Evaluate Rule Against Firm State</span>
+            </Button>
+
             {evaluate.isError && (
-              <p className="mt-2 text-xs text-risk">
-                Couldn&apos;t evaluate — the firm-state input isn&apos;t valid JSON.
+              <p className="text-xs text-risk font-semibold">
+                Evaluation failed — please verify firm-state JSON formatting.
               </p>
             )}
-            {result && (
-              <div className="mt-3">
-                <VerdictBanner result={result} />
-              </div>
-            )}
+
+            {result && <VerdictBanner result={result} />}
           </div>
 
-          {/* 4 — Technical proof, collapsed by default */}
+          {/* Technical Details for Auditors */}
           <TechnicalDetail
             rego={compiled.rego}
             obligationId={obligationId}
@@ -382,9 +379,9 @@ function RuleLine({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex gap-4 py-1.5">
-      <div className="eyebrow w-28 shrink-0 pt-0.5">{label}</div>
-      <div className="text-[15px] leading-relaxed text-foreground">{children}</div>
+    <div className="flex gap-4 items-start">
+      <div className="eyebrow w-32 shrink-0 pt-0.5">{label}</div>
+      <div className="text-sm font-semibold leading-relaxed text-foreground">{children}</div>
     </div>
   )
 }
@@ -401,8 +398,8 @@ function VerdictBanner({ result }: { result: PolicyEvalResult }) {
       <Banner
         tone="neutral"
         icon={<MinusCircle className="size-5" />}
-        title="Does not apply"
-        body="The firm is below the threshold for this rule, so nothing needs to be done."
+        title="Does Not Apply"
+        body="Firm parameters fall below threshold limits for this rule."
       />
     )
   }
@@ -410,22 +407,22 @@ function VerdictBanner({ result }: { result: PolicyEvalResult }) {
     return (
       <Banner
         tone="ok"
-        icon={<CircleCheck className="size-5" />}
-        title="Compliant"
-        body="This obligation is attested as met."
+        icon={<CircleCheck className="size-5 text-ok" />}
+        title="Compliant & Satisfied"
+        body="This obligation passes all policy rules against active firm state."
       />
     )
   }
   return (
     <Banner
       tone="risk"
-      icon={<CircleX className="size-5" />}
-      title="Not compliant"
+      icon={<CircleX className="size-5 text-risk" />}
+      title="Non-Compliant Breach Detected"
       body={plainReason(result)}
       extra={
         result.blocked ? (
-          <span className="inline-flex items-center gap-1 rounded border border-risk px-1.5 py-0.5 text-[10px] font-medium text-risk uppercase">
-            <Ban className="size-3" /> Blocked
+          <span className="inline-flex items-center gap-1 rounded-full border border-risk bg-risk/10 px-2 py-0.5 text-[10px] font-bold text-risk uppercase">
+            <Ban className="size-3" /> Hard Enforced Block
           </span>
         ) : undefined
       }
@@ -447,18 +444,18 @@ function Banner({
   extra?: React.ReactNode
 }) {
   const styles: Record<string, string> = {
-    ok: "border-ok/40 bg-ok/5 text-ok",
-    risk: "border-risk/40 bg-risk/5 text-risk",
-    neutral: "border-line bg-cream-200/40 text-text-dim",
+    ok: "border-ok/40 bg-ok/10 text-ok",
+    risk: "border-risk/40 bg-risk/10 text-risk",
+    neutral: "border-line bg-cream-200/50 text-text-dim",
   }
   return (
-    <div className={`rounded-xl border p-4 ${styles[tone]}`}>
-      <div className="flex items-center gap-2">
+    <div className={`rounded-2xl border p-5 shadow-xs ${styles[tone]}`}>
+      <div className="flex items-center gap-3">
         {icon}
-        <span className="font-display text-lg leading-none">{title}</span>
+        <span className="font-display text-lg font-bold">{title}</span>
         {extra}
       </div>
-      <p className="mt-1.5 text-sm leading-relaxed text-foreground">{body}</p>
+      <p className="mt-1.5 text-xs leading-relaxed text-foreground font-medium">{body}</p>
     </div>
   )
 }
@@ -473,18 +470,18 @@ function ModeControl({
   pending: boolean
 }) {
   return (
-    <div className="rounded-xl border border-line bg-surface p-4">
+    <div className="rounded-2xl border border-line bg-surface p-5 space-y-2 shadow-xs">
       <div className="flex flex-wrap items-center gap-3">
-        <span className="eyebrow">Enforcement</span>
-        <div className="inline-flex rounded-full border border-line p-0.5">
+        <span className="eyebrow">Enforcement Stage</span>
+        <div className="inline-flex rounded-full border border-line p-1 bg-background">
           {STAGES.map((s) => (
             <button
               key={s}
               disabled={pending || s === stage}
               onClick={() => onSet(s)}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              className={`rounded-full px-4 py-1 text-xs font-semibold transition-all ${
                 s === stage
-                  ? "bg-ink text-on-ink"
+                  ? "bg-ink text-on-ink shadow-xs"
                   : "text-text-dim hover:text-foreground disabled:opacity-50"
               }`}
             >
@@ -492,11 +489,10 @@ function ModeControl({
             </button>
           ))}
         </div>
-        <span className="text-sm text-foreground">{STAGE_EXPLAINER[stage]}</span>
+        <span className="text-xs font-semibold text-foreground">{STAGE_EXPLAINER[stage]}</span>
       </div>
-      <p className="mt-2 text-xs text-text-dim">
-        New rules start in Audit and are promoted by a human — they can never
-        block operations automatically.
+      <p className="text-[11px] text-text-dim">
+        Rules initialize in Audit mode and require human compliance authorization before promoting to Hard Enforcement.
       </p>
     </div>
   )
@@ -516,48 +512,40 @@ function TechnicalDetail({
   trace?: string
 }) {
   return (
-    <details className="group rounded-xl border border-line bg-surface">
-      <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-medium text-foreground">
+    <details className="group rounded-2xl border border-line bg-surface shadow-xs">
+      <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4 text-xs font-bold text-foreground">
+        <div className="flex items-center gap-2">
+          <Code2 className="size-4 text-text-dim" />
+          <span>Technical Rego / OPA Code & Audit Trace</span>
+        </div>
         <ChevronRight className="size-4 text-text-dim transition-transform group-open:rotate-90" />
-        View technical detail (for auditors)
       </summary>
-      <div className="space-y-4 border-t border-line px-4 py-4">
-        <p className="text-xs text-text-dim">
-          This rule runs as deterministic open-source policy code (OPA/Rego) — the
-          same input always produces the same result. Expand to inspect.
-        </p>
-
+      <div className="space-y-4 border-t border-line p-5">
         <div>
-          <div className="eyebrow mb-1.5">Compiled Rego policy</div>
-          <pre className="max-h-72 overflow-auto rounded-lg border border-line bg-cream-200/40 p-3 text-xs leading-relaxed text-foreground">
-            <code className="tnum">{rego}</code>
+          <div className="eyebrow mb-1.5">Compiled Rego Policy Code</div>
+          <pre className="max-h-72 overflow-auto rounded-xl border border-line bg-ink p-4 text-xs leading-relaxed text-on-ink font-mono">
+            <code>{rego}</code>
           </pre>
         </div>
 
         <div>
-          <div className="eyebrow mb-1.5">Firm-state input (read-only facts)</div>
+          <div className="eyebrow mb-1.5">Firm State JSON Input</div>
           <textarea
             value={inputText}
             onChange={(e) => onInput(e.target.value)}
-            rows={10}
-            spellCheck={false}
-            className="tnum w-full resize-none rounded-lg border border-line bg-cream-200/40 p-3 text-xs leading-relaxed [color-scheme:light]"
+            rows={8}
+            className="w-full resize-none rounded-xl border border-line bg-ink p-4 text-xs leading-relaxed text-on-ink font-mono outline-none focus:border-on-ink/40"
           />
         </div>
 
         {trace && (
           <div>
-            <div className="eyebrow mb-1.5">OPA evaluation trace</div>
-            <pre className="max-h-64 overflow-auto rounded-lg border border-line bg-cream-200/40 p-3 text-[11px] leading-snug text-text-dim">
-              <code className="tnum">{trace}</code>
+            <div className="eyebrow mb-1.5">Evaluation Trace Log</div>
+            <pre className="max-h-64 overflow-auto rounded-xl border border-line bg-cream-200/50 p-4 text-[11px] font-mono leading-relaxed text-text-dim">
+              <code>{trace}</code>
             </pre>
           </div>
         )}
-
-        <div>
-          <div className="eyebrow mb-1">Obligation id</div>
-          <div className="tnum break-all text-[11px] text-text-dim">{obligationId}</div>
-        </div>
       </div>
     </details>
   )
@@ -566,12 +554,12 @@ function TechnicalDetail({
 function StageChip({ stage }: { stage: PolicyStage }) {
   const color =
     stage === "hard"
-      ? "border-risk/50 text-risk"
+      ? "border-risk/50 bg-risk/10 text-risk"
       : stage === "soft"
-        ? "border-warn/50 text-warn"
-        : "border-line text-text-dim"
+        ? "border-warn/50 bg-warn/10 text-warn"
+        : "border-line bg-cream-200 text-text-dim"
   return (
-    <span className={`shrink-0 rounded border px-1.5 py-0.5 text-[10px] font-medium ${color}`}>
+    <span className={`shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase ${color}`}>
       {STAGE_WORD[stage]}
     </span>
   )

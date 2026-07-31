@@ -2,10 +2,13 @@
 
 import * as React from "react"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { Zap } from "lucide-react"
+import { Zap, AlertTriangle, Layers } from "lucide-react"
 
 import { useAsOf } from "@/components/as-of-provider"
 import { BlastGraph } from "@/components/blast-graph"
+import { Button } from "@workspace/ui/components/button"
+import { GraphSkeleton } from "@/components/skeleton"
+import { EmptyState } from "@/components/empty-state"
 import {
   computeBlastRadius,
   listClauses,
@@ -15,27 +18,24 @@ import {
 } from "@/lib/api"
 
 const CATEGORY_COLOR: Record<BlastChange["category"], string> = {
-  obligation: "text-warn",
-  control: "text-verified",
-  evidence: "text-muted-foreground",
+  obligation: "text-warn bg-warn/10 border-warn/20",
+  control: "text-ok bg-ok/10 border-ok/20",
+  evidence: "text-text-dim bg-cream-200 border-line",
 }
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`
 
-/** One-line plain-language summary of a blast-radius result. */
 function blastSummary(b: BlastRadius): string {
   const s = b.summary
   const needReview = b.nodes.filter(
     (n) => n.type === "obligation" && n.status && n.status !== "approved",
   ).length
-  let msg = `This change affects ${plural(s.obligations, "obligation")}, ${plural(
+  let msg = `This amendment impacts ${plural(s.obligations, "obligation")}, ${plural(
     s.controls,
     "control",
   )}, and ${plural(s.evidence, "evidence source")}.`
   if (needReview > 0) {
-    msg += ` ${needReview} obligation${needReview === 1 ? "" : "s"} still need${
-      needReview === 1 ? "s" : ""
-    } your review.`
+    msg += ` ${needReview} obligation${needReview === 1 ? "" : "s"} require compliance officer review.`
   }
   return msg
 }
@@ -51,9 +51,6 @@ export default function AmendmentsPage() {
   const [text, setText] = React.useState<string>("")
   const [runKey, setRunKey] = React.useState(0)
 
-  // Prefill on load, and re-select when the current clause is no longer in the
-  // list (e.g. the as-of date changed to before it was in force) so a stale
-  // clause_ref is never submitted.
   const clauseList = clauses.data?.clauses ?? []
   React.useEffect(() => {
     if (!clauseList.length) return
@@ -75,94 +72,110 @@ export default function AmendmentsPage() {
   })
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full bg-background">
       {/* Left: amendment editor + change list */}
-      <div className="flex w-[380px] shrink-0 flex-col border-r border-line">
-        <div className="space-y-3 border-b border-line p-4">
+      <div className="flex w-[420px] shrink-0 flex-col border-r border-line bg-surface/60">
+        <div className="space-y-4 border-b border-line p-5 bg-surface">
           <div>
-            <label className="text-[11px] tracking-wide text-muted-foreground uppercase">
-              Amend clause
-            </label>
+            <div className="eyebrow mb-1">Target Regulation Clause</div>
             <select
               value={ref}
               onChange={(e) => {
                 const c = clauseList.find((x) => x.clause_ref === e.target.value)
                 if (c) selectClause(c)
               }}
-              className="hairline mt-1 w-full rounded-md bg-surface px-2.5 py-1.5 text-sm text-foreground outline-none [color-scheme:light]"
+              className="w-full rounded-xl border border-line bg-background px-3 py-2 text-xs font-semibold text-foreground outline-none focus:border-foreground/40 transition-colors"
             >
               {clauseList.map((c) => (
                 <option key={c.id} value={c.clause_ref}>
-                  {c.clause_ref} — {c.heading}
+                  Clause {c.clause_ref} — {c.heading}
                 </option>
               ))}
             </select>
           </div>
+
           <div>
-            <label className="text-[11px] tracking-wide text-muted-foreground uppercase">
-              Amended text
-            </label>
+            <div className="flex justify-between items-center mb-1">
+              <span className="eyebrow">Amended Text Draft</span>
+              <span className="text-[10px] font-mono text-text-dim">
+                {text.length} chars
+              </span>
+            </div>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              rows={7}
-              className="hairline mt-1 w-full resize-none rounded-md bg-surface px-2.5 py-2 text-sm leading-relaxed text-foreground outline-none"
+              rows={8}
+              placeholder="Enter proposed regulatory text amendment…"
+              className="w-full resize-none rounded-xl border border-line bg-background p-3 text-xs leading-relaxed text-foreground placeholder:text-text-dim outline-none focus:border-foreground/40 transition-colors font-mono"
             />
           </div>
-          <button
-            type="button"
+
+          <Button
+            variant="default"
+            size="lg"
+            isLoading={blast.isPending}
+            loadingText="Simulating Propagation…"
+            disabled={!ref || !text.trim()}
             onClick={() => blast.mutate()}
-            disabled={!ref || !text.trim() || blast.isPending}
-            className="hairline inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2.5 text-base font-semibold text-primary-foreground disabled:opacity-50"
+            className="w-full shadow-md"
           >
-            <Zap className="size-4" />
-            {blast.isPending ? "Computing…" : "Compute blast radius"}
-          </button>
+            <Zap className="size-4 text-warn" />
+            <span>Compute Blast Radius</span>
+          </Button>
         </div>
 
-        {/* Change list */}
-        <div className="min-h-0 flex-1 overflow-auto p-4">
+        {/* Change Impact List */}
+        <div className="min-h-0 flex-1 overflow-auto p-5 space-y-3">
           {blast.data ? (
             <div className="space-y-3">
-              <div className="rounded-md border border-warn/40 bg-warn/5 p-3 text-xs leading-relaxed text-foreground">
+              <div className="rounded-xl border border-warn/40 bg-warn/10 p-3.5 text-xs leading-relaxed text-foreground font-medium shadow-2xs">
                 {blastSummary(blast.data)}
               </div>
+              <div className="eyebrow">Impact Breakdown ({blast.data.changes.length})</div>
               <ul className="space-y-2">
                 {blast.data.changes.map((c, i) => (
                   <li
                     key={i}
-                    className="hairline rounded-md bg-surface px-3 py-2 text-xs"
+                    className="rounded-xl border border-line bg-surface p-3 text-xs space-y-1 shadow-2xs transition-all hover:border-foreground/30"
                   >
                     <span
-                      className={`text-[10px] tracking-wide uppercase ${CATEGORY_COLOR[c.category]}`}
+                      className={`inline-block rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase ${
+                        CATEGORY_COLOR[c.category]
+                      }`}
                     >
                       {c.category}
                     </span>
-                    <p className="mt-0.5 text-foreground">{c.detail}</p>
+                    <p className="text-foreground leading-relaxed font-medium">{c.detail}</p>
                   </li>
                 ))}
               </ul>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">
-              Edit a clause and compute the blast radius to see exactly which
-              obligations, controls and evidence are affected.
-            </p>
+            <div className="p-8 text-center text-xs text-text-dim border border-dashed border-line rounded-2xl">
+              <Layers className="size-8 mx-auto mb-2 text-text-dim/60" />
+              Select a clause above, modify its text, and click &quot;Compute Blast Radius&quot; to calculate downstream impact.
+            </div>
           )}
           {blast.isError && (
-            <p className="text-sm text-danger">Failed to compute blast radius.</p>
+            <p className="text-xs text-risk font-semibold">Failed to compute blast radius simulation.</p>
           )}
         </div>
       </div>
 
       {/* Right: animated blast-radius graph */}
-      <div className="relative flex-1">
-        {blast.data ? (
+      <div className="relative flex-1 bg-cream/40">
+        {blast.isPending ? (
+          <div className="h-full p-8">
+            <GraphSkeleton />
+          </div>
+        ) : blast.data ? (
           <BlastGraph payload={blast.data} runKey={runKey} />
         ) : (
-          <div className="absolute inset-0 grid place-items-center text-sm text-muted-foreground">
-            The blast-radius graph appears here.
-          </div>
+          <EmptyState
+            icon="sparkles"
+            title="Blast Radius Visualizer"
+            description="The interactive downstream impact graph will automatically layout here after you compute the amendment."
+          />
         )}
       </div>
     </div>

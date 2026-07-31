@@ -7,6 +7,7 @@ import { Check, PenLine, ShieldCheck, X } from "lucide-react"
 import { DeonticBadge } from "@/components/badges"
 import { ConfidenceMeter } from "@/components/confidence"
 import { useDialog } from "@/components/use-dialog"
+import { Button } from "@workspace/ui/components/button"
 import { formatDeadline } from "@/lib/format"
 import {
   postSignoff,
@@ -18,14 +19,8 @@ import {
 const MIN_JUSTIFICATION = 20
 const DEONTICS: DeonticType[] = ["MUST", "MUST_NOT", "MAY"]
 
-type Step = 1 | 2 | 3 | 4 // 4 = result
+type Step = 1 | 2 | 3 | 4
 
-/**
- * SignoffModal is the deliberate, multi-step human sign-off. Friction is a
- * feature: the reviewer must (1) review the obligation against its source
- * sentence, (2) choose approve/reject and optionally correct, (3) type a
- * substantive justification, before an Ed25519 signature is produced.
- */
 export function SignoffModal({
   obligation,
   onClose,
@@ -73,31 +68,37 @@ export function SignoffModal({
   const dialogRef = useDialog<HTMLDivElement>(onClose)
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-background/70 p-4">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 backdrop-blur-sm p-4">
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={`Sign off clause ${obligation.clause_ref}`}
         tabIndex={-1}
-        className="hairline flex max-h-[85vh] w-[560px] flex-col overflow-hidden rounded-lg bg-surface outline-none"
+        className="flex max-h-[88vh] w-[580px] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl outline-none"
       >
-        <header className="flex items-center justify-between border-b border-line px-5 py-3">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="size-4 text-verified" />
-            <span className="text-sm font-medium">Sign-off — clause {obligation.clause_ref}</span>
+        <header className="flex items-center justify-between border-b border-line px-6 py-4 bg-surface">
+          <div className="flex items-center gap-2.5">
+            <ShieldCheck className="size-5 text-ok" />
+            <span className="font-display text-base font-bold text-foreground">
+              Sign-Off: Clause {obligation.clause_ref}
+            </span>
           </div>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground" aria-label="Close">
-            <X className="size-4" />
+          <button
+            onClick={onClose}
+            className="rounded-lg p-1 text-text-dim hover:text-foreground hover:bg-cream-200/60 transition-colors"
+            aria-label="Close"
+          >
+            <X className="size-5" />
           </button>
         </header>
 
         {/* Step indicator */}
         {step < 4 && (
-          <div className="flex items-center gap-2 border-b border-line px-5 py-2 text-[11px] text-muted-foreground">
-            {["Review", "Decide", "Sign"].map((label, i) => (
+          <div className="flex items-center gap-3 border-b border-line bg-cream/40 px-6 py-2.5 text-xs text-text-dim font-medium">
+            {["Review Source", "Decision & Justification", "Cryptographic Signing"].map((label, i) => (
               <React.Fragment key={label}>
-                <span className={step === i + 1 ? "tnum text-foreground" : "tnum"}>
+                <span className={step === i + 1 ? "tnum font-bold text-foreground" : "tnum"}>
                   {i + 1}. {label}
                 </span>
                 {i < 2 && <span className="text-line">→</span>}
@@ -106,47 +107,46 @@ export function SignoffModal({
           </div>
         )}
 
-        <div className="min-h-0 flex-1 overflow-auto p-5">
-          {step === 1 && (
-            <StepReview obligation={obligation} />
-          )}
+        <div className="min-h-0 flex-1 overflow-auto p-6 space-y-4">
+          {step === 1 && <StepReview obligation={obligation} />}
 
           {step === 2 && (
             <div className="space-y-4 text-sm">
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <DecisionButton
                   active={action === "approve"}
                   onClick={() => setAction("approve")}
                   tone="verified"
                 >
-                  Approve
+                  Approve Extraction
                 </DecisionButton>
                 <DecisionButton
                   active={action === "reject"}
                   onClick={() => setAction("reject")}
                   tone="danger"
                 >
-                  Reject
+                  Reject Extraction
                 </DecisionButton>
               </div>
 
               {action === "approve" && (
-                <div>
-                  <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                <div className="rounded-xl border border-line p-3 bg-cream/30">
+                  <label className="flex items-center gap-2 text-xs font-semibold text-foreground cursor-pointer">
                     <input
                       type="checkbox"
                       checked={correct}
                       onChange={(e) => setCorrect(e.target.checked)}
+                      className="rounded border-line"
                     />
-                    Correct the obligation before signing
+                    Correct extracted fields before signing
                   </label>
                   {correct && (
-                    <div className="mt-2 grid grid-cols-2 gap-3">
-                      <Labeled label="Deontic">
+                    <div className="mt-3 grid grid-cols-2 gap-3">
+                      <Labeled label="Deontic Duty">
                         <select
                           value={deontic}
                           onChange={(e) => setDeontic(e.target.value as DeonticType)}
-                          className="hairline w-full rounded bg-background px-2 py-1 text-sm [color-scheme:light]"
+                          className="w-full rounded-xl border border-line bg-background px-3 py-1.5 text-xs"
                         >
                           {DEONTICS.map((d) => (
                             <option key={d} value={d}>{d}</option>
@@ -158,7 +158,7 @@ export function SignoffModal({
                           value={deadline}
                           onChange={(e) => setDeadline(e.target.value)}
                           placeholder="e.g. P30D"
-                          className="hairline w-full rounded bg-background px-2 py-1 text-sm"
+                          className="w-full rounded-xl border border-line bg-background px-3 py-1.5 text-xs font-mono"
                         />
                       </Labeled>
                     </div>
@@ -166,24 +166,24 @@ export function SignoffModal({
                 </div>
               )}
 
-              <Labeled label="Signed by (reviewer)">
+              <Labeled label="Compliance Officer Name & Role">
                 <input
                   value={signedBy}
                   onChange={(e) => setSignedBy(e.target.value)}
-                  placeholder="Your name and role"
-                  className="hairline w-full rounded bg-background px-2.5 py-1.5 text-sm"
+                  placeholder="e.g. Priya Menon (Chief Compliance Officer)"
+                  className="w-full rounded-xl border border-line bg-background px-3 py-2 text-xs font-medium"
                 />
               </Labeled>
 
-              <Labeled label={`Justification (required, min ${MIN_JUSTIFICATION} chars)`}>
+              <Labeled label={`Justification (Required, min ${MIN_JUSTIFICATION} characters)`}>
                 <textarea
                   value={justification}
                   onChange={(e) => setJustification(e.target.value)}
                   rows={4}
-                  placeholder="Why is this decision correct? This is recorded and signed."
-                  className="hairline w-full resize-none rounded bg-background px-2.5 py-2 text-sm leading-relaxed"
+                  placeholder="Provide substantive reasoning for this decision. This statement is cryptographically bound into the audit feed."
+                  className="w-full resize-none rounded-xl border border-line bg-background p-3 text-xs leading-relaxed"
                 />
-                <div className="tnum mt-1 text-right text-[11px] text-muted-foreground">
+                <div className="tnum mt-1 text-right text-[11px] font-mono text-text-dim">
                   {justification.trim().length}/{MIN_JUSTIFICATION}
                 </div>
               </Labeled>
@@ -191,45 +191,45 @@ export function SignoffModal({
           )}
 
           {step === 3 && (
-            <div className="space-y-3 text-sm">
-              <p className="text-muted-foreground">
+            <div className="space-y-4 text-sm">
+              <p className="text-text-dim leading-relaxed">
                 {action === "approve" ? (
                   <>
-                    You are about to <span className="text-verified">approve</span> and
-                    cryptographically sign this obligation with an Ed25519 signature.
+                    You are about to <span className="font-bold text-ok">approve</span> and produce an Ed25519 cryptographic signature for this regulatory obligation.
                   </>
                 ) : (
                   <>
-                    You are about to <span className="text-danger">reject</span> this
-                    extraction. This is recorded with your justification.
+                    You are about to <span className="font-bold text-risk">reject</span> this AI extraction. This decision will be logged in the audit trail.
                   </>
                 )}
               </p>
-              <Summary label="Obligation" value={`${obligation.clause_ref} — ${obligation.clause_heading}`} />
-              <Summary label="Signed by" value={signedBy} />
-              <Summary label="Justification" value={justification} />
+              <div className="rounded-2xl border border-line bg-cream/30 p-4 space-y-2">
+                <Summary label="Obligation" value={`Clause ${obligation.clause_ref} — ${obligation.clause_heading}`} />
+                <Summary label="Signer" value={signedBy} />
+                <Summary label="Justification" value={justification} />
+              </div>
               {mutation.isError && (
-                <p className="text-danger">Sign-off failed. Please try again.</p>
+                <p className="text-xs font-semibold text-risk">Sign-off request failed. Please try again.</p>
               )}
             </div>
           )}
 
           {step === 4 && mutation.data && (
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center gap-2 text-verified">
-                <Check className="size-5" />
-                <span className="font-medium">
+            <div className="space-y-4 text-sm">
+              <div className="flex items-center gap-2.5 text-ok font-bold text-base">
+                <Check className="size-6 text-ok" />
+                <span>
                   {mutation.data.signoff.action === "approve"
-                    ? "Approved & signed"
-                    : "Rejection recorded"}
+                    ? "Cryptographically Signed & Approved"
+                    : "Rejection Successfully Recorded"}
                 </span>
               </div>
               {mutation.data.signoff.action === "approve" && (
-                <div className="space-y-2">
-                  <Summary label="Verified" value={mutation.data.verified ? "✓ signature valid" : "—"} />
-                  <Mono label="Obligation hash (sha256)" value={mutation.data.signoff.obligation_hash} />
-                  <Mono label="Ed25519 signature" value={mutation.data.signoff.signature ?? ""} />
-                  <Mono label="Public key" value={mutation.data.signoff.public_key ?? ""} />
+                <div className="rounded-2xl border border-ok/30 bg-ok/5 p-4 space-y-2">
+                  <Summary label="Signature Verification" value={mutation.data.verified ? "✓ Ed25519 Signature Verified" : "—"} />
+                  <Mono label="Obligation Hash (sha256)" value={mutation.data.signoff.obligation_hash} />
+                  <Mono label="Ed25519 Signature" value={mutation.data.signoff.signature ?? ""} />
+                  <Mono label="Public Key" value={mutation.data.signoff.public_key ?? ""} />
                 </div>
               )}
             </div>
@@ -237,43 +237,42 @@ export function SignoffModal({
         </div>
 
         {/* Footer nav */}
-        <footer className="flex items-center justify-between border-t border-line px-5 py-3">
+        <footer className="flex items-center justify-between border-t border-line px-6 py-4 bg-surface">
           {step === 4 ? (
-            <button
-              onClick={onClose}
-              className="ml-auto hairline rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground"
-            >
+            <Button variant="default" onClick={onClose} className="ml-auto">
               Done
-            </button>
+            </Button>
           ) : (
             <>
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => (step === 1 ? onClose() : setStep((step - 1) as Step))}
-                className="text-sm text-muted-foreground hover:text-foreground"
               >
                 {step === 1 ? "Cancel" : "Back"}
-              </button>
+              </Button>
               {step < 3 ? (
-                <button
-                  onClick={() => setStep((step + 1) as Step)}
+                <Button
+                  variant="default"
+                  size="sm"
                   disabled={step === 2 && (!justificationValid || !signerValid)}
-                  className="hairline rounded-md bg-surface-2 px-4 py-1.5 text-sm disabled:opacity-40"
+                  onClick={() => setStep((step + 1) as Step)}
                 >
                   Continue
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
+                  variant="default"
+                  size="default"
+                  isLoading={mutation.isPending}
+                  loadingText="Signing with Ed25519…"
                   onClick={() => mutation.mutate()}
-                  disabled={mutation.isPending}
-                  className="hairline inline-flex items-center gap-2 rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground disabled:opacity-50"
                 >
                   <PenLine className="size-4" />
-                  {mutation.isPending
-                    ? "Signing…"
-                    : action === "approve"
-                      ? "Sign with Ed25519"
-                      : "Record rejection"}
-                </button>
+                  <span>
+                    {action === "approve" ? "Sign with Ed25519" : "Record Rejection"}
+                  </span>
+                </Button>
               )}
             </>
           )}
@@ -287,27 +286,25 @@ function StepReview({ obligation }: { obligation: Obligation }) {
   return (
     <div className="space-y-4 text-sm">
       <div className="flex items-center gap-2">
-        <span className="tnum text-primary">{obligation.clause_ref}</span>
+        <span className="tnum font-bold text-primary bg-cream-200 px-2 py-0.5 rounded text-xs">
+          Clause {obligation.clause_ref}
+        </span>
         <DeonticBadge deontic={obligation.deontic_type} />
         <ConfidenceMeter value={obligation.confidence} />
       </div>
-      <h3 className="font-display text-lg leading-tight">{obligation.clause_heading}</h3>
+      <h3 className="font-display text-lg font-bold">{obligation.clause_heading}</h3>
       <div>
-        <div className="text-[11px] tracking-wide text-muted-foreground uppercase">
-          Reasoning chain — source sentence
-        </div>
-        <blockquote className="mt-1.5 border-l-2 border-verified pl-3 leading-relaxed">
-          {obligation.source_sentence}
+        <div className="eyebrow mb-1">Exact Regulatory Sentence</div>
+        <blockquote className="border-l-2 border-ok pl-3 text-xs leading-relaxed text-text-dim italic bg-cream/30 py-2 pr-3 rounded-r-lg">
+          &quot;{obligation.source_sentence}&quot;
         </blockquote>
       </div>
-      <dl className="grid grid-cols-2 gap-2 text-xs">
+      <dl className="grid grid-cols-2 gap-3 text-xs border-t border-line pt-3">
         <Summary label="Bearer" value={obligation.bearer} />
         <Summary
           label="Deadline"
-          value={obligation.deadline ? formatDeadline(obligation.deadline) : "—"}
+          value={obligation.deadline ? formatDeadline(obligation.deadline) : "None"}
         />
-        <Summary label="Threshold" value={JSON.stringify(obligation.threshold)} />
-        <Summary label="Current status" value={obligation.status} />
       </dl>
     </div>
   )
@@ -324,12 +321,15 @@ function DecisionButton({
   tone: "verified" | "danger"
   children: React.ReactNode
 }) {
-  const color = tone === "verified" ? "border-verified text-verified" : "border-danger text-danger"
+  const color =
+    tone === "verified"
+      ? "border-ok bg-ok/10 text-ok font-bold shadow-xs"
+      : "border-risk bg-risk/10 text-risk font-bold shadow-xs"
   return (
     <button
       onClick={onClick}
-      className={`flex-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
-        active ? color : "border-line text-muted-foreground"
+      className={`flex-1 rounded-xl border p-3 text-xs transition-all ${
+        active ? color : "border-line bg-background text-text-dim hover:text-foreground"
       }`}
     >
       {children}
@@ -340,7 +340,7 @@ function DecisionButton({
 function Labeled({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="text-[11px] tracking-wide text-muted-foreground uppercase">{label}</span>
+      <span className="eyebrow">{label}</span>
       <div className="mt-1">{children}</div>
     </label>
   )
@@ -349,8 +349,8 @@ function Labeled({ label, children }: { label: string; children: React.ReactNode
 function Summary({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-[11px] tracking-wide text-muted-foreground uppercase">{label}</div>
-      <div className="text-foreground">{value}</div>
+      <div className="eyebrow">{label}</div>
+      <div className="text-xs font-semibold text-foreground mt-0.5">{value}</div>
     </div>
   )
 }
@@ -358,8 +358,8 @@ function Summary({ label, value }: { label: string; value: string }) {
 function Mono({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-[11px] tracking-wide text-muted-foreground uppercase">{label}</div>
-      <div className="tnum break-all text-xs text-verified">{value}</div>
+      <div className="eyebrow">{label}</div>
+      <div className="tnum break-all text-xs font-mono font-semibold text-ok mt-0.5">{value}</div>
     </div>
   )
 }

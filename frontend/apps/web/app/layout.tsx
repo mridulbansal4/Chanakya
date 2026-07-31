@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Fraunces, Inter, JetBrains_Mono } from "next/font/google"
+import { Inter, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google"
 
 import "@workspace/ui/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -8,17 +8,14 @@ import { AsOfProvider } from "@/components/as-of-provider"
 import { AppShell } from "@/components/app-shell"
 import { cn } from "@workspace/ui/lib/utils"
 
-// UI / body / tables / buttons — Inter (the clean base font).
 const fontSans = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
-// Page titles + CHANAKYA wordmark — Fraunces (high-contrast editorial serif).
-const fontDisplay = Fraunces({
+const fontDisplay = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["400", "500", "600", "700"],
+  weight: ["500", "600", "700", "800"],
 })
 
-// Machine values only — IDs, hashes, clause numbers, Rego, JSON.
 const fontMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "600"],

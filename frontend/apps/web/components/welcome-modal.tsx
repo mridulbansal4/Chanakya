@@ -8,9 +8,11 @@ import {
   ScrollText,
   ShieldCheck,
   X,
+  ArrowRight,
 } from "lucide-react"
 
 import { useDialog } from "@/components/use-dialog"
+import { Button } from "@workspace/ui/components/button"
 
 interface Step {
   icon: React.ReactNode
@@ -21,54 +23,46 @@ interface Step {
 
 const STEPS: Step[] = [
   {
-    icon: <ScrollText className="size-5 text-primary" />,
-    title: "Welcome to CHANAKYA",
+    icon: <ScrollText className="size-6 text-primary" />,
+    title: "Welcome to CHANAKYA SupTech OS",
     body: (
       <>
-        CHANAKYA turns SEBI regulations into a live, auditable compliance system.
-        The AI only ever <em>proposes</em> obligations as data — <strong>you</strong>{" "}
-        approve them, and a deterministic engine enforces them. Nothing is acted
-        on without your sign-off.
+        CHANAKYA converts complex SEBI circulars into a live, fully auditable compliance operating system.
+        The AI proposes obligations with source citations — <strong>you</strong>{" "}
+        approve them with cryptographic signatures, and a deterministic engine enforces them.
       </>
     ),
   },
   {
-    icon: <ClipboardCheck className="size-5 text-warn" />,
-    title: "Your daily work: the Review Queue",
+    icon: <ClipboardCheck className="size-6 text-warn" />,
+    title: "Your Daily Action Hub: Review Queue",
     body: (
       <>
-        New and low-confidence obligations wait here for your judgement. Approve,
-        correct, or reject each one. Nothing is enforced until you sign — this is
-        your inbox.
+        Extracted and low-confidence obligations wait here for human review. Approve,
+        correct, or reject each obligation before automated policies activate.
       </>
     ),
-    cta: { label: "Open the Review Queue", href: "/review" },
+    cta: { label: "Open Review Queue", href: "/review" },
   },
   {
-    icon: <FileSearch className="size-5 text-warn" />,
-    title: "When a regulation changes",
+    icon: <FileSearch className="size-6 text-warn" />,
+    title: "Regulation Change Simulation: Blast Radius",
     body: (
       <>
-        Use <strong>Blast Radius</strong> to preview exactly what an amendment
-        would affect — which obligations, controls, and evidence — <em>before</em>{" "}
-        you accept it. No more guessing what a circular change touches.
+        Preview the exact downstream impact of regulatory circular amendments — mapping affected obligations, controls, and evidence sources before enforcing changes.
       </>
     ),
-    cta: { label: "See Blast Radius", href: "/amendments" },
+    cta: { label: "Explore Blast Radius Simulator", href: "/amendments" },
   },
   {
-    icon: <ShieldCheck className="size-5 text-verified" />,
-    title: "From text to enforcement — fully traceable",
+    icon: <ShieldCheck className="size-6 text-ok" />,
+    title: "Complete Lineage Audit Trail",
     body: (
       <>
-        The flow is: <strong>Review → Sign-off</strong> (a cryptographic signature
-        proving you approved this exact obligation) <strong>→ Policy</strong> (an
-        automated check) <strong>→ Audit</strong> (reconstruct the trail as of any
-        date) <strong>→ Regulator Feed</strong>. Every claim is cited and
-        reproducible.
+        Trace every obligation from <strong>Review → Cryptographic Ed25519 Sign-off → OPA Policy Code → Audit Trail → Machine-Readable Regulator Feed</strong>.
       </>
     ),
-    cta: { label: "Go to the Overview", href: "/" },
+    cta: { label: "Launch Overview Dashboard", href: "/" },
   },
 ]
 
@@ -85,70 +79,74 @@ export function WelcomeModal({ onClose }: { onClose: () => void }) {
   const dialogRef = useDialog<HTMLDivElement>(onClose)
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-background/70 p-4">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 backdrop-blur-sm p-4">
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label="Getting started with CHANAKYA"
         tabIndex={-1}
-        className="hairline w-[520px] max-w-full overflow-hidden rounded-lg bg-surface outline-none"
+        className="w-[540px] max-w-full overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl outline-none"
       >
-        <header className="flex items-center justify-between border-b border-line px-5 py-3">
-          <span className="text-[11px] tracking-widest text-muted-foreground uppercase">
-            Getting started · {step + 1} of {STEPS.length}
+        <header className="flex items-center justify-between border-b border-line px-6 py-4 bg-surface">
+          <span className="eyebrow">
+            Getting Started · Step {step + 1} of {STEPS.length}
           </span>
           <button
             type="button"
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground"
+            className="rounded-lg p-1 text-text-dim hover:text-foreground hover:bg-cream-200/60 transition-colors"
             aria-label="Skip"
           >
-            <X className="size-4" />
+            <X className="size-5" />
           </button>
         </header>
 
-        <div className="p-6">
-          <div className="flex items-center gap-2">{s.icon}</div>
-          <h2 className="font-display mt-2 text-2xl leading-tight">{s.title}</h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
+        <div className="p-6 space-y-4">
+          <div className="flex size-12 items-center justify-center rounded-2xl bg-cream-200/80 shadow-inner">
+            {s.icon}
+          </div>
+          <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">{s.title}</h2>
+          <p className="text-xs leading-relaxed text-text-dim">{s.body}</p>
           {s.cta && (
-            <button
-              type="button"
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => go(s.cta!.href)}
-              className="mt-4 text-sm text-primary hover:underline"
+              className="mt-2"
             >
-              {s.cta.label} →
-            </button>
+              <span>{s.cta.label}</span>
+              <ArrowRight className="size-3.5" />
+            </Button>
           )}
 
-          <div className="mt-6 flex items-center gap-1.5">
+          <div className="mt-6 flex items-center gap-2 pt-2">
             {STEPS.map((_, i) => (
               <span
                 key={i}
                 className={`h-1.5 rounded-full transition-all ${
-                  i === step ? "w-5 bg-primary" : "w-1.5 bg-line"
+                  i === step ? "w-6 bg-foreground" : "w-1.5 bg-line"
                 }`}
               />
             ))}
           </div>
         </div>
 
-        <footer className="flex items-center justify-between border-t border-line px-5 py-3">
-          <button
-            type="button"
+        <footer className="flex items-center justify-between border-t border-line px-6 py-4 bg-surface">
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => (step === 0 ? onClose() : setStep(step - 1))}
-            className="text-sm text-muted-foreground hover:text-foreground"
           >
-            {step === 0 ? "Skip" : "Back"}
-          </button>
-          <button
-            type="button"
+            {step === 0 ? "Skip Intro" : "Back"}
+          </Button>
+          <Button
+            variant="default"
+            size="default"
             onClick={() => (last ? onClose() : setStep(step + 1))}
-            className="hairline rounded-md bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground"
           >
-            {last ? "Start using CHANAKYA" : "Next"}
-          </button>
+            {last ? "Start Using CHANAKYA" : "Next"}
+          </Button>
         </footer>
       </div>
     </div>

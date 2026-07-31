@@ -5,9 +5,12 @@ import { useQuery } from "@tanstack/react-query"
 import {
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
   type ColumnDef,
+  type SortingState,
 } from "@tanstack/react-table"
+import { ArrowUpDown, ArrowUp, ArrowDown, Search, Filter } from "lucide-react"
 
 import { useAsOf } from "@/components/as-of-provider"
 import { ObligationDetailPanel } from "@/components/obligation-detail"
@@ -15,6 +18,7 @@ import { DeonticBadge, StatusBadge } from "@/components/badges"
 import { ConfidenceMeter } from "@/components/confidence"
 import { PageHeader } from "@/components/page-header"
 import { SkeletonRows } from "@/components/skeleton"
+import { EmptyState } from "@/components/empty-state"
 import { formatDeadline } from "@/lib/format"
 import {
   listObligations,
@@ -42,14 +46,18 @@ const columns: ColumnDef<Obligation>[] = [
   {
     accessorKey: "clause_ref",
     header: "Clause",
-    cell: (c) => <span className="tnum text-primary">{c.getValue<string>()}</span>,
+    cell: (c) => <span className="tnum font-semibold text-primary">{c.getValue<string>()}</span>,
   },
   {
     accessorKey: "deontic_type",
     header: "Obligation type",
     cell: (c) => <DeonticBadge deontic={c.getValue<DeonticType>()} />,
   },
-  { accessorKey: "bearer", header: "Bearer" },
+  {
+    accessorKey: "bearer",
+    header: "Bearer",
+    cell: (c) => <span className="font-medium text-foreground">{c.getValue<string>()}</span>,
+  },
   {
     accessorKey: "status",
     header: "Status",
@@ -66,11 +74,11 @@ const columns: ColumnDef<Obligation>[] = [
     cell: (c) => {
       const raw = c.getValue<string>()
       return raw ? (
-        <span title={raw} className="text-foreground">
+        <span title={raw} className="tnum font-medium text-foreground">
           {formatDeadline(raw)}
         </span>
       ) : (
-        <span className="text-muted-foreground">No deadline</span>
+        <span className="text-muted-foreground italic text-xs">No deadline</span>
       )
     },
   },
@@ -78,7 +86,7 @@ const columns: ColumnDef<Obligation>[] = [
     accessorKey: "clause_heading",
     header: "Subject",
     cell: (c) => (
-      <span className="text-muted-foreground">{c.getValue<string>()}</span>
+      <span className="text-text-dim line-clamp-1 max-w-xs">{c.getValue<string>()}</span>
     ),
   },
 ]
@@ -87,19 +95,36 @@ export default function RegisterPage() {
   const { asOf } = useAsOf()
   const [deontic, setDeontic] = React.useState<DeonticType | "">("")
   const [status, setStatus] = React.useState<ObligationStatus | "">("")
+  const [search, setSearch] = React.useState("")
   const [selected, setSelected] = React.useState<string | null>(null)
+  const [sorting, setSorting] = React.useState<SortingState>([])
 
   const query = useQuery({
     queryKey: ["obligations", asOf, deontic, status],
-    queryFn: ({ signal }) =>
-      listObligations({ asOf, deontic, status }, signal),
+    queryFn: ({ signal }) => listObligations({ asOf, deontic, status }, signal),
   })
 
-  const data = React.useMemo(() => query.data?.obligations ?? [], [query.data])
+  const rawData = React.useMemo(() => query.data?.obligations ?? [], [query.data])
+
+  const filteredData = React.useMemo(() => {
+    if (!search.trim()) return rawData
+    const q = search.toLowerCase()
+    return rawData.filter(
+      (o) =>
+        o.clause_ref.toLowerCase().includes(q) ||
+        o.clause_heading.toLowerCase().includes(q) ||
+        o.bearer.toLowerCase().includes(q) ||
+        o.source_sentence.toLowerCase().includes(q)
+    )
+  }, [rawData, search])
+
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
+    state: { sorting },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   })
 
   return (
@@ -107,38 +132,91 @@ export default function RegisterPage() {
       <div className="flex min-w-0 flex-1 flex-col">
         <PageHeader
           eyebrow="Register"
-          title="Obligation register"
-          description="Every obligation CHANAKYA extracted from the regulation, with its exact source. Click a row to inspect the citation."
+          title="Obligation Register"
+          description="Every obligation CHANAKYA extracted from the regulation with complete source provenance and AI extraction confidence scores."
         />
-        {/* Filter bar */}
-        <div className="flex items-center gap-2.5 border-b border-line px-7 py-3 text-sm">
-          <Select value={deontic} onChange={(v) => setDeontic(v as DeonticType | "")} options={DEONTIC_OPTIONS} />
-          <Select value={status} onChange={(v) => setStatus(v as ObligationStatus | "")} options={STATUS_OPTIONS} />
-          <span className="tnum ml-auto text-sm text-muted-foreground">
-            {query.data?.count ?? 0} obligations
+
+        {/* Enhanced Filter Bar */}
+        <div className="flex flex-wrap items-center gap-3 border-b border-line bg-surface/80 backdrop-blur-md px-7 py-3 text-sm z-10">
+          <div className="relative flex-1 max-w-xs">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-text-dim" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search clause, subject, sentence…"
+              className="w-full rounded-xl border border-line bg-background pl-9 pr-3 py-1.5 text-xs text-foreground placeholder:text-text-dim outline-none focus:border-foreground/40 transition-colors"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Filter className="size-3.5 text-text-dim" />
+            <Select value={deontic} onChange={(v) => setDeontic(v as DeonticType | "")} options={DEONTIC_OPTIONS} />
+            <Select value={status} onChange={(v) => setStatus(v as ObligationStatus | "")} options={STATUS_OPTIONS} />
+          </div>
+
+          <span className="tnum ml-auto text-xs font-mono text-text-dim">
+            {filteredData.length} of {query.data?.count ?? 0} obligations
           </span>
         </div>
 
-        {/* Table */}
+        {/* Table Container */}
         <div className="min-h-0 flex-1 overflow-auto">
           {query.isError ? (
-            <div className="p-6 text-sm text-risk">
-              Couldn&apos;t reach the backend. Make sure the API is running on
-              port 8080, then refresh.
-            </div>
+            <EmptyState
+              icon="alert"
+              title="Backend Unreachable"
+              description="Could not connect to the CHANAKYA API server. Make sure the backend is running on port 8080."
+              primaryAction={{
+                label: "Retry Connection",
+                onClick: () => query.refetch(),
+              }}
+            />
           ) : query.isLoading ? (
-            <SkeletonRows rows={8} />
+            <SkeletonRows rows={10} cols={7} />
+          ) : filteredData.length === 0 ? (
+            <EmptyState
+              icon="search"
+              title="No Obligations Found"
+              description={
+                search || deontic || status
+                  ? "No obligations match your current search and filter criteria."
+                  : `No obligations were in force as of ${asOf}.`
+              }
+              primaryAction={
+                search || deontic || status
+                  ? {
+                      label: "Clear Filters",
+                      onClick: () => {
+                        setSearch("")
+                        setDeontic("")
+                        setStatus("")
+                      },
+                    }
+                  : undefined
+              }
+            />
           ) : (
             <table className="w-full border-collapse text-sm">
-              <thead className="sticky top-0 bg-surface">
+              <thead className="sticky top-0 bg-surface/95 backdrop-blur-md shadow-xs z-10">
                 {table.getHeaderGroups().map((hg) => (
                   <tr key={hg.id} className="border-b border-line">
                     {hg.headers.map((h) => (
                       <th
                         key={h.id}
-                        className="px-7 py-3 text-left text-xs font-medium tracking-wide text-muted-foreground uppercase"
+                        onClick={h.column.getToggleSortingHandler()}
+                        className="px-7 py-3 text-left text-xs font-semibold tracking-wider text-muted-foreground uppercase cursor-pointer select-none hover:text-foreground transition-colors"
                       >
-                        {flexRender(h.column.columnDef.header, h.getContext())}
+                        <div className="flex items-center gap-1.5">
+                          {flexRender(h.column.columnDef.header, h.getContext())}
+                          {h.column.getIsSorted() === "asc" ? (
+                            <ArrowUp className="size-3.5 text-primary" />
+                          ) : h.column.getIsSorted() === "desc" ? (
+                            <ArrowDown className="size-3.5 text-primary" />
+                          ) : (
+                            <ArrowUpDown className="size-3.5 text-text-dim/40 group-hover:text-foreground" />
+                          )}
+                        </div>
                       </th>
                     ))}
                   </tr>
@@ -151,36 +229,27 @@ export default function RegisterPage() {
                     <tr
                       key={row.id}
                       onClick={() => setSelected(row.original.id)}
-                      className={`cursor-pointer border-b border-line/60 transition-colors ${
+                      className={`cursor-pointer border-b border-line/50 transition-all duration-150 ${
                         active
-                          ? "bg-surface-2"
-                          : "odd:bg-surface/40 hover:bg-surface"
+                          ? "bg-cream-200/80 shadow-xs border-foreground/20 font-medium"
+                          : "odd:bg-surface/30 hover:bg-cream-200/50"
                       }`}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="px-7 py-3.5 align-top">
+                        <td key={cell.id} className="px-7 py-3.5 align-middle">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       ))}
                     </tr>
                   )
                 })}
-                {!query.isLoading && data.length === 0 && (
-                  <tr>
-                    <td colSpan={columns.length} className="px-6 py-10 text-center text-sm text-muted-foreground">
-                      {deontic || status
-                        ? "No obligations match these filters. Try clearing them."
-                        : `No obligations were in force as of ${asOf}. Pick a later date (top right).`}
-                    </td>
-                  </tr>
-                )}
               </tbody>
             </table>
           )}
         </div>
       </div>
 
-      {/* Detail panel */}
+      {/* Detail Panel */}
       {selected && (
         <ObligationDetailPanel
           id={selected}
@@ -204,7 +273,7 @@ function Select({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="hairline rounded-md bg-surface px-3 py-2 text-sm text-foreground outline-none [color-scheme:light]"
+      className="rounded-xl border border-line bg-background px-3 py-1.5 text-xs text-foreground outline-none focus:border-foreground/40 transition-colors"
     >
       {options.map((o) => (
         <option key={o.value} value={o.value}>

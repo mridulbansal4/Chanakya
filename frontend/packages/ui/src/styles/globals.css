@@ -8,14 +8,13 @@
 @source "../**/*.{ts,tsx}";
 
 @theme inline {
-    /* CHANAKYA "Editorial" — high-contrast serif display, Inter UI, mono figures. */
+    /* CHANAKYA Enterprise OS — Material Design 3 (M3) & Color Psychology */
     --font-heading: var(--font-display);
     --font-display: var(--font-display);
     --font-sans: var(--font-sans);
     --font-mono: var(--font-mono);
 
-    /* Editorial palette — exposed as Tailwind utilities (bg-ink, text-on-ink,
-       bg-cream, border-line-dark, text-ok, bg-lavender, …). */
+    /* Enterprise Palette */
     --color-ink: var(--ink);
     --color-ink-800: var(--ink-800);
     --color-cream: var(--cream);
@@ -27,13 +26,12 @@
     --color-text-dim: var(--text-dim);
     --color-on-ink: var(--on-ink);
     --color-on-ink-dim: var(--on-ink-dim);
-    --color-lavender: var(--lavender);
+    --color-lavender: var(--steel-blue);
 
-    /* Status — used ONLY for state, never decoration. */
+    /* Psychological Status Indicators */
     --color-ok: var(--ok);
     --color-warn: var(--warn);
     --color-risk: var(--risk);
-    /* Back-compat aliases (existing components use verified/danger/brand). */
     --color-verified: var(--verified);
     --color-verified-foreground: var(--verified-foreground);
     --color-warn-foreground: var(--warn-foreground);
@@ -73,84 +71,74 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
+
+    --radius-sm: calc(var(--radius) * 0.5);
+    --radius-md: calc(var(--radius) * 0.75);
     --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-xl: calc(var(--radius) * 1.33);
+    --radius-2xl: calc(var(--radius) * 1.75);
     --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
-    --font-sans: var(--font-sans);
+
+    --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+    --shadow-card-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(37, 99, 235, 0.15);
 }
 
-/*
- * CHANAKYA "Editorial" — a single locked light palette: warm cream app
- * background, near-white data surfaces, near-black (--ink) nav/hero/feature
- * panels and primary buttons, ONE restrained soft-lavender accent. Colour is
- * either ink (brand/interactive), a neutral (cream/surface/line), or a status:
- * ok (green), warn (amber), risk (red). No blue/teal/neon, no gradients.
- */
-:root {
-    /* Editorial palette (locked) */
-    --ink: #141414;            /* near-black: nav/hero panels, dark cards, primary buttons */
-    --ink-800: #1E1E1E;        /* raised dark surfaces */
-    --cream: #EEEAE1;          /* warm cream: primary app background */
-    --cream-200: #E4DFD4;      /* cream borders / subtle fills on light */
-    --surface: #FAF8F4;        /* near-white data surfaces (tables, dense panels) */
-    --line: #DAD5CA;           /* hairline borders on light */
-    --line-dark: #2A2A2A;      /* hairline borders on dark panels */
-    --text: #141414;           /* primary text on light */
-    --text-dim: #6B675F;       /* secondary text on light */
-    --on-ink: #EEEAE1;         /* text on dark panels */
-    --on-ink-dim: #9A968D;     /* secondary text on dark panels */
-    --lavender: #C9C2F0;       /* soft lavender — the single, rare accent */
+/* Cosmic Studio 60-30-10 Enterprise Color Psychology (Dark Default) */
+:root, .dark {
+    --ink: #08090E;            /* 60% Dominant Obsidian Grounding Base */
+    --ink-800: #11131C;        /* 30% Structural Dark Slate Surface */
+    --cream: #08090E;          /* Main App Dark Canvas */
+    --cream-200: #1A1D2C;      /* Dark Hover Fill */
+    --surface: #11131C;        /* Enterprise Card Surface */
+    --line: #1E2235;           /* Precision Hairline Border */
+    --line-dark: #262C44;      /* Elevated Border */
+    --text: #F8FAFC;           /* WCAG AAA High Contrast White */
+    --text-dim: #94A3B8;       /* Slate Silver Secondary Text */
+    --on-ink: #F8FAFC;         /* Text on Dark */
+    --on-ink-dim: #64748B;     /* Muted Slate Text */
+    --steel-blue: #2563EB;     /* 10% Trust Blue Accent */
+    --lavender: #2563EB;       /* Trust Blue Back-compat */
 
-    /* Status — state only */
-    --ok: #3F7D5B;             /* satisfied / approved / signed */
-    --warn: #A66A12;           /* pending / needs-review */
-    --risk: #B4432E;           /* gap / prohibited / breach */
+    /* Psychological Status Indicators */
+    --ok: #10B981;             /* Emerald Compliance Verified */
+    --warn: #F59E0B;           /* Amber Caution Needed */
+    --risk: #EF4444;           /* Crimson Gap / Violation */
 
-    /* Surface + status back-compat aliases used across components */
     --surface-2: var(--cream-200);
     --verified: var(--ok);
     --verified-foreground: #FFFFFF;
     --warn-foreground: #FFFFFF;
     --danger: var(--risk);
     --danger-foreground: #FFFFFF;
-    --brand: var(--ink);
-    --brand-foreground: var(--on-ink);
+    --brand: var(--on-ink);
+    --brand-foreground: var(--ink);
 
-    /* Single soft card lift — never a heavy shadow or glow. */
-    --shadow-card: 0 1px 2px rgba(20, 20, 20, 0.05);
-
-    /* shadcn semantic tokens → editorial */
     --background: var(--cream);
-    --foreground: var(--ink);
+    --foreground: var(--text);
     --card: var(--surface);
-    --card-foreground: var(--ink);
+    --card-foreground: var(--text);
     --popover: var(--surface);
-    --popover-foreground: var(--ink);
-    --primary: var(--ink);
-    --primary-foreground: var(--on-ink);
+    --popover-foreground: var(--text);
+    --primary: #F8FAFC;
+    --primary-foreground: #08090E;
     --secondary: var(--cream-200);
-    --secondary-foreground: var(--ink);
+    --secondary-foreground: var(--text);
     --muted: var(--cream-200);
     --muted-foreground: var(--text-dim);
-    --accent: var(--cream-200);      /* shadcn hover fill = cream, NOT lavender */
-    --accent-foreground: var(--ink);
+    --accent: var(--cream-200);
+    --accent-foreground: var(--text);
     --destructive: var(--risk);
     --border: var(--line);
     --input: var(--line);
-    --ring: var(--ink);
+    --ring: var(--steel-blue);
 
-    /* Graph / chart ramp — ink + status neutrals, no neon. */
-    --chart-1: var(--ink);
+    --chart-1: var(--primary);
     --chart-2: var(--ok);
     --chart-3: var(--warn);
     --chart-4: var(--risk);
     --chart-5: var(--text-dim);
 
-    --radius: 0.75rem;         /* 12px — the one radius */
+    --radius: 0.85rem;
 
     --sidebar: var(--ink);
     --sidebar-foreground: var(--on-ink);
@@ -165,107 +153,147 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
-  /* Projector scale — the whole design system is rem-based, so lifting the root
-     size scales type, spacing, paddings and component sizing together (~+12.5%),
-     keeping every proportion identical but comfortably readable from 8–10 ft. */
+  }
   html {
-    font-size: 112.5%;
-    }
+    font-size: 100%;
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
   body {
-    @apply bg-background text-foreground;
-    /* Density over whitespace where it counts; crisp text rendering. */
-    font-feature-settings: "cv01", "ss01";
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv01", "ss01", "cv11", "tnum";
     line-height: 1.55;
-    }
-  /* Editorial serif display for headings — large, generous, high-contrast. */
-  h1, h2, h3 {
+    background-color: var(--cream);
+    color: var(--text);
+  }
+  ::selection {
+    background-color: #2563EB;
+    color: #FFFFFF;
+  }
+  h1, h2, h3, h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.01em;
-    }
-  /* Clause ids, PAN, deadlines, figures: mono with TABULAR figures so
-     columns of numbers align. Apply with class="font-mono" or .tnum. */
+    letter-spacing: -0.025em;
+    font-weight: 700;
+  }
   .font-mono, code, kbd, samp, pre {
     font-variant-numeric: tabular-nums;
-    }
+  }
   .tnum {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
-    }
-  /* Hairline utility — 1px lines, near-flat. */
+  }
   .hairline {
     border: 1px solid var(--line);
-    }
-  /* Small ALL-CAPS Inter section eyebrow. */
+  }
   .eyebrow {
     font-family: var(--font-sans);
-    font-size: 0.72rem;
-    font-weight: 500;
+    font-size: 0.68rem;
+    font-weight: 700;
     line-height: 1;
-    letter-spacing: 0.13em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--text-dim);
-    }
+  }
   button, a, [role="button"], [role="link"], select, input[type="submit"], input[type="button"], input[type="reset"] {
     cursor: pointer;
   }
 }
 
-/*
- * Accessibility (unlayered so these beat Tailwind's layered utilities, including
- * `outline-none` on custom-styled controls).
- */
+/* Material Design 3 (M3) Type Scale Utilities */
+.text-display-lg { font-family: var(--font-display); font-size: 3.5rem; line-height: 4rem; font-weight: 800; letter-spacing: -0.03em; }
+.text-display-md { font-family: var(--font-display); font-size: 2.8rem; line-height: 3.25rem; font-weight: 800; letter-spacing: -0.025em; }
+.text-display-sm { font-family: var(--font-display); font-size: 2.25rem; line-height: 2.75rem; font-weight: 700; letter-spacing: -0.02em; }
 
-/* Always show a visible focus ring for keyboard users. */
-:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-  border-radius: 3px;
+.text-headline-lg { font-family: var(--font-display); font-size: 2rem; line-height: 2.5rem; font-weight: 700; letter-spacing: -0.02em; }
+.text-headline-md { font-family: var(--font-display); font-size: 1.75rem; line-height: 2.25rem; font-weight: 700; letter-spacing: -0.015em; }
+.text-headline-sm { font-family: var(--font-display); font-size: 1.5rem; line-height: 2rem; font-weight: 600; letter-spacing: -0.01em; }
+
+.text-title-lg { font-family: var(--font-sans); font-size: 1.375rem; line-height: 1.75rem; font-weight: 600; }
+.text-title-md { font-family: var(--font-sans); font-size: 1rem; line-height: 1.5rem; font-weight: 600; }
+.text-title-sm { font-family: var(--font-sans); font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; }
+
+.text-body-lg { font-family: var(--font-sans); font-size: 1rem; line-height: 1.5rem; font-weight: 400; }
+.text-body-md { font-family: var(--font-sans); font-size: 0.875rem; line-height: 1.25rem; font-weight: 400; }
+.text-body-sm { font-family: var(--font-sans); font-size: 0.75rem; line-height: 1rem; font-weight: 400; }
+
+.text-label-lg { font-family: var(--font-sans); font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; letter-spacing: 0.01em; }
+.text-label-md { font-family: var(--font-sans); font-size: 0.75rem; line-height: 1rem; font-weight: 600; letter-spacing: 0.04em; }
+.text-label-sm { font-family: var(--font-sans); font-size: 0.6875rem; line-height: 1rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* Enterprise Card Elevation */
+.card-3d {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-3d:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 20px rgba(37, 99, 235, 0.15);
+  border-color: rgba(37, 99, 235, 0.4);
 }
 
-/* Respect the user's reduced-motion preference — kills the blast-radius edge
-   animation, ping/spin, and transitions. */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
+/* Custom Dark Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
 }
 
-/*
- * React Flow zoom / fit-view controls. The library's default styling is a
- * light chip with near-black icons; restyle into visible hairline surface
- * buttons that read on our editorial canvas. Unlayered + !important so these
- * beat the imported @xyflow/react/dist/style.css.
- */
+/* React Flow Controls (+ / -) */
 .react-flow__controls {
-  border: 1px solid var(--line) !important;
-  border-radius: 8px;
+  border: 1px solid #1E2235 !important;
+  border-radius: 12px !important;
   overflow: hidden;
-  box-shadow: var(--shadow-card) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
+  background: #11131C !important;
+  padding: 3px;
 }
 .react-flow__controls-button {
-  width: 28px !important;
-  height: 28px !important;
-  background: var(--surface) !important;
-  border-bottom: 1px solid var(--line) !important;
-  color: var(--ink) !important;
+  width: 32px !important;
+  height: 32px !important;
+  background: #11131C !important;
+  border-bottom: 1px solid #1E2235 !important;
+  border-radius: 8px !important;
+  color: #F8FAFC !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 .react-flow__controls-button:last-child {
   border-bottom: none !important;
 }
 .react-flow__controls-button:hover {
-  background: var(--cream-200) !important;
+  background: #1A1D2C !important;
+  color: #2563EB !important;
 }
 .react-flow__controls-button svg {
-  fill: var(--ink) !important;
-  max-width: 14px;
-  max-height: 14px;
+  fill: #F8FAFC !important;
+  stroke: #F8FAFC !important;
+  color: #F8FAFC !important;
+  width: 14px !important;
+  height: 14px !important;
 }
 .react-flow__controls-button:disabled svg {
-  fill: var(--text-dim) !important;
+  fill: #64748B !important;
+  stroke: #64748B !important;
+}
+
+/* Completely Hide React Flow MiniMap & Next.js Dev Badge Overlay */
+.react-flow__minimap {
+  display: none !important;
+}
+
+nextjs-portal, [data-nextjs-toast], [data-nextjs-dialog-overlay], [nextjs-toast], [class*="nextjs-toast"] {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
 }

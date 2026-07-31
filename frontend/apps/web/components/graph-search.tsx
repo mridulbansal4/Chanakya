@@ -5,54 +5,123 @@ import { Panel, useReactFlow } from "@xyflow/react"
 import { Search } from "lucide-react"
 
 /**
- * GraphSearch lets a user jump to a node by clause number or heading text on a
- * large graph. It centers the viewport on the first match. Must be rendered as
- * a child of <ReactFlow>.
+ * GraphSearch provides instant, ultra-fast jump-to-node search on graph canvases.
+ * - Enter / Live Search: Fast zoom-in to target node with glowing halo.
+ * - Backspace / Empty: Guaranteed zoom-out reset to fit full graph.
  */
-export function GraphSearch({ placeholder = "Find a clause…" }: { placeholder?: string }) {
+export function GraphSearch({ placeholder = "Find a clause or obligation…" }: { placeholder?: string }) {
   const rf = useReactFlow()
   const [q, setQ] = React.useState("")
   const [miss, setMiss] = React.useState(false)
 
-  const find = () => {
-    const term = q.trim().toLowerCase()
-    if (!term) return
-    const match = rf.getNodes().find((n) => {
-      const d = n.data as Record<string, unknown>
-      return [d.label, d.sublabel, d.ref]
-        .map((v) => String(v ?? "").toLowerCase())
-        .some((s) => s.includes(term))
+  // Guaranteed zoom-out reset to fit the whole graph
+  const resetToDefaultZoom = React.useCallback(() => {
+    setMiss(false)
+    rf.setNodes((nodes) => nodes.map((n) => ({ ...n, selected: false })))
+
+    // Execute fitView after React Flow processes node unselection
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const allNodes = rf.getNodes()
+        rf.fitView({
+          nodes: allNodes,
+          duration: 300,
+          padding: 0.15,
+        })
+      }, 40)
     })
-    if (match) {
-      setMiss(false)
-      rf.setCenter(match.position.x + 70, match.position.y + 20, {
-        zoom: 1.4,
-        duration: 500,
+  }, [rf])
+
+  const findNode = React.useCallback(
+    (searchTerm: string) => {
+      const term = searchTerm.trim().toLowerCase()
+      if (!term) {
+        resetToDefaultZoom()
+        return
+      }
+
+      const allNodes = rf.getNodes()
+      const match = allNodes.find((n) => {
+        const d = (n.data as Record<string, unknown>) ?? {}
+        const fields = [
+          n.id,
+          d.label,
+          d.sublabel,
+          d.ref,
+          d.rawLabel,
+          d.rawSublabel,
+        ]
+        return fields
+          .map((v) => String(v ?? "").toLowerCase())
+          .some((s) => s.includes(term))
       })
+
+      if (match) {
+        setMiss(false)
+
+        // Highlight matching node with glowing selection halo
+        rf.setNodes((nodes) =>
+          nodes.map((n) => ({
+            ...n,
+            selected: n.id === match.id,
+          }))
+        )
+
+        // Calculate node center coordinates
+        const nodeWidth = (match.width as number) || (match.measured?.width as number) || 250
+        const nodeHeight = (match.height as number) || (match.measured?.height as number) || 52
+        const centerX = match.position.x + nodeWidth / 2
+        const centerY = match.position.y + nodeHeight / 2
+
+        // Fast camera glide centered on target node
+        requestAnimationFrame(() => {
+          rf.setCenter(centerX, centerY, {
+            zoom: 1.6,
+            duration: 300,
+          })
+        })
+      } else {
+        setMiss(true)
+      }
+    },
+    [rf, resetToDefaultZoom]
+  )
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    setQ(val)
+
+    if (val.trim() === "") {
+      resetToDefaultZoom()
     } else {
-      setMiss(true)
+      findNode(val)
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      findNode(q)
+    } else if (e.key === "Backspace" && (q.length <= 1 || q.trim() === "")) {
+      resetToDefaultZoom()
     }
   }
 
   return (
-    <Panel position="top-right" className="!m-2">
+    <Panel position="top-right" className="!m-4">
       <div
-        className={`flex items-center gap-1.5 rounded-2xl border bg-white/35 px-2.5 py-1.5 shadow-[0_8px_30px_rgba(20,20,20,0.12)] backdrop-blur-xl backdrop-saturate-150 ${
-          miss ? "border-danger/60" : "border-white/60"
+        className={`flex items-center gap-2.5 rounded-2xl border bg-[#12141C]/95 px-4 py-2.5 shadow-2xl backdrop-blur-2xl transition-all ${
+          miss
+            ? "border-red-500/80 ring-2 ring-red-500/30"
+            : "border-white/15 focus-within:border-blue-500/80 focus-within:ring-2 focus-within:ring-blue-500/30"
         }`}
       >
-        <Search className="size-3 text-text-dim" aria-hidden />
+        <Search className="size-4 text-slate-400 shrink-0" aria-hidden />
         <input
           value={q}
-          onChange={(e) => {
-            setQ(e.target.value)
-            setMiss(false)
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") find()
-          }}
+          onChange={handleSearchChange}
+          onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-36 bg-transparent text-xs text-foreground outline-none placeholder:text-muted-foreground"
+          className="w-56 bg-transparent text-xs font-semibold text-white outline-none placeholder:text-slate-400"
         />
       </div>
     </Panel>

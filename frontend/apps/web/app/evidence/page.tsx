@@ -2,11 +2,13 @@
 
 import type { ReactNode } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { FileWarning, Lock } from "lucide-react"
+import { FileWarning, Lock, ShieldAlert, CheckCircle2, Ticket } from "lucide-react"
 
 import { useAsOf } from "@/components/as-of-provider"
 import { DeonticBadge } from "@/components/badges"
 import { PageHeader } from "@/components/page-header"
+import { SkeletonRows, CardSkeleton } from "@/components/skeleton"
+import { EmptyState } from "@/components/empty-state"
 import { formatDeadline } from "@/lib/format"
 import {
   getEvidenceMap,
@@ -29,39 +31,46 @@ export default function EvidencePage() {
   const em = evidence.data
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full bg-background">
       {/* Left: evidence mapping */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col border-r border-line">
         <PageHeader
           eyebrow="Evidence & Gaps"
-          title="Evidence coverage"
-          description="Which obligations are backed by evidence from your firm's read-only systems, and where the gaps are. Each gap becomes a draft remediation ticket."
+          title="Evidence Coverage Matrix"
+          description="Real-time map linking regulatory obligations to read-only enterprise data connectors. Evidence gaps automatically generate remediation tickets."
         />
+
         {/* Summary strip */}
         <section className="grid grid-cols-3 gap-px border-b border-line bg-line">
-          <Stat label="Satisfied" value={em?.satisfied ?? "—"} tone="verified" />
-          <Stat label="Gaps" value={em?.gaps ?? "—"} tone={em?.gaps ? "danger" : "default"} />
-          <Stat label="Read-only sources" value={em?.sources.length ?? "—"} />
+          <Stat label="Satisfied Obligations" value={em?.satisfied ?? "—"} tone="verified" />
+          <Stat label="Remediation Gaps" value={em?.gaps ?? "—"} tone={em?.gaps ? "danger" : "default"} />
+          <Stat label="Connected Systems" value={em?.sources.length ?? "—"} />
         </section>
 
         <div className="min-h-0 flex-1 overflow-auto">
           {evidence.isError ? (
-            <div className="p-6 text-sm text-danger">
-              Couldn&apos;t reach the backend. Make sure the API is running on
-              port 8080, then refresh.
-            </div>
+            <EmptyState
+              icon="alert"
+              title="Backend Connection Error"
+              description="Could not load evidence mapping. Please ensure backend is running on port 8080."
+              primaryAction={{ label: "Retry", onClick: () => evidence.refetch() }}
+            />
           ) : evidence.isLoading ? (
-            <div className="p-6 text-sm text-muted-foreground">
-              Checking your evidence coverage…
-            </div>
+            <SkeletonRows rows={8} cols={5} />
+          ) : (em?.obligations ?? []).length === 0 ? (
+            <EmptyState
+              icon="inbox"
+              title="No Evidence Requirements"
+              description={`No active obligations requiring evidence as of ${asOf}.`}
+            />
           ) : (
             <table className="w-full border-collapse text-sm">
-              <thead className="sticky top-0 bg-surface">
-                <tr className="border-b border-line text-[11px] tracking-wide text-muted-foreground uppercase">
+              <thead className="sticky top-0 bg-surface/95 backdrop-blur-md shadow-xs z-10">
+                <tr className="border-b border-line text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                   <Th>Clause</Th>
-                  <Th>Obligation type</Th>
-                  <Th>Control</Th>
-                  <Th>Evidence (read-only source)</Th>
+                  <Th>Obligation Type</Th>
+                  <Th>Control Enforceable</Th>
+                  <Th>Read-Only System Source</Th>
                   <Th>Status</Th>
                 </tr>
               </thead>
@@ -76,14 +85,14 @@ export default function EvidencePage() {
 
         {/* Read-only sources footer */}
         {em && (
-          <div className="flex flex-wrap items-center gap-2 border-t border-line px-6 py-2.5 text-xs">
-            <span className="inline-flex items-center gap-1 text-muted-foreground">
-              <Lock className="size-3" /> Connectors are read-only:
+          <div className="flex flex-wrap items-center gap-2 border-t border-line bg-surface/80 px-6 py-3 text-xs">
+            <span className="inline-flex items-center gap-1.5 font-semibold text-text-dim">
+              <Lock className="size-3.5 text-ok" /> Enterprise Connectors (Read-Only):
             </span>
             {em.sources.map((s) => (
               <span
                 key={s.id}
-                className="hairline tnum rounded bg-surface px-2 py-0.5 text-muted-foreground"
+                className="tnum rounded-lg border border-line bg-background px-2.5 py-1 font-mono text-xs text-foreground shadow-2xs"
               >
                 {s.source_system}
               </span>
@@ -93,50 +102,68 @@ export default function EvidencePage() {
       </div>
 
       {/* Right: draft tickets */}
-      <aside className="flex w-[380px] shrink-0 flex-col border-l border-line bg-surface">
-        <header className="flex items-center justify-between border-b border-line px-4 py-3">
-          <span className="inline-flex items-center gap-2 text-xs tracking-wide text-muted-foreground uppercase">
-            <FileWarning className="size-3.5 text-warn" />
-            Draft remediation tickets
+      <aside className="flex w-[400px] shrink-0 flex-col bg-surface/60">
+        <header className="flex items-center justify-between border-b border-line px-5 py-4 bg-surface">
+          <span className="inline-flex items-center gap-2 text-xs font-bold tracking-wider text-foreground uppercase">
+            <Ticket className="size-4 text-warn" />
+            Draft Remediation Tickets
           </span>
-          <span className="tnum text-xs text-muted-foreground">
+          <span className="tnum rounded-full bg-warn/15 border border-warn/30 px-2.5 py-0.5 text-xs font-bold text-warn">
             {tickets.data?.count ?? 0}
           </span>
         </header>
-        <div className="min-h-0 flex-1 overflow-auto p-4">
-          <p className="mb-3 text-[11px] text-muted-foreground">
-            Drafted for each gap. CHANAKYA never files these into a firm system.
+
+        <div className="min-h-0 flex-1 overflow-auto p-5 space-y-3">
+          <p className="text-xs text-text-dim leading-relaxed">
+            Automatically generated for compliance gaps. CHANAKYA prepares these draft tickets without modifying external systems.
           </p>
-          <ul className="space-y-2">
-            {(tickets.data?.tickets ?? []).map((t) => (
-              <li key={t.id} className="hairline rounded-md bg-background p-3 text-xs">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="tnum text-primary">{t.clause_ref}</span>
-                  <span className="rounded border border-warn/40 px-1.5 py-0.5 text-[10px] font-medium text-warn uppercase">
-                    {t.state}
-                  </span>
-                </div>
-                <p className="mt-1 font-medium text-foreground">{t.title}</p>
-                <dl className="mt-1.5 space-y-0.5 text-muted-foreground">
-                  <div className="flex gap-2">
-                    <dt>Owner</dt>
-                    <dd className="text-foreground">{t.owner}</dd>
+
+          {tickets.isLoading ? (
+            Array.from({ length: 3 }).map((_, i) => <CardSkeleton key={i} />)
+          ) : (tickets.data?.tickets ?? []).length === 0 ? (
+            <div className="p-8 text-center text-xs text-text-dim border border-dashed border-line rounded-2xl">
+              No remediation tickets required.
+            </div>
+          ) : (
+            <ul className="space-y-3">
+              {(tickets.data?.tickets ?? []).map((t) => (
+                <li
+                  key={t.id}
+                  className="rounded-2xl border border-line bg-surface p-4 text-xs shadow-xs transition-all hover:shadow-md hover:border-foreground/30 hover:-translate-y-0.5 space-y-2"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="tnum font-bold text-primary bg-cream-200/80 px-2 py-0.5 rounded-md">
+                      Clause {t.clause_ref}
+                    </span>
+                    <span className="rounded-full border border-warn/40 bg-warn/10 px-2 py-0.5 text-[10px] font-bold text-warn uppercase">
+                      {t.state}
+                    </span>
                   </div>
-                  {t.deadline && (
-                    <div className="flex gap-2">
-                      <dt>Deadline</dt>
-                      <dd className="text-foreground" title={t.deadline}>
-                        {formatDeadline(t.deadline)}
-                      </dd>
+
+                  <p className="font-semibold text-foreground text-sm leading-snug">{t.title}</p>
+
+                  <dl className="space-y-1 text-text-dim">
+                    <div className="flex justify-between">
+                      <dt className="text-text-dim">Owner:</dt>
+                      <dd className="font-medium text-foreground">{t.owner}</dd>
                     </div>
-                  )}
-                </dl>
-                <blockquote className="mt-2 border-l-2 border-line pl-2 text-[11px] leading-snug text-muted-foreground">
-                  {t.citation}
-                </blockquote>
-              </li>
-            ))}
-          </ul>
+                    {t.deadline && (
+                      <div className="flex justify-between">
+                        <dt className="text-text-dim">Deadline:</dt>
+                        <dd className="tnum font-medium text-foreground" title={t.deadline}>
+                          {formatDeadline(t.deadline)}
+                        </dd>
+                      </div>
+                    )}
+                  </dl>
+
+                  <blockquote className="border-l-2 border-line pl-2.5 text-[11px] leading-relaxed text-text-dim italic">
+                    {t.citation}
+                  </blockquote>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </aside>
     </div>
@@ -146,49 +173,51 @@ export default function EvidencePage() {
 function EvidenceRow({ o }: { o: ObligationEvidence }) {
   return (
     <tr
-      className={`border-b border-line/60 transition-colors ${
-        o.satisfied ? "odd:bg-surface/40 hover:bg-surface" : "bg-danger/5"
+      className={`border-b border-line/60 transition-all duration-150 ${
+        o.satisfied ? "odd:bg-surface/30 hover:bg-cream-200/40" : "bg-risk/5 hover:bg-risk/10"
       }`}
     >
-      <td className="px-6 py-2.5 align-top">
-        <span className="tnum text-primary">{o.clause_ref}</span>
-        <div className="text-xs text-muted-foreground">{o.clause_heading}</div>
+      <td className="px-6 py-3.5 align-top">
+        <span className="tnum font-bold text-primary bg-cream-200/80 px-2 py-0.5 rounded-md">
+          {o.clause_ref}
+        </span>
+        <div className="mt-1 text-xs text-text-dim line-clamp-1 max-w-xs">{o.clause_heading}</div>
       </td>
-      <td className="px-6 py-2.5 align-top">
+      <td className="px-6 py-3.5 align-top">
         <DeonticBadge deontic={o.deontic_type} />
       </td>
-      <td className="px-6 py-2.5 align-top text-muted-foreground">
+      <td className="px-6 py-3.5 align-top text-text-dim font-medium">
         {o.controls.length ? (
           o.controls.join(", ")
         ) : (
-          <span className="text-risk">No control mapped</span>
+          <span className="text-risk font-semibold text-xs">No control mapped</span>
         )}
       </td>
-      <td className="px-6 py-2.5 align-top">
+      <td className="px-6 py-3.5 align-top">
         {o.evidence.length ? (
-          <div className="space-y-0.5">
+          <div className="space-y-1">
             {o.evidence.map((e) => (
-              <div key={e.id} className="text-foreground">
+              <div key={e.id} className="text-foreground font-medium">
                 {e.name}{" "}
-                <span className="tnum text-xs text-muted-foreground">({e.source_system})</span>
+                <span className="tnum text-xs text-text-dim">({e.source_system})</span>
               </div>
             ))}
           </div>
         ) : (
-          <span className="text-risk">No evidence yet</span>
+          <span className="text-risk font-semibold text-xs">No evidence source</span>
         )}
       </td>
-      <td className="px-6 py-2.5 align-top">
+      <td className="px-6 py-3.5 align-top">
         {o.satisfied ? (
-          <span className="rounded border border-verified/40 px-1.5 py-0.5 text-[10px] font-medium text-verified">
-            Satisfied
+          <span className="inline-flex items-center gap-1 rounded-full border border-ok/40 bg-ok/10 px-2.5 py-0.5 text-xs font-bold text-ok">
+            <CheckCircle2 className="size-3" /> Satisfied
           </span>
         ) : (
           <span
-            className="rounded border border-danger/40 px-1.5 py-0.5 text-[10px] font-medium text-danger"
+            className="inline-flex items-center gap-1 rounded-full border border-risk/40 bg-risk/10 px-2.5 py-0.5 text-xs font-bold text-risk"
             title={o.gap_reason}
           >
-            Gap
+            <ShieldAlert className="size-3" /> Gap
           </span>
         )}
       </td>
@@ -206,15 +235,15 @@ function Stat({
   tone?: "default" | "verified" | "danger"
 }) {
   const color =
-    tone === "verified" ? "text-verified" : tone === "danger" ? "text-danger" : "text-foreground"
+    tone === "verified" ? "text-ok" : tone === "danger" ? "text-risk" : "text-foreground"
   return (
-    <div className="bg-background px-5 py-3">
-      <div className="text-[11px] tracking-wide text-muted-foreground uppercase">{label}</div>
-      <div className={`tnum mt-1 text-2xl ${color}`}>{value}</div>
+    <div className="bg-surface px-6 py-4">
+      <div className="eyebrow">{label}</div>
+      <div className={`tnum font-display mt-1 text-2xl font-bold ${color}`}>{value}</div>
     </div>
   )
 }
 
 function Th({ children }: { children: ReactNode }) {
-  return <th className="px-6 py-2 text-left font-medium">{children}</th>
+  return <th className="px-6 py-3 text-left font-semibold">{children}</th>
 }

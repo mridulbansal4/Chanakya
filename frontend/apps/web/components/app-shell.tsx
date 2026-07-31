@@ -5,18 +5,24 @@ import type { ReactNode } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
+import { motion } from "framer-motion"
 
 import { AsOfControl } from "@/components/as-of-control"
 import { HelpMenu } from "@/components/help-menu"
 import { ScreenBanner } from "@/components/screen-banner"
 import { WelcomeModal } from "@/components/welcome-modal"
 import { GlossaryModal } from "@/components/glossary-modal"
+import { CommandPalette } from "@/components/command-palette"
+import { PageTransition } from "@/components/page-transition"
 import { useAsOf } from "@/components/as-of-provider"
 import { getReviewQueue } from "@/lib/api"
 import { cn } from "@workspace/ui/lib/utils"
 
-// Demo persona + firm, so the app reads like a real deployment.
-const OFFICER = { name: "Priya Menon", role: "Compliance Officer", firm: "Acme Investment Advisers" }
+const OFFICER = {
+  name: "Priya Menon",
+  role: "Compliance Officer",
+  firm: "Acme Investment Advisers",
+}
 
 const NAV = [
   { href: "/", label: "Overview", hint: "Your compliance dashboard at a glance." },
@@ -30,7 +36,6 @@ const NAV = [
   { href: "/feed", label: "Feed", hint: "The machine-readable feed a regulator's systems can consume." },
 ]
 
-// Plain-language purpose of each screen, shown as a dismissible banner.
 const BANNER: Record<string, ReactNode> = {
   "/": "Your compliance posture at a glance. Start with what needs your attention, then explore the live obligation graph below.",
   "/regulatory-feed": "CHANAKYA monitors SEBI for new circulars. Process the new MITC amendment to see the full lifecycle — diff, obligations, blast radius, workflows, approval, evidence, and an audit pack.",
@@ -49,12 +54,6 @@ function bannerFor(pathname: string): { id: string; text: ReactNode } | null {
   return text ? { id: key, text } : null
 }
 
-/**
- * AppShell is the persistent chrome: wordmark, primary nav (with a live Review
- * Queue count badge), the global as-of control, the health indicator, and a
- * per-screen context banner. It is a fixed-height flex column so full-height
- * pages (the graphs) and scrolling pages both work inside <main>.
- */
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const { asOf } = useAsOf()
@@ -65,7 +64,6 @@ export function AppShell({ children }: { children: ReactNode }) {
     select: (d) => d.count,
   })
 
-  // First-run welcome tour (skippable, re-openable from the help menu).
   const [welcomeOpen, setWelcomeOpen] = React.useState(false)
   const [glossaryOpen, setGlossaryOpen] = React.useState(false)
   React.useEffect(() => {
@@ -81,49 +79,65 @@ export function AppShell({ children }: { children: ReactNode }) {
   const banner = bannerFor(pathname)
 
   return (
-    <div className="flex h-svh flex-col overflow-hidden">
-      <header className="grid h-14 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 bg-ink px-6 text-on-ink">
-        <div className="flex items-center gap-2">
-          <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.svg" alt="CHANAKYA Logo" className="h-6 w-auto" />
-            <span className="font-display text-xl leading-none tracking-tight text-on-ink">
+    <div className="flex h-svh flex-col overflow-hidden bg-background text-foreground">
+      <header className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 bg-[#090A0F]/95 px-4 lg:px-6 text-white shadow-xl backdrop-blur-xl z-30 gap-3">
+        {/* Brand wordmark */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <img src="/logo.svg" alt="CHANAKYA Logo" className="h-6 w-auto transition-transform group-hover:scale-105" />
+            <span className="font-display text-lg lg:text-xl leading-none tracking-tight text-white font-bold">
               CHANAKYA
+            </span>
+            <span className="hidden sm:inline-block rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[9px] font-mono tracking-widest text-slate-300 uppercase">
+              SUPTECH OS
             </span>
           </Link>
         </div>
-        <nav className="flex items-center justify-center gap-1 text-sm">
-            {NAV.map((item) => {
-              const active =
-                item.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.href)
-              const badge =
-                item.href === "/review" && (reviewCount.data ?? 0) > 0
-                  ? reviewCount.data
-                  : null
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  title={item.hint}
-                  className={cn(
-                    "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 transition-colors",
-                    active
-                      ? "bg-on-ink/12 text-on-ink"
-                      : "text-on-ink-dim hover:bg-on-ink/8 hover:text-on-ink",
-                  )}
-                >
-                  {item.label}
-                  {badge != null && (
-                    <span className="tnum inline-flex min-w-4 items-center justify-center rounded-full bg-warn px-1 text-[10px] font-medium text-white">
-                      {badge}
-                    </span>
-                  )}
-                </Link>
-              )
-            })}
+
+        {/* Navigation Tabs */}
+        <nav className="flex min-w-0 flex-1 items-center justify-center gap-1 text-xs overflow-x-auto no-scrollbar py-1 px-2">
+          {NAV.map((item) => {
+            const active =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.href)
+            const badge =
+              item.href === "/review" && (reviewCount.data ?? 0) > 0
+                ? reviewCount.data
+                : null
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                title={item.hint}
+                className={cn(
+                  "relative inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs transition-all duration-150 whitespace-nowrap shrink-0",
+                  active
+                    ? "text-white font-semibold"
+                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                )}
+              >
+                {active && (
+                  <motion.div
+                    layoutId="activeNavTab"
+                    className="absolute inset-0 rounded-full bg-blue-600/30 border border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{item.label}</span>
+                {badge != null && (
+                  <span className="relative z-10 tnum inline-flex min-w-4 items-center justify-center rounded-full bg-amber-500 px-1.5 py-0.2 text-[10px] font-extrabold text-black shadow-sm">
+                    {badge}
+                  </span>
+                )}
+              </Link>
+            )
+          })}
         </nav>
-        <div className="flex items-center justify-end gap-3">
+
+        {/* Action Controls */}
+        <div className="flex items-center justify-end gap-2.5 shrink-0">
+          <CommandPalette />
           <AsOfControl />
           <HelpMenu
             onTour={() => setWelcomeOpen(true)}
@@ -131,9 +145,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           />
           <div
             title={`${OFFICER.name} · ${OFFICER.role} · ${OFFICER.firm}`}
-            className="hidden size-8 place-items-center rounded-md border border-line-dark bg-ink-800 md:grid"
+            className="hidden size-8 place-items-center rounded-full border border-white/15 bg-white/5 md:grid shadow-inner cursor-pointer hover:border-white/40 transition-all"
           >
-            <span className="grid size-6 place-items-center rounded-full bg-on-ink/15 text-[11px] font-medium text-on-ink">
+            <span className="grid size-7 place-items-center rounded-full bg-white/10 text-[11px] font-bold text-white">
               {OFFICER.name
                 .split(" ")
                 .map((w) => w[0])
@@ -145,7 +159,9 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       {banner && <ScreenBanner id={banner.id}>{banner.text}</ScreenBanner>}
 
-      <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
+      <main className="min-h-0 flex-1 overflow-y-auto bg-background">
+        <PageTransition key={pathname}>{children}</PageTransition>
+      </main>
 
       {welcomeOpen && <WelcomeModal onClose={closeWelcome} />}
       {glossaryOpen && <GlossaryModal onClose={() => setGlossaryOpen(false)} />}

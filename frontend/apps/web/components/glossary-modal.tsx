@@ -1,8 +1,9 @@
 "use client"
 
-import { X } from "lucide-react"
+import { X, BookOpen } from "lucide-react"
 
 import { useDialog } from "@/components/use-dialog"
+import { Button } from "@workspace/ui/components/button"
 
 const TERMS: Array<{ term: string; def: string }> = [
   {
@@ -50,34 +51,42 @@ const TERMS: Array<{ term: string; def: string }> = [
 export function GlossaryModal({ onClose }: { onClose: () => void }) {
   const dialogRef = useDialog<HTMLDivElement>(onClose)
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-background/70 p-4">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 backdrop-blur-sm p-4">
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label="Glossary — in plain English"
         tabIndex={-1}
-        className="hairline flex max-h-[85vh] w-[560px] max-w-full flex-col overflow-hidden rounded-lg bg-surface outline-none"
+        className="flex max-h-[85vh] w-[580px] max-w-full flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl outline-none"
       >
-        <header className="flex items-center justify-between border-b border-line px-5 py-3">
-          <h2 className="font-display text-lg">Glossary — in plain English</h2>
+        <header className="flex items-center justify-between border-b border-line px-6 py-4 bg-surface">
+          <div className="flex items-center gap-2.5">
+            <BookOpen className="size-5 text-brand" />
+            <h2 className="font-display text-lg font-bold">Glossary — Plain English Guide</h2>
+          </div>
           <button
             type="button"
             onClick={onClose}
-            className="text-muted-foreground hover:text-foreground"
+            className="rounded-lg p-1 text-text-dim hover:text-foreground hover:bg-cream-200/60 transition-colors"
             aria-label="Close"
           >
-            <X className="size-4" />
+            <X className="size-5" />
           </button>
         </header>
-        <dl className="min-h-0 flex-1 space-y-4 overflow-auto p-5 text-sm">
+        <dl className="min-h-0 flex-1 space-y-4 overflow-auto p-6 text-sm divide-y divide-line/40">
           {TERMS.map((t) => (
-            <div key={t.term}>
-              <dt className="font-medium text-foreground">{t.term}</dt>
-              <dd className="mt-0.5 leading-relaxed text-muted-foreground">{t.def}</dd>
+            <div key={t.term} className="pt-3 first:pt-0 space-y-1">
+              <dt className="font-semibold text-foreground text-xs uppercase tracking-wide font-sans">{t.term}</dt>
+              <dd className="leading-relaxed text-text-dim text-xs">{t.def}</dd>
             </div>
           ))}
         </dl>
+        <footer className="border-t border-line px-6 py-3 bg-surface flex justify-end">
+          <Button variant="default" size="sm" onClick={onClose}>
+            Close
+          </Button>
+        </footer>
       </div>
     </div>
   )

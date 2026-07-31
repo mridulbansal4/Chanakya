@@ -11,31 +11,32 @@ export interface LegendItem {
 }
 
 /**
- * GraphLegend overlays a compact key on a React Flow canvas so a non-engineer
- * can decode node colours/types and edge meanings without help.
+ * GraphLegend overlays a high-contrast minimalist key on the graph.
  */
 export function GraphLegend({ items }: { items: LegendItem[] }) {
   return (
-    <Panel position="top-left" className="!m-2">
-      <div className="rounded-2xl border border-white/60 bg-white/35 px-3 py-2.5 text-[10px] shadow-[0_8px_30px_rgba(20,20,20,0.12)] backdrop-blur-xl backdrop-saturate-150">
-        <div className="mb-1.5 tracking-wide text-text-dim uppercase">Legend</div>
-        <ul className="space-y-1">
+    <Panel position="top-left" className="!m-0 !mt-16 !ml-6">
+      <div className="w-56 rounded-2xl border border-white/15 bg-[#12141C]/95 px-4 py-3 text-xs text-white shadow-2xl backdrop-blur-2xl space-y-2">
+        <div className="text-[10px] font-mono font-bold tracking-widest text-slate-400 uppercase">
+          Graph Legend
+        </div>
+        <ul className="space-y-1.5">
           {items.map((it) => (
-            <li key={it.label} className="flex items-center gap-1.5">
+            <li key={it.label} className="flex items-center gap-2.5">
               {it.line ? (
                 <span
-                  className="inline-block h-0 w-3.5"
+                  className="inline-block h-0 w-4"
                   style={{
                     borderTop: `2px ${it.dashed ? "dashed" : "solid"} ${it.color}`,
                   }}
                 />
               ) : (
                 <span
-                  className="inline-block h-2.5 w-2.5 rounded-sm"
-                  style={{ background: it.color + "22", border: `1px solid ${it.color}` }}
+                  className="inline-block size-3 rounded-md shadow-xs"
+                  style={{ background: it.color, border: `1px solid ${it.color}` }}
                 />
               )}
-              <span className="text-muted-foreground">{it.label}</span>
+              <span className="font-medium text-slate-200 text-xs">{it.label}</span>
             </li>
           ))}
         </ul>

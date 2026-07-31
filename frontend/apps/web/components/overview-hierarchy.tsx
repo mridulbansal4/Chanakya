@@ -1,32 +1,25 @@
 "use client"
 
 import * as React from "react"
+import { motion } from "framer-motion"
 
 import { DeonticBadge } from "@/components/badges"
 import { ConfidenceMeter } from "@/components/confidence"
 import { STATUS_LABEL } from "@/lib/format"
 import type { Clause, Obligation, ObligationStatus } from "@/lib/api"
 
-/**
- * OverviewHierarchy answers "what obligations exist and what is their status" as
- * four clause-section boxes laid out in a grid that fits in a single view — no
- * page scrolling. A box with many rows scrolls internally so all four stay
- * visible at once.
- */
-
-// Status → editorial dot colour. Colour signals STATE only.
 const STATUS_DOT: Record<ObligationStatus, string> = {
-  approved: "bg-ok",
-  needs_review: "bg-warn",
-  pending: "bg-text-dim",
-  rejected: "bg-risk",
+  approved: "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]",
+  needs_review: "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]",
+  pending: "bg-slate-500",
+  rejected: "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]",
 }
 
 function StatusDot({ status }: { status: ObligationStatus }) {
   return (
     <span
       title={STATUS_LABEL[status]}
-      className={`inline-block size-2 shrink-0 rounded-full ${STATUS_DOT[status]}`}
+      className={`inline-block size-2.5 shrink-0 rounded-full ${STATUS_DOT[status]}`}
       aria-hidden
     />
   )
@@ -39,7 +32,6 @@ interface Section {
   counts: Partial<Record<ObligationStatus, number>>
 }
 
-/** Top-level section number of a clause ref: "4.2" → "4", "1" → "1". */
 function sectionOf(ref: string): string {
   return (ref.split(".")[0] ?? ref).trim()
 }
@@ -70,7 +62,6 @@ function buildSections(obligations: Obligation[], clauses: Clause[]): Section[] 
     })
 }
 
-// Summary chips read attention-first.
 const SUMMARY_ORDER: ObligationStatus[] = [
   "needs_review",
   "pending",
@@ -91,40 +82,47 @@ export function OverviewHierarchy({
   )
 
   return (
-    <div className="h-full overflow-hidden p-3 pt-12">
-      <div className="grid h-full auto-rows-fr grid-cols-1 gap-3 md:grid-cols-2">
-        {sections.map((sec) => (
-          <section
+    <div className="h-full overflow-hidden p-6 pt-14 bg-background">
+      <div className="grid h-full auto-rows-fr grid-cols-1 gap-5 md:grid-cols-2">
+        {sections.map((sec, idx) => (
+          <motion.section
             key={sec.ref}
-            className="flex min-h-0 flex-col overflow-hidden rounded-xl border border-line bg-surface shadow-[var(--shadow-card)]"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: idx * 0.05 }}
+            className="card-3d flex min-h-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#111319] shadow-2xl hover:border-indigo-500/40"
           >
-            <header className="flex shrink-0 items-center gap-2 border-b border-line px-4 py-2.5">
-              <span className="tnum text-xs text-text-dim">§{sec.ref}</span>
-              <span className="truncate font-display text-base leading-none">
-                {sec.heading}
-              </span>
-              <span className="ml-auto flex shrink-0 items-center gap-2 text-[11px] text-text-dim">
+            <header className="flex shrink-0 items-center justify-between border-b border-white/10 bg-white/5 px-6 py-4">
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="tnum rounded-md bg-white/10 px-2.5 py-0.5 text-xs font-bold text-white font-mono border border-white/10">
+                  §{sec.ref}
+                </span>
+                <h3 className="truncate font-display text-base font-bold text-white">
+                  {sec.heading}
+                </h3>
+              </div>
+              <div className="flex shrink-0 items-center gap-3 text-xs text-slate-400 font-mono">
                 {SUMMARY_ORDER.filter((s) => sec.counts[s]).map((s) => (
-                  <span key={s} className="inline-flex items-center gap-1">
+                  <span key={s} className="inline-flex items-center gap-1.5 font-semibold">
                     <StatusDot status={s} />
-                    <span className="tnum">{sec.counts[s]}</span>
+                    <span className="tnum font-extrabold text-white">{sec.counts[s]}</span>
                   </span>
                 ))}
-                <span className="tnum">· {sec.obligations.length}</span>
-              </span>
+                <span className="tnum text-slate-400 font-medium">· {sec.obligations.length} total</span>
+              </div>
             </header>
 
-            <ul className="min-h-0 flex-1 overflow-y-auto">
+            <ul className="min-h-0 flex-1 overflow-y-auto divide-y divide-white/5">
               {sec.obligations.map((o) => (
                 <li
                   key={o.id}
-                  className="flex items-center gap-2.5 border-b border-line/60 px-4 py-2 last:border-b-0"
+                  className="flex items-center gap-3.5 px-6 py-3.5 transition-colors hover:bg-white/5"
                 >
                   <StatusDot status={o.status} />
-                  <span className="tnum w-10 shrink-0 text-xs text-text-dim">
+                  <span className="tnum font-bold text-xs text-indigo-400 font-mono w-10 shrink-0">
                     {o.clause_ref}
                   </span>
-                  <span className="min-w-0 flex-1 truncate text-sm text-foreground">
+                  <span className="min-w-0 flex-1 truncate text-xs font-semibold text-slate-200">
                     {o.clause_heading}
                   </span>
                   <DeonticBadge deontic={o.deontic_type} />
@@ -134,7 +132,7 @@ export function OverviewHierarchy({
                 </li>
               ))}
             </ul>
-          </section>
+          </motion.section>
         ))}
       </div>
     </div>

@@ -1,0 +1,75 @@
+================================================================================
+              CHANAKYA PROJECT - UI LIBRARIES SETUP & GUIDE
+================================================================================
+Included Libraries:
+  1. Kibo UI  - https://www.kibo-ui.com/
+  2. Forge UI - https://forgeui.in/
+  3. shadcn/ui - https://ui.shadcn.com/
+
+--------------------------------------------------------------------------------
+STEP 1: INSTALL REQUIRED DEPENDENCIES
+--------------------------------------------------------------------------------
+Open terminal in the project directory:
+
+  cd frontend/packages/ui
+  npm install framer-motion @radix-ui/react-slot lucide-react clsx tailwind-merge class-variance-authority tw-animate-css next-themes zod
+
+  cd ../apps/web
+  npm install framer-motion lucide-react @tanstack/react-query @tanstack/react-table next-themes
+
+--------------------------------------------------------------------------------
+STEP 2: ADDING KIBO UI COMPONENTS
+--------------------------------------------------------------------------------
+Run these commands inside `frontend/apps/web`:
+
+  # Add components using the Kibo UI CLI
+  npx kibo-ui add avatar-stack
+  npx kibo-ui add gantt
+  npx kibo-ui add kanban
+  npx kibo-ui add calendar
+  npx kibo-ui add dropzone
+  npx kibo-ui add code-block
+  npx kibo-ui add tags
+  npx kibo-ui add credit-card
+  npx kibo-ui add color-picker
+  npx kibo-ui add image-crop
+  npx kibo-ui add video-player
+  npx kibo-ui add choicebox
+
+  # Alternatively via shadcn CLI URL:
+  npx shadcn@latest add "https://www.kibo-ui.com/r/<component-name>.json"
+
+--------------------------------------------------------------------------------
+STEP 3: ADDING FORGE UI COMPONENTS
+--------------------------------------------------------------------------------
+Run these commands inside `frontend/apps/web`:
+
+  # Add components using shadcn CLI with Forge UI registry
+  npx shadcn@latest add "https://forgeui.in/r/animated-form.json"
+  npx shadcn@latest add "https://forgeui.in/r/animated-tabs.json"
+  npx shadcn@latest add "https://forgeui.in/r/bot-detection.json"
+  npx shadcn@latest add "https://forgeui.in/r/fraud-card.json"
+  npx shadcn@latest add "https://forgeui.in/r/notification-center.json"
+  npx shadcn@latest add "https://forgeui.in/r/security-card.json"
+  npx shadcn@latest add "https://forgeui.in/r/text-morph.json"
+  npx shadcn@latest add "https://forgeui.in/r/text-shimmer.json"
+  npx shadcn@latest add "https://forgeui.in/r/expandable-card.json"
+
+--------------------------------------------------------------------------------
+STEP 4: RUNNING THE DEV SERVER & DEMO
+--------------------------------------------------------------------------------
+To run the project:
+
+  cd frontend
+  npm run dev
+
+Open your browser to:
+  http://localhost:3000/ui-demo
+
+--------------------------------------------------------------------------------
+SUMMARY OF WORKSPACE STRUCTURE:
+--------------------------------------------------------------------------------
+- UI Components: frontend/apps/web/components/
+- Shared UI Package: frontend/packages/ui/
+- Demo Page: frontend/apps/web/app/ui-demo/page.tsx
+================================================================================
