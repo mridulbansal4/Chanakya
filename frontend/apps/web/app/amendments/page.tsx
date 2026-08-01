@@ -117,7 +117,7 @@ export default function AmendmentsPage() {
             loadingText="Simulating Propagation…"
             disabled={!ref || !text.trim()}
             onClick={() => blast.mutate()}
-            className="w-full shadow-md"
+            className="w-full shadow-elev-1"
           >
             <Zap className="size-4 text-warn" />
             <span>Compute Blast Radius</span>
@@ -151,7 +151,7 @@ export default function AmendmentsPage() {
               </ul>
             </div>
           ) : (
-            <div className="p-8 text-center text-xs text-text-dim border border-dashed border-line rounded-2xl">
+            <div className="p-8 text-center text-xs text-text-dim border border-dashed border-line rounded-lg">
               <Layers className="size-8 mx-auto mb-2 text-text-dim/60" />
               Select a clause above, modify its text, and click &quot;Compute Blast Radius&quot; to calculate downstream impact.
             </div>

@@ -1,5 +1,5 @@
-import type { Metadata } from "next"
-import { Inter, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google"
+import type { Metadata, Viewport } from "next"
+import { Inter, Source_Serif_4, JetBrains_Mono } from "next/font/google"
 
 import "@workspace/ui/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -8,24 +8,51 @@ import { AsOfProvider } from "@/components/as-of-provider"
 import { AppShell } from "@/components/app-shell"
 import { cn } from "@workspace/ui/lib/utils"
 
-const fontSans = Inter({ subsets: ["latin"], variable: "--font-sans" })
-
-const fontDisplay = Plus_Jakarta_Sans({
+/**
+ * Three families, three jobs. See the TYPE SCALE block in globals.css for
+ * the rules on which one is allowed where.
+ */
+const fontSans = Inter({
   subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["500", "600", "700", "800"],
+  variable: "--font-sans",
+  display: "swap",
+})
+
+const fontSerif = Source_Serif_4({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  // 700 is loaded because existing headings pair `font-display` with
+  // `font-bold`; without it the browser synthesises a fake bold, which on a
+  // serif smears the stroke contrast that makes the face worth using.
+  weight: ["400", "600", "700"],
+  display: "swap",
 })
 
 const fontMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-mono",
+  display: "swap",
 })
 
 export const metadata: Metadata = {
   title: "CHANAKYA — Regulatory Operating System",
   description:
     "Agentic compliance for the Indian securities market: from regulatory text to operational action.",
+}
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // No maximumScale / userScalable:false — pinch zoom must never be disabled.
+  // Dark is the product default, but the theme toggle can switch to light, so
+  // the document must advertise both — pinning this to "dark" leaves the UA
+  // painting dark form controls and scrollbars over a light page.
+  colorScheme: "dark light",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0b0c0e" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f8fa" },
+  ],
 }
 
 export default function RootLayout({
@@ -38,14 +65,20 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
       className={cn(
-        "antialiased",
         "font-sans",
         fontSans.variable,
-        fontDisplay.variable,
+        fontSerif.variable,
         fontMono.variable,
       )}
     >
       <body>
+        <a
+          href="#main-content"
+          /* z-50 clears the app header (z-30). */
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-accent-solid focus:px-4 focus:py-2 focus:text-label-lg focus:text-accent-on"
+        >
+          Skip to content
+        </a>
         <ThemeProvider>
           <Providers>
             <AsOfProvider>

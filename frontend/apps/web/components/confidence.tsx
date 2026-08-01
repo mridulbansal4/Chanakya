@@ -1,22 +1,42 @@
 import { confidenceHelp } from "@/lib/format"
 
+/** Below this, extraction is routed to human review. */
+const REVIEW_THRESHOLD = 75
+
 /**
- * ConfidenceMeter renders the AI's extraction confidence as a percentage + a
- * small bar (teal at/above the review threshold, amber below), with a tooltip
- * explaining what it means and that low-confidence items are routed to review.
+ * Extraction confidence as a percentage plus a bar.
+ *
+ * The percentage is always rendered, not just the bar: colour and length
+ * both encode the same thing, and neither survives a printed audit pack on
+ * its own. The bar is amber below the review threshold — the same meaning
+ * amber carries everywhere else, i.e. "a person needs to look at this".
  */
 export function ConfidenceMeter({ value }: { value: number }) {
   const pct = Math.round(value * 100)
-  const tone = pct >= 75 ? "bg-verified" : "bg-warn"
+  const belowThreshold = pct < REVIEW_THRESHOLD
+
   return (
     <span
       title={confidenceHelp(pct)}
-      className="inline-flex items-center gap-1.5 align-middle"
+      role="meter"
+      aria-valuenow={pct}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={`Extraction confidence ${pct} percent${
+        belowThreshold ? ", below review threshold" : ""
+      }`}
+      className="inline-flex items-center gap-2 align-middle"
     >
-      <span className="tnum text-sm text-foreground">{pct}%</span>
-      <span className="relative h-2 w-16 overflow-hidden rounded-full bg-surface-2">
+      <span
+        className={`tnum text-label-lg ${belowThreshold ? "text-warn" : "text-fg-muted"}`}
+      >
+        {pct}%
+      </span>
+      <span className="relative h-1 w-14 overflow-hidden rounded-full bg-elevated">
         <span
-          className={`absolute inset-y-0 left-0 rounded-full ${tone}`}
+          className={`absolute inset-y-0 left-0 rounded-full ${
+            belowThreshold ? "bg-warn" : "bg-ok"
+          }`}
           style={{ width: `${pct}%` }}
         />
       </span>

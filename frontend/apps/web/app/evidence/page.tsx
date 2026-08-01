@@ -121,7 +121,7 @@ export default function EvidencePage() {
           {tickets.isLoading ? (
             Array.from({ length: 3 }).map((_, i) => <CardSkeleton key={i} />)
           ) : (tickets.data?.tickets ?? []).length === 0 ? (
-            <div className="p-8 text-center text-xs text-text-dim border border-dashed border-line rounded-2xl">
+            <div className="p-8 text-center text-xs text-text-dim border border-dashed border-line rounded-lg">
               No remediation tickets required.
             </div>
           ) : (
@@ -129,7 +129,7 @@ export default function EvidencePage() {
               {(tickets.data?.tickets ?? []).map((t) => (
                 <li
                   key={t.id}
-                  className="rounded-2xl border border-line bg-surface p-4 text-xs shadow-xs transition-all hover:shadow-md hover:border-foreground/30 hover:-translate-y-0.5 space-y-2"
+                  className="rounded-lg border border-line bg-surface p-4 text-xs shadow-xs transition-all hover:shadow-elev-1 hover:border-foreground/30 hover:-translate-y-0.5 space-y-2"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="tnum font-bold text-primary bg-cream-200/80 px-2 py-0.5 rounded-md">
@@ -239,7 +239,7 @@ function Stat({
   return (
     <div className="rounded-xl border border-line bg-surface p-4.5 transition-all duration-200 hover:border-foreground/20 hover:bg-surface-2 shadow-sm">
       <div className="eyebrow">{label}</div>
-      <div className={`tnum font-display mt-1 text-2xl font-bold ${color}`}>{value}</div>
+      <div className={`tnum mt-1 text-metric-md ${color}`}>{value}</div>
     </div>
   )
 }

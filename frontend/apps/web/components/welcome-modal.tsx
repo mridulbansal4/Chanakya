@@ -79,14 +79,14 @@ export function WelcomeModal({ onClose }: { onClose: () => void }) {
   const dialogRef = useDialog<HTMLDivElement>(onClose)
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-scrim backdrop-blur-sm p-4">
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label="Getting started with CHANAKYA"
         tabIndex={-1}
-        className="w-[540px] max-w-full overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl outline-none"
+        className="w-[540px] max-w-full overflow-hidden rounded-lg border border-line bg-surface shadow-elev-3 outline-none"
       >
         <header className="flex items-center justify-between border-b border-line px-6 py-4 bg-surface">
           <span className="eyebrow">
@@ -103,7 +103,7 @@ export function WelcomeModal({ onClose }: { onClose: () => void }) {
         </header>
 
         <div className="p-6 space-y-4">
-          <div className="flex size-12 items-center justify-center rounded-2xl bg-cream-200/80 shadow-inner">
+          <div className="flex size-12 items-center justify-center rounded-lg bg-cream-200/80 shadow-inner">
             {s.icon}
           </div>
           <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">{s.title}</h2>

@@ -7,360 +7,941 @@
 @source "../../../components/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
 
-@theme inline {
-    /* CHANAKYA Enterprise OS — Material Design 3 (M3) & Color Psychology */
-    --font-heading: var(--font-display);
-    --font-display: var(--font-display);
-    --font-sans: var(--font-sans);
-    --font-mono: var(--font-mono);
+/* ════════════════════════════════════════════════════════════════════════
+   CHANAKYA — Regulatory Operating System
+   Design tokens. This file is the single source of truth for colour,
+   type, elevation, radius and motion. Components must not hardcode a
+   hex value or a raw Tailwind palette class (bg-blue-600, text-slate-400).
 
-    /* Enterprise Palette */
-    --color-ink: var(--ink);
-    --color-ink-800: var(--ink-800);
-    --color-cream: var(--cream);
-    --color-cream-200: var(--cream-200);
-    --color-surface: var(--surface);
-    --color-surface-2: var(--surface-2);
-    --color-line: var(--line);
-    --color-line-dark: var(--line-dark);
-    --color-text-dim: var(--text-dim);
-    --color-on-ink: var(--on-ink);
-    --color-on-ink-dim: var(--on-ink-dim);
-    --color-lavender: var(--steel-blue);
+   Colour discipline: the canvas is neutral. Colour is spent on exactly
+   five jobs — accent (interactive/brand), ok, warn, risk, info. Nothing
+   is coloured for decoration.
+   ════════════════════════════════════════════════════════════════════════ */
 
-    /* Psychological Status Indicators */
-    --color-ok: var(--ok);
-    --color-warn: var(--warn);
-    --color-risk: var(--risk);
-    --color-verified: var(--verified);
-    --color-verified-foreground: var(--verified-foreground);
-    --color-warn-foreground: var(--warn-foreground);
-    --color-danger: var(--danger);
-    --color-danger-foreground: var(--danger-foreground);
-    --color-brand: var(--brand);
-    --color-brand-foreground: var(--brand-foreground);
-
-    --color-sidebar-ring: var(--sidebar-ring);
-    --color-sidebar-border: var(--sidebar-border);
-    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-    --color-sidebar-accent: var(--sidebar-accent);
-    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-    --color-sidebar-primary: var(--sidebar-primary);
-    --color-sidebar-foreground: var(--sidebar-foreground);
-    --color-sidebar: var(--sidebar);
-    --color-chart-5: var(--chart-5);
-    --color-chart-4: var(--chart-4);
-    --color-chart-3: var(--chart-3);
-    --color-chart-2: var(--chart-2);
-    --color-chart-1: var(--chart-1);
-    --color-ring: var(--ring);
-    --color-input: var(--input);
-    --color-border: var(--border);
-    --color-destructive: var(--destructive);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-accent: var(--accent);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-muted: var(--muted);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-secondary: var(--secondary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-primary: var(--primary);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-popover: var(--popover);
-    --color-card-foreground: var(--card-foreground);
-    --color-card: var(--card);
-    --color-foreground: var(--foreground);
-    --color-background: var(--background);
-
-    --radius-sm: calc(var(--radius) * 0.5);
-    --radius-md: calc(var(--radius) * 0.75);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.33);
-    --radius-2xl: calc(var(--radius) * 1.75);
-    --radius-3xl: calc(var(--radius) * 2.2);
-
-    --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
-    --shadow-card-hover: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(37, 99, 235, 0.15);
-}
-
-/* Light Mode (Enterprise White/Slate) */
 :root {
-    --ink: #FFFFFF;
-    --ink-800: #F8FAFC;
-    --cream: #FFFFFF;
-    --cream-200: #F1F5F9;
-    --surface: #FFFFFF;
-    --line: #E2E8F0;
-    --line-dark: #CBD5E1;
-    --text: #0F172A;
-    --text-dim: #475569;
-    --on-ink: #0F172A;
-    --on-ink-dim: #64748B;
-    --steel-blue: #2563EB;
-    --lavender: #2563EB;
+  /* ── Canvas ────────────────────────────────────────────────────────────
+     A near-neutral ramp with a ~4° cool cast. Deliberately not blue-tinted:
+     a tinted canvas reads as "tech product", a neutral one reads as
+     instrument. Steps are close together so elevation is felt, not seen. */
+  --sunken: #eef0f4;   /* wells, inset regions, graph canvas */
+  --canvas: #f7f8fa;   /* app background */
+  --raised: #ffffff;   /* cards, panels, table surfaces */
+  --overlay: #ffffff;  /* popovers, dialogs, command palette */
+  --elevated: #eff1f5; /* hover fill on raised surfaces */
 
-    /* Psychological Status Indicators */
-    --ok: #10B981;             
-    --warn: #F59E0B;           
-    --risk: #EF4444;           
+  /* ── Hairlines ────────────────────────────────────────────────────────
+     Three weights. Most borders should be --line-subtle; a visible border
+     is a deliberate statement of separation, not a default. */
+  --line-subtle: #e4e7ec;
+  --line: #d3d8e0;
+  --line-strong: #b6bdc9;
 
-    --surface-2: var(--cream-200);
-    --verified: var(--ok);
-    --verified-foreground: #FFFFFF;
-    --warn-foreground: #FFFFFF;
-    --danger: var(--risk);
-    --danger-foreground: #FFFFFF;
-    --brand: var(--on-ink);
-    --brand-foreground: var(--ink);
+  /* ── Foreground ───────────────────────────────────────────────────────
+     Every step below --fg-faint is verified ≥ 4.5:1 on --canvas.
+     --fg-faint is 3.3:1 and is for decorative glyphs and disabled states
+     ONLY — never body text, never a label a user must read. */
+  --fg: #14171c;        /* 17.1:1 — primary text */
+  --fg-muted: #4a515e;  /*  7.5:1 — secondary text, descriptions */
+  --fg-subtle: #667083; /*  4.7:1 — tertiary, eyebrows, column headers */
+  --fg-faint: #7d8797;  /*  3.4:1 — decorative / disabled only */
 
-    --background: var(--cream);
-    --foreground: var(--text);
-    --card: var(--surface);
-    --card-foreground: var(--text);
-    --popover: var(--surface);
-    --popover-foreground: var(--text);
-    --primary: #0F172A;
-    --primary-foreground: #FFFFFF;
-    --secondary: var(--cream-200);
-    --secondary-foreground: var(--text);
-    --muted: var(--cream-200);
-    --muted-foreground: var(--text-dim);
-    --accent: var(--cream-200);
-    --accent-foreground: var(--text);
-    --destructive: var(--risk);
-    --border: var(--line);
-    --input: var(--line);
-    --ring: var(--steel-blue);
+  /* ── Accent ───────────────────────────────────────────────────────────
+     One accent. --accent is the readable-on-dark stop (5.5:1) used for
+     text, icons and strokes. --accent-solid is the fill stop, carrying
+     white text at 6.7:1. */
+  --accent: #1d4ed8;
+  --accent-solid: #1d4ed8;
+  --accent-hover: #1e40af;
+  --accent-on: #ffffff;
+  --accent-weak: rgba(29, 78, 216, 0.10);
+  --accent-line: rgba(29, 78, 216, 0.28);
 
-    --chart-1: var(--primary);
-    --chart-2: var(--ok);
-    --chart-3: var(--warn);
-    --chart-4: var(--risk);
-    --chart-5: var(--text-dim);
+  /* ── Status ───────────────────────────────────────────────────────────
+     Desaturated relative to stock Tailwind. In an instrument, alarm comes
+     from contrast against a calm field — not from saturation. All four
+     verified ≥ 4.5:1 as text on --canvas. */
+  --ok: #047857;        /* 5.2:1 — verified, in force, covered */
+  --ok-weak: rgba(4, 120, 87, 0.10);
+  --ok-line: rgba(4, 120, 87, 0.28);
 
-    --radius: 0.85rem;
+  --warn: #a15c07;      /* 4.8:1 — needs judgement, pending, drift */
+  --warn-weak: rgba(161, 92, 7, 0.10);
+  --warn-line: rgba(161, 92, 7, 0.28);
 
-    --sidebar: var(--ink);
-    --sidebar-foreground: var(--on-ink);
-    --sidebar-primary: var(--on-ink);
-    --sidebar-primary-foreground: var(--ink);
-    --sidebar-accent: var(--ink-800);
-    --sidebar-accent-foreground: var(--on-ink);
-    --sidebar-border: var(--line-dark);
-    --sidebar-ring: var(--on-ink);
+  --risk: #c62a2f;      /* 5.2:1 — gap, violation, rejected */
+  --risk-weak: rgba(198, 42, 47, 0.10);
+  --risk-line: rgba(198, 42, 47, 0.28);
+
+  --info: var(--accent);
+  --info-weak: var(--accent-weak);
+  --info-line: var(--accent-line);
+
+  /* ── Radius ───────────────────────────────────────────────────────────
+     8px base. Heavily rounded corners read consumer; institutional
+     software sits between 4 and 8. */
+  --radius: 0.5rem;
+
+  /* ── Elevation ────────────────────────────────────────────────────────
+     Neutral shadow only — no coloured glow. Each raised level also gets a
+     1px inner top highlight, which is what makes a surface read as
+     physically above its neighbour without shadow noise. */
+  --elev-1: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --elev-2:
+    0 4px 12px -2px rgba(15, 23, 42, 0.10),
+    0 1px 2px rgba(15, 23, 42, 0.06);
+  --elev-3:
+    0 16px 40px -12px rgba(15, 23, 42, 0.18),
+    0 2px 6px rgba(15, 23, 42, 0.08);
+  --highlight: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+
+  /* One scrim opacity for every modal surface. Dialogs that dim the page by
+     different amounts make the app feel assembled from parts. */
+  --scrim: rgba(15, 23, 42, 0.45);
+
+  /* ── Motion ───────────────────────────────────────────────────────────
+     Three durations, two curves. Anything outside this set is a bug.
+     --ease-out is the workhorse: fast departure, soft arrival. */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-1: 120ms; /* micro — colour, opacity, hover */
+  --dur-2: 180ms; /* standard — small enter/exit, dropdowns */
+  --dur-3: 260ms; /* structural — page, dialog, layout */
+
+  /* ── shadcn / Radix compatibility surface ─────────────────────────────
+     Mapped onto the tokens above so third-party primitives inherit the
+     system rather than introducing a second palette. */
+  --background: var(--canvas);
+  --foreground: var(--fg);
+  --card: var(--raised);
+  --card-foreground: var(--fg);
+  --popover: var(--overlay);
+  --popover-foreground: var(--fg);
+  --primary: var(--accent-solid);
+  --primary-foreground: var(--accent-on);
+  --secondary: var(--elevated);
+  --secondary-foreground: var(--fg);
+  --muted: var(--elevated);
+  --muted-foreground: var(--fg-muted);
+  --accent-foreground: var(--fg);
+  --destructive: var(--risk);
+  --destructive-foreground: #ffffff;
+  --border: var(--line-subtle);
+  --input: var(--line);
+  --ring: var(--accent);
+
+  /* Categorical series for graphs. Ordered by perceptual distance, not by
+     hue wheel. Never the sole carrier of meaning — always pair with a
+     shape, label or position. */
+  --chart-1: var(--accent);
+  --chart-2: var(--ok);
+  --chart-3: var(--warn);
+  --chart-4: var(--risk);
+  --chart-5: var(--fg-subtle);
+
+  --sidebar: var(--sunken);
+  --sidebar-foreground: var(--fg);
+  --sidebar-primary: var(--accent);
+  --sidebar-primary-foreground: var(--accent-on);
+  --sidebar-accent: var(--elevated);
+  --sidebar-accent-foreground: var(--fg);
+  --sidebar-border: var(--line-subtle);
+  --sidebar-ring: var(--accent);
+
+  /* ── Legacy aliases ───────────────────────────────────────────────────
+     Kept so screens not yet migrated keep rendering against the new
+     system instead of the old palette. Do not use these in new code. */
+  --ink: var(--sunken);
+  --ink-800: var(--raised);
+  --cream: var(--canvas);
+  --cream-200: var(--elevated);
+  --surface: var(--raised);
+  --surface-2: var(--elevated);
+  --line-dark: var(--line-strong);
+  --text: var(--fg);
+  --text-dim: var(--fg-muted);
+  --on-ink: var(--fg);
+  --on-ink-dim: var(--fg-subtle);
+  --steel-blue: var(--accent);
+  --lavender: var(--accent);
+  --verified: var(--ok);
+  --verified-foreground: #ffffff;
+  --warn-foreground: #ffffff;
+  --danger: var(--risk);
+  --danger-foreground: #ffffff;
+  --brand: var(--accent);
+  --brand-foreground: var(--accent-on);
 }
 
-/* Cosmic Studio 60-30-10 Enterprise Color Psychology (Dark Default) */
+/* ── Dark theme ─────────────────────────────────────────────────────────
+   Only the raw values are restated here. Everything derived from them —
+   the shadcn/Radix mapping and the legacy aliases above — is declared with
+   var() on :root, and `next-themes` puts .dark on the same <html> element,
+   so those declarations recompute against whichever palette wins. Adding a
+   token means adding it in both blocks; adding a *mapping* means adding it
+   once, above.
+
+   The dark ramp is the original instrument palette: a near-neutral canvas
+   with a ~4° cool cast, close-together steps so elevation is felt rather
+   than seen. Every foreground step below --fg-faint is ≥ 4.5:1 on --canvas.
+   ──────────────────────────────────────────────────────────────────────── */
 .dark {
-    --ink: #08090E;            /* 60% Dominant Obsidian Grounding Base */
-    --ink-800: #11131C;        /* 30% Structural Dark Slate Surface */
-    --cream: #08090E;          /* Main App Dark Canvas */
-    --cream-200: #1A1D2C;      /* Dark Hover Fill */
-    --surface: #11131C;        /* Enterprise Card Surface */
-    --line: #1E2235;           /* Precision Hairline Border */
-    --line-dark: #262C44;      /* Elevated Border */
-    --text: #F8FAFC;           /* WCAG AAA High Contrast White */
-    --text-dim: #94A3B8;       /* Slate Silver Secondary Text */
-    --on-ink: #F8FAFC;         /* Text on Dark */
-    --on-ink-dim: #64748B;     /* Muted Slate Text */
-    --steel-blue: #2563EB;     /* 10% Trust Blue Accent */
-    --lavender: #2563EB;       /* Trust Blue Back-compat */
+  /* Canvas */
+  --sunken: #08090a;
+  --canvas: #0b0c0e;
+  --raised: #121317;
+  --overlay: #16181d;
+  --elevated: #1b1e24;
 
-    /* Psychological Status Indicators */
-    --ok: #10B981;             /* Emerald Compliance Verified */
-    --warn: #F59E0B;           /* Amber Caution Needed */
-    --risk: #EF4444;           /* Crimson Gap / Violation */
+  /* Hairlines */
+  --line-subtle: #1c1f25;
+  --line: #24282f;
+  --line-strong: #333944;
 
-    --surface-2: var(--cream-200);
-    --verified: var(--ok);
-    --verified-foreground: #FFFFFF;
-    --warn-foreground: #FFFFFF;
-    --danger: var(--risk);
-    --danger-foreground: #FFFFFF;
-    --brand: var(--on-ink);
-    --brand-foreground: var(--ink);
+  /* Foreground */
+  --fg: #f2f4f7;        /* 17.8:1 */
+  --fg-muted: #a8b0bc;  /*  8.9:1 */
+  --fg-subtle: #7b8494; /*  5.2:1 */
+  --fg-faint: #5a6373;  /*  3.3:1 — decorative / disabled only */
 
-    --background: var(--cream);
-    --foreground: var(--text);
-    --card: var(--surface);
-    --card-foreground: var(--text);
-    --popover: var(--surface);
-    --popover-foreground: var(--text);
-    --primary: #F8FAFC;
-    --primary-foreground: #08090E;
-    --secondary: var(--cream-200);
-    --secondary-foreground: var(--text);
-    --muted: var(--cream-200);
-    --muted-foreground: var(--text-dim);
-    --accent: var(--cream-200);
-    --accent-foreground: var(--text);
-    --destructive: var(--risk);
-    --border: var(--line);
-    --input: var(--line);
-    --ring: var(--steel-blue);
+  /* Accent — --accent is the readable-on-dark stop, --accent-solid the fill */
+  --accent: #4c82f7;
+  --accent-solid: #1d4ed8;
+  --accent-hover: #2563eb;
+  --accent-on: #ffffff;
+  --accent-weak: rgba(76, 130, 247, 0.12);
+  --accent-line: rgba(76, 130, 247, 0.32);
 
-    --chart-1: var(--primary);
-    --chart-2: var(--ok);
-    --chart-3: var(--warn);
-    --chart-4: var(--risk);
-    --chart-5: var(--text-dim);
+  /* Status */
+  --ok: #3fa97a;        /* 6.7:1 */
+  --ok-weak: rgba(63, 169, 122, 0.12);
+  --ok-line: rgba(63, 169, 122, 0.3);
 
-    --radius: 0.85rem;
+  --warn: #e0a215;      /* 8.7:1 */
+  --warn-weak: rgba(224, 162, 21, 0.12);
+  --warn-line: rgba(224, 162, 21, 0.3);
 
-    --sidebar: var(--ink);
-    --sidebar-foreground: var(--on-ink);
-    --sidebar-primary: var(--on-ink);
-    --sidebar-primary-foreground: var(--ink);
-    --sidebar-accent: var(--ink-800);
-    --sidebar-accent-foreground: var(--on-ink);
-    --sidebar-border: var(--line-dark);
-    --sidebar-ring: var(--on-ink);
+  --risk: #e5484d;      /* 5.0:1 */
+  --risk-weak: rgba(229, 72, 77, 0.12);
+  --risk-line: rgba(229, 72, 77, 0.32);
+
+  /* Elevation — a dark surface needs a heavier shadow and a light inner
+     top edge to read as physically above its neighbour. */
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --elev-2:
+    0 4px 12px -2px rgba(0, 0, 0, 0.5),
+    0 1px 2px rgba(0, 0, 0, 0.4);
+  --elev-3:
+    0 16px 40px -12px rgba(0, 0, 0, 0.65),
+    0 2px 6px rgba(0, 0, 0, 0.4);
+  --highlight: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --scrim: rgba(0, 0, 0, 0.66);
+
+  /* Amber is light in dark mode, so text sitting on a warn fill goes dark. */
+  --warn-foreground: #0b0c0e;
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-display: var(--font-serif);
+  --font-heading: var(--font-serif);
+  --font-mono: var(--font-mono);
+
+  /* Canvas */
+  --color-sunken: var(--sunken);
+  --color-canvas: var(--canvas);
+  --color-raised: var(--raised);
+  --color-overlay: var(--overlay);
+  --color-elevated: var(--elevated);
+
+  /* Hairlines */
+  --color-line-subtle: var(--line-subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  /* Foreground */
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-fg-faint: var(--fg-faint);
+
+  /* Accent */
+  --color-accent: var(--accent);
+  --color-accent-solid: var(--accent-solid);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-on: var(--accent-on);
+  --color-accent-weak: var(--accent-weak);
+  --color-accent-line: var(--accent-line);
+
+  /* Status */
+  --color-ok: var(--ok);
+  --color-ok-weak: var(--ok-weak);
+  --color-ok-line: var(--ok-line);
+  --color-warn: var(--warn);
+  --color-warn-weak: var(--warn-weak);
+  --color-warn-line: var(--warn-line);
+  --color-risk: var(--risk);
+  --color-risk-weak: var(--risk-weak);
+  --color-risk-line: var(--risk-line);
+  --color-info: var(--info);
+  --color-info-weak: var(--info-weak);
+  --color-info-line: var(--info-line);
+
+  /* shadcn surface */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Legacy aliases — migrating out */
+  --color-ink: var(--ink);
+  --color-ink-800: var(--ink-800);
+  --color-cream: var(--cream);
+  --color-cream-200: var(--cream-200);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line-dark: var(--line-dark);
+  --color-text-dim: var(--text-dim);
+  --color-on-ink: var(--on-ink);
+  --color-on-ink-dim: var(--on-ink-dim);
+  --color-lavender: var(--lavender);
+  --color-verified: var(--verified);
+  --color-verified-foreground: var(--verified-foreground);
+  --color-warn-foreground: var(--warn-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.5);
+  --radius-2xl: calc(var(--radius) * 2);
+  --radius-3xl: calc(var(--radius) * 3);
+
+  --color-scrim: var(--scrim);
+
+  --shadow-elev-1: var(--elev-1);
+  --shadow-elev-2: var(--elev-2);
+  --shadow-elev-3: var(--elev-3);
+
+  --ease-out: var(--ease-out);
+  --ease-in-out: var(--ease-in-out);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
+
   html {
     font-size: 100%;
     scroll-behavior: smooth;
     color-scheme: light dark;
+    scrollbar-color: var(--line-strong) transparent;
+    scrollbar-width: thin;
   }
+
   body {
-    @apply bg-background text-foreground antialiased;
-    font-feature-settings: "cv01", "ss01", "cv11", "tnum";
-    line-height: 1.55;
-    background-color: var(--cream);
-    color: var(--text);
-  }
-  ::selection {
-    background-color: #2563EB;
-    color: #FFFFFF;
-  }
-  h1, h2, h3, h4 {
-    font-family: var(--font-display);
-    letter-spacing: -0.025em;
-    font-weight: 700;
-  }
-  .font-mono, code, kbd, samp, pre {
-    font-variant-numeric: tabular-nums;
-  }
-  .tnum {
-    font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
-  }
-  .hairline {
-    border: 1px solid var(--line);
-  }
-  .eyebrow {
+    background-color: var(--canvas);
+    color: var(--fg);
     font-family: var(--font-sans);
-    font-size: 0.68rem;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-dim);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* cv05 = straight-tailed l, ss03 = disambiguated punctuation.
+       tnum is NOT global — proportional figures read better in prose;
+       tabular figures are opted into per component via .tnum. */
+    font-feature-settings: "cv05", "ss03";
   }
-  button, a, [role="button"], [role="link"], select, input[type="submit"], input[type="button"], input[type="reset"] {
+
+  ::selection {
+    background-color: var(--accent-solid);
+    color: var(--accent-on);
+  }
+
+  /* One focus treatment, everywhere. Never removed — an invisible focus
+     ring is a keyboard user losing their place on the page. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  button,
+  a,
+  [role="button"],
+  [role="link"],
+  [role="option"],
+  select,
+  summary,
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"] {
     cursor: pointer;
   }
+
+  [disabled],
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
 }
 
-/* Material Design 3 (M3) Type Scale Utilities */
-.text-display-lg { font-family: var(--font-display); font-size: 3.5rem; line-height: 4rem; font-weight: 800; letter-spacing: -0.03em; }
-.text-display-md { font-family: var(--font-display); font-size: 2.8rem; line-height: 3.25rem; font-weight: 800; letter-spacing: -0.025em; }
-.text-display-sm { font-family: var(--font-display); font-size: 2.25rem; line-height: 2.75rem; font-weight: 700; letter-spacing: -0.02em; }
+/* ════════════════════════════════════════════════════════════════════════
+   TYPE SCALE
 
-.text-headline-lg { font-family: var(--font-display); font-size: 2rem; line-height: 2.5rem; font-weight: 700; letter-spacing: -0.02em; }
-.text-headline-md { font-family: var(--font-display); font-size: 1.75rem; line-height: 2.25rem; font-weight: 700; letter-spacing: -0.015em; }
-.text-headline-sm { font-family: var(--font-display); font-size: 1.5rem; line-height: 2rem; font-weight: 600; letter-spacing: -0.01em; }
+   Two families doing genuinely different jobs. The previous pairing
+   (Plus Jakarta Sans + Inter) put two humanist sans faces next to each
+   other, so the display/body split created no hierarchy at all.
 
-.text-title-lg { font-family: var(--font-sans); font-size: 1.375rem; line-height: 1.75rem; font-weight: 600; }
-.text-title-md { font-family: var(--font-sans); font-size: 1rem; line-height: 1.5rem; font-weight: 600; }
-.text-title-sm { font-family: var(--font-sans); font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; }
+   --font-serif  Source Serif 4 — page-level editorial moments only:
+                 page titles, dialog titles, empty-state headings. Never
+                 inside dense data (table headers, card titles, KPIs);
+                 a serif at 13px in a table is noise, not authority.
+   --font-sans   Inter — every piece of interface and data text.
+   --font-mono   JetBrains Mono — clause refs, IDs, hashes, and any
+                 figure that must align in a column.
+   ════════════════════════════════════════════════════════════════════════ */
 
-.text-body-lg { font-family: var(--font-sans); font-size: 1rem; line-height: 1.5rem; font-weight: 400; }
-.text-body-md { font-family: var(--font-sans); font-size: 0.875rem; line-height: 1.25rem; font-weight: 400; }
-.text-body-sm { font-family: var(--font-sans); font-size: 0.75rem; line-height: 1rem; font-weight: 400; }
+.text-display-lg {
+  font-family: var(--font-serif);
+  font-size: 3rem;
+  line-height: 1.1;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+.text-display-md {
+  font-family: var(--font-serif);
+  font-size: 2.25rem;
+  line-height: 1.15;
+  font-weight: 400;
+  letter-spacing: -0.018em;
+}
+.text-display-sm {
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  line-height: 1.2;
+  font-weight: 400;
+  letter-spacing: -0.014em;
+}
 
-.text-label-lg { font-family: var(--font-sans); font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; letter-spacing: 0.01em; }
-.text-label-md { font-family: var(--font-sans); font-size: 0.75rem; line-height: 1rem; font-weight: 600; letter-spacing: 0.04em; }
-.text-label-sm { font-family: var(--font-sans); font-size: 0.6875rem; line-height: 1rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.text-headline-lg {
+  font-family: var(--font-sans);
+  font-size: 1.375rem;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.016em;
+}
+.text-headline-md {
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+.text-headline-sm {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.008em;
+}
 
-/* Enterprise Card Elevation */
+.text-title-lg {
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  font-weight: 600;
+}
+.text-title-md {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  font-weight: 600;
+}
+.text-title-sm {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  font-weight: 600;
+}
+
+.text-body-lg {
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  font-weight: 400;
+}
+.text-body-md {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  font-weight: 400;
+}
+.text-body-sm {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.text-label-lg {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  font-weight: 500;
+}
+.text-label-md {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+}
+.text-label-sm {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Numeric scale. Data is set in Inter at weight 500–600, never 800:
+   a KPI at weight 800 reads as advertising. Tabular figures and tight
+   tracking so a column of numbers scans as a column. */
+.text-metric-lg,
+.text-metric-md,
+.text-metric-sm {
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum", "cv05";
+  letter-spacing: -0.02em;
+  font-weight: 550;
+}
+.text-metric-lg {
+  font-size: 2rem;
+  line-height: 1.1;
+}
+.text-metric-md {
+  font-size: 1.5rem;
+  line-height: 1.15;
+}
+.text-metric-sm {
+  font-size: 1.125rem;
+  line-height: 1.2;
+}
+
+/* ALL-CAPS section marker. Tracked open because uppercase at small sizes
+   loses word-shape and needs the extra letter spacing to stay legible. */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+
+/* Opt-in tabular figures for anything that must align in a column. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.font-mono,
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.hairline {
+  border: 1px solid var(--line-subtle);
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   SURFACES
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* The standard panel: raised fill, hairline, and a 1px inner top
+   highlight that does the work a drop shadow would otherwise do. */
+.surface {
+  background-color: var(--raised);
+  border: 1px solid var(--line-subtle);
+  border-radius: var(--radius);
+  box-shadow: var(--highlight);
+}
+
+/* Interactive panel. Lifts by border and fill, not by transform —
+   translating a card on hover shifts everything optically around it and
+   costs a layer promotion for no informational gain. */
+.surface-interactive {
+  background-color: var(--raised);
+  border: 1px solid var(--line-subtle);
+  border-radius: var(--radius);
+  box-shadow: var(--highlight);
+  transition:
+    background-color var(--dur-1) var(--ease-out),
+    border-color var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out);
+}
+.surface-interactive:hover {
+  background-color: var(--elevated);
+  border-color: var(--line-strong);
+  box-shadow: var(--highlight), var(--elev-2);
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   SHINY BUTTON / CTA
+   ════════════════════════════════════════════════════════════════════════ */
+
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --gradient-angle-offset {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@property --gradient-percent {
+  syntax: "<percentage>";
+  initial-value: 5%;
+  inherits: false;
+}
+
+@property --gradient-shine {
+  syntax: "<color>";
+  initial-value: white;
+  inherits: false;
+}
+
+.shiny-cta {
+  --shiny-cta-bg: var(--canvas, #0b0c0e);
+  --shiny-cta-bg-subtle: var(--line-subtle, #1c1f25);
+  --shiny-cta-fg: var(--fg, #ffffff);
+  --shiny-cta-highlight: var(--accent, #4c82f7);
+  --shiny-cta-highlight-subtle: var(--accent-hover, #2563eb);
+  /* The bright point travelling around the conic border. Bound to --fg
+     rather than left at the property's `white` initial value, so in light
+     mode it inverts to near-black instead of vanishing into the page. */
+  --gradient-shine: var(--fg, #ffffff);
+  --animation: gradient-angle linear infinite;
+  --duration: 3s;
+  --shadow-size: 2px;
+  --transition: 800ms cubic-bezier(0.25, 1, 0.5, 1);
+  
+  isolation: isolate;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  outline-offset: 4px;
+  padding: 0.625rem 1.5rem;
+  font-family: var(--font-sans, system-ui, sans-serif);
+  font-size: 0.875rem;
+  line-height: 1.2;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: 360px;
+  color: var(--shiny-cta-fg);
+  background: linear-gradient(var(--shiny-cta-bg), var(--shiny-cta-bg)) padding-box,
+    conic-gradient(
+      from calc(var(--gradient-angle, 0deg) - var(--gradient-angle-offset, 0deg)),
+      transparent,
+      var(--shiny-cta-highlight) var(--gradient-percent, 5%),
+      var(--gradient-shine, white) calc(var(--gradient-percent, 5%) * 2),
+      var(--shiny-cta-highlight) calc(var(--gradient-percent, 5%) * 3),
+      transparent calc(var(--gradient-percent, 5%) * 4)
+    ) border-box;
+  box-shadow: inset 0 0 0 1px var(--shiny-cta-bg-subtle);
+  transition: var(--transition);
+  transition-property: --gradient-angle-offset, --gradient-percent, --gradient-shine;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.shiny-cta::before,
+.shiny-cta::after,
+.shiny-cta span::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: 50%;
+  translate: -50% -50%;
+  z-index: -1;
+}
+
+.shiny-cta:active {
+  translate: 0 1px;
+}
+
+.shiny-cta:disabled,
+.shiny-cta[disabled],
+.shiny-cta[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Dots pattern */
+.shiny-cta::before {
+  --size: calc(100% - var(--shadow-size) * 3);
+  --position: 2px;
+  --space: calc(var(--position) * 2);
+  width: var(--size);
+  height: var(--size);
+  background: radial-gradient(
+    circle at var(--position) var(--position),
+    white calc(var(--position) / 4),
+    transparent 0
+  ) padding-box;
+  background-size: var(--space) var(--space);
+  background-repeat: space;
+  mask-image: conic-gradient(
+    from calc(var(--gradient-angle, 0deg) + 45deg),
+    black,
+    transparent 10% 90%,
+    black
+  );
+  border-radius: inherit;
+  opacity: 0.4;
+  z-index: -1;
+}
+
+/* Inner shimmer */
+.shiny-cta::after {
+  --animation: shimmer linear infinite;
+  width: 100%;
+  aspect-ratio: 1;
+  background: linear-gradient(
+    -50deg,
+    transparent,
+    var(--shiny-cta-highlight),
+    transparent
+  );
+  mask-image: radial-gradient(circle at bottom, transparent 40%, black);
+  opacity: 0.6;
+}
+
+.shiny-cta span {
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.shiny-cta span::before {
+  --size: calc(100% + 1rem);
+  width: var(--size);
+  height: var(--size);
+  box-shadow: inset 0 -1ex 2rem 4px var(--shiny-cta-highlight);
+  opacity: 0;
+  transition: opacity var(--transition);
+  animation: calc(var(--duration) * 1.5) breathe linear infinite;
+}
+
+/* Animate */
+.shiny-cta,
+.shiny-cta::before,
+.shiny-cta::after {
+  animation: var(--animation) var(--duration),
+    var(--animation) calc(var(--duration) / 0.4) reverse paused;
+  animation-composition: add;
+}
+
+.shiny-cta:is(:hover, :focus-visible) {
+  --gradient-percent: 20%;
+  --gradient-angle-offset: 95deg;
+  --gradient-shine: var(--shiny-cta-highlight-subtle);
+}
+
+.shiny-cta:is(:hover, :focus-visible),
+.shiny-cta:is(:hover, :focus-visible)::before,
+.shiny-cta:is(:hover, :focus-visible)::after {
+  animation-play-state: running;
+}
+
+.shiny-cta:is(:hover, :focus-visible) span::before {
+  opacity: 1;
+}
+
+@keyframes gradient-angle {
+  to {
+    --gradient-angle: 360deg;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes breathe {
+  from, to {
+    scale: 1;
+  }
+  50% {
+    scale: 1.2;
+  }
+}
+
+/* Legacy alias — the old blue-glow lift, now neutral. */
 .card-3d {
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    background-color var(--dur-1) var(--ease-out),
+    border-color var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out);
 }
 .card-3d:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 20px rgba(37, 99, 235, 0.15);
-  border-color: rgba(37, 99, 235, 0.4);
+  border-color: var(--line-strong);
+  box-shadow: var(--highlight), var(--elev-2);
 }
 
-/* Custom Dark Scrollbars */
+/* ════════════════════════════════════════════════════════════════════════
+   SCROLLBARS
+   Sized to be grabbable (10px) rather than decorative, with a transparent
+   border so the thumb reads as inset.
+   ════════════════════════════════════════════════════════════════════════ */
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.25);
+  background-color: var(--line-strong);
+  border: 3px solid transparent;
+  background-clip: padding-box;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.5);
+  background-color: var(--fg-faint);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
-/* React Flow Controls (+ / -) */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   REACT FLOW
+   The graph canvas is a sunken well — it sits below the app surface,
+   which is what signals "this is a viewport into data" rather than
+   "this is another card".
+   ════════════════════════════════════════════════════════════════════════ */
+
 .react-flow__controls {
-  border: 1px solid #1E2235 !important;
-  border-radius: 12px !important;
+  border: 1px solid var(--line-subtle) !important;
+  border-radius: var(--radius) !important;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
-  background: #11131C !important;
-  padding: 3px;
+  box-shadow: var(--elev-2) !important;
+  background: var(--overlay) !important;
+  padding: 2px;
 }
 .react-flow__controls-button {
   width: 32px !important;
   height: 32px !important;
-  background: #11131C !important;
-  border-bottom: 1px solid #1E2235 !important;
-  border-radius: 8px !important;
-  color: #F8FAFC !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: calc(var(--radius) * 0.75) !important;
+  color: var(--fg-muted) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-.react-flow__controls-button:last-child {
-  border-bottom: none !important;
+  transition:
+    background-color var(--dur-1) var(--ease-out),
+    color var(--dur-1) var(--ease-out);
 }
 .react-flow__controls-button:hover {
-  background: #1A1D2C !important;
-  color: #2563EB !important;
+  background: var(--elevated) !important;
+  color: var(--fg) !important;
 }
 .react-flow__controls-button svg {
-  fill: #F8FAFC !important;
-  stroke: #F8FAFC !important;
-  color: #F8FAFC !important;
-  width: 14px !important;
-  height: 14px !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  width: 13px !important;
+  height: 13px !important;
 }
-.react-flow__controls-button:disabled svg {
-  fill: #64748B !important;
-  stroke: #64748B !important;
+.react-flow__controls-button:disabled {
+  color: var(--fg-faint) !important;
+  cursor: not-allowed;
 }
-
-/* Completely Hide React Flow MiniMap & Next.js Dev Badge Overlay */
+.react-flow__attribution {
+  background: transparent !important;
+  color: var(--fg-faint) !important;
+}
 .react-flow__minimap {
   display: none !important;
 }
 
-nextjs-portal, [data-nextjs-toast], [data-nextjs-dialog-overlay], [nextjs-toast], [class*="nextjs-toast"] {
+/* Hide only the Next.js dev-tools launcher badge. The error overlay
+   (nextjs-portal) is deliberately left visible — suppressing it hides
+   real runtime errors during development. */
+[data-nextjs-dev-tools-button] {
   display: none !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  visibility: hidden !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   A global stop, not a per-component opt-in. Transforms and transitions
+   collapse to near-zero; nothing is left mid-animation.
+   ════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

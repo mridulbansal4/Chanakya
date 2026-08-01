@@ -4,9 +4,9 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 import { AnimatePresence, motion } from "framer-motion"
 import {
-  ArrowRight,
   BookOpen,
   CheckCircle2,
+  CornerDownLeft,
   FileCheck,
   FileText,
   Home,
@@ -17,123 +17,179 @@ import {
   Zap,
 } from "lucide-react"
 
+import {
+  TRANSITION_MICRO,
+  TRANSITION_STANDARD,
+  overlayVariants,
+  scrimVariants,
+} from "@/lib/motion"
+import { cn } from "@workspace/ui/lib/utils"
+
 interface NavItem {
   id: string
   title: string
   subtitle: string
   href: string
   icon: React.ReactNode
-  badge: string
+  group: string
 }
 
+/**
+ * Icons are monochrome and inherit from the row.
+ *
+ * The previous version gave each destination its own hue — emerald, cyan,
+ * purple, amber — which meant nine colours carrying no information. In a
+ * system where amber means "needs judgement" and red means "gap", spending
+ * those same hues on decoration is what makes the real signals stop
+ * registering.
+ */
 const ITEMS: NavItem[] = [
   {
     id: "overview",
-    title: "Executive Overview",
-    subtitle: "Compliance posture & live DAG graph",
+    title: "Overview",
+    subtitle: "Compliance posture and the live obligation graph",
     href: "/",
-    icon: <Home className="size-4 text-emerald-400" />,
-    badge: "Dashboard",
+    icon: <Home className="size-4" aria-hidden />,
+    group: "Monitor",
   },
   {
     id: "reg-feed",
     title: "Regulatory Feed",
-    subtitle: "Live SEBI circular detection & MITC workflow",
+    subtitle: "New SEBI circulars, detected and processed",
     href: "/regulatory-feed",
-    icon: <Radio className="size-4 text-cyan-400" />,
-    badge: "Automation",
+    icon: <Radio className="size-4" aria-hidden />,
+    group: "Monitor",
   },
   {
     id: "register",
     title: "Obligation Register",
-    subtitle: "Full extracted regulatory obligation matrix",
+    subtitle: "Every obligation extracted, with its source clause",
     href: "/register",
-    icon: <BookOpen className="size-4 text-purple-400" />,
-    badge: "Matrix",
+    icon: <BookOpen className="size-4" aria-hidden />,
+    group: "Monitor",
   },
   {
     id: "blast",
-    title: "Blast Radius Simulator",
-    subtitle: "Preview ripple effects of clause amendments",
+    title: "Blast Radius",
+    subtitle: "Preview what a clause amendment would affect",
     href: "/amendments",
-    icon: <Zap className="size-4 text-amber-400" />,
-    badge: "Simulation",
+    icon: <Zap className="size-4" aria-hidden />,
+    group: "Analyse",
   },
   {
     id: "evidence",
-    title: "Evidence Coverage & Gaps",
-    subtitle: "Read-only system connectors & remediation tickets",
+    title: "Evidence & Gaps",
+    subtitle: "Coverage from connected systems, and what is missing",
     href: "/evidence",
-    icon: <FileCheck className="size-4 text-emerald-400" />,
-    badge: "Audit",
-  },
-  {
-    id: "review",
-    title: "Review Queue Inbox",
-    subtitle: "Obligations awaiting compliance officer sign-off",
-    href: "/review",
-    icon: <ShieldCheck className="size-4 text-amber-400" />,
-    badge: "Inbox",
-  },
-  {
-    id: "policy",
-    title: "Automated Policy Engine",
-    subtitle: "OPA / Rego deterministic code checks",
-    href: "/policy",
-    icon: <CheckCircle2 className="size-4 text-cyan-400" />,
-    badge: "OPA Code",
+    icon: <FileCheck className="size-4" aria-hidden />,
+    group: "Analyse",
   },
   {
     id: "audit",
-    title: "Compliance Lineage Audit",
-    subtitle: "Time-travel audit trail & provenance graph",
+    title: "Audit Trail",
+    subtitle: "Reconstruct the compliance trail as of any date",
     href: "/audit",
-    icon: <Network className="size-4 text-purple-400" />,
-    badge: "Provenance",
+    icon: <Network className="size-4" aria-hidden />,
+    group: "Analyse",
+  },
+  {
+    id: "review",
+    title: "Review Queue",
+    subtitle: "Obligations awaiting your sign-off",
+    href: "/review",
+    icon: <ShieldCheck className="size-4" aria-hidden />,
+    group: "Act",
+  },
+  {
+    id: "policy",
+    title: "Policy Engine",
+    subtitle: "Turn obligations into automated checks",
+    href: "/policy",
+    icon: <CheckCircle2 className="size-4" aria-hidden />,
+    group: "Act",
   },
   {
     id: "feed",
     title: "Machine-Readable Feed",
-    subtitle: "SupTech feed for regulatory system ingestion",
+    subtitle: "The feed a regulator's systems consume",
     href: "/feed",
-    icon: <FileText className="size-4 text-emerald-400" />,
-    badge: "SupTech",
+    icon: <FileText className="size-4" aria-hidden />,
+    group: "Act",
   },
 ]
+
+const LISTBOX_ID = "command-palette-listbox"
 
 export function CommandPalette() {
   const [open, setOpen] = React.useState(false)
   const [query, setQuery] = React.useState("")
-  const [selectedIndex, setSelectedIndex] = React.useState(0)
+  const [activeIndex, setActiveIndex] = React.useState(0)
   const router = useRouter()
 
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault()
-        setOpen((prev) => !prev)
-      } else if (e.key === "Escape") {
-        setOpen(false)
-      }
-    }
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
+  const panelRef = React.useRef<HTMLDivElement>(null)
+  const inputRef = React.useRef<HTMLInputElement>(null)
+  const listRef = React.useRef<HTMLDivElement>(null)
+  // Remembering the trigger lets us put focus back where the user left it.
+  const restoreFocusRef = React.useRef<HTMLElement | null>(null)
+
+  const openPalette = () => {
+    restoreFocusRef.current = document.activeElement as HTMLElement | null
+    setOpen(true)
+  }
+
+  const closePalette = React.useCallback(() => {
+    setOpen(false)
+    setQuery("")
+    restoreFocusRef.current?.focus()
   }, [])
 
+  React.useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault()
+        if (open) closePalette()
+        else openPalette()
+      }
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [open, closePalette])
+
+  // Lock the page behind the dialog. Without this the list underneath
+  // scrolls when the palette's own list reaches its end.
+  React.useEffect(() => {
+    if (!open) return
+    const previous = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.body.style.overflow = previous
+    }
+  }, [open])
+
   const filtered = React.useMemo(() => {
-    if (!query.trim()) return ITEMS
-    const q = query.toLowerCase()
+    const q = query.trim().toLowerCase()
+    if (!q) return ITEMS
     return ITEMS.filter(
       (item) =>
         item.title.toLowerCase().includes(q) ||
         item.subtitle.toLowerCase().includes(q) ||
-        item.badge.toLowerCase().includes(q)
+        item.group.toLowerCase().includes(q),
     )
   }, [query])
 
   React.useEffect(() => {
-    setSelectedIndex(0)
+    setActiveIndex(0)
   }, [query])
+
+  // Keep the highlighted row in view during keyboard navigation — otherwise
+  // arrowing past the fold moves a selection the user cannot see.
+  React.useEffect(() => {
+    if (!open) return
+    const el = listRef.current?.querySelector<HTMLElement>(
+      `[data-index="${activeIndex}"]`,
+    )
+    el?.scrollIntoView({ block: "nearest" })
+  }, [activeIndex, open])
 
   const selectItem = (item: NavItem) => {
     setOpen(false)
@@ -141,126 +197,187 @@ export function CommandPalette() {
     router.push(item.href)
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const onInputKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault()
-      setSelectedIndex((i) => (i + 1) % Math.max(1, filtered.length))
+      setActiveIndex((i) => (filtered.length ? (i + 1) % filtered.length : 0))
     } else if (e.key === "ArrowUp") {
       e.preventDefault()
-      setSelectedIndex((i) => (i - 1 + filtered.length) % Math.max(1, filtered.length))
-    } else if (e.key === "Enter" && filtered[selectedIndex]) {
+      setActiveIndex((i) =>
+        filtered.length ? (i - 1 + filtered.length) % filtered.length : 0,
+      )
+    } else if (e.key === "Home") {
       e.preventDefault()
-      selectItem(filtered[selectedIndex]!)
+      setActiveIndex(0)
+    } else if (e.key === "End") {
+      e.preventDefault()
+      setActiveIndex(Math.max(0, filtered.length - 1))
+    } else if (e.key === "Enter") {
+      const item = filtered[activeIndex]
+      if (item) {
+        e.preventDefault()
+        selectItem(item)
+      }
+    } else if (e.key === "Escape") {
+      e.preventDefault()
+      closePalette()
     }
   }
+
+  // Focus trap. The palette has exactly one focusable control (the input),
+  // so containment is simply: any Tab returns focus to it.
+  const onPanelKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Tab") {
+      e.preventDefault()
+      inputRef.current?.focus()
+    }
+  }
+
+  let renderedGroup: string | null = null
 
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
-        className="hidden md:inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-slate-200 hover:text-white hover:bg-white/15 hover:border-white/30 transition-all shadow-inner group font-medium"
-        title="Search operating system (Cmd+K)"
+        type="button"
+        onClick={openPalette}
+        className="shiny-cta !py-1 !px-3 !text-xs font-medium !rounded-full shadow-sm md:inline-flex hidden"
+        aria-label="Search and navigate. Keyboard shortcut: Control or Command K"
       >
-        <Search className="size-4 text-blue-400 transition-transform group-hover:scale-110" />
-        <span>Search OS…</span>
-        <kbd className="tnum rounded-md bg-white/15 px-2 py-0.5 text-xs font-mono text-slate-200 border border-white/15 font-semibold">
-          ⌘K
-        </kbd>
+        <span>
+          <Search className="size-3.5 text-blue-400" aria-hidden />
+          <span>Search</span>
+          <kbd className="rounded border border-white/20 bg-white/10 px-1 py-px font-mono text-[10px] text-white/80">
+            ⌘K
+          </kbd>
+        </span>
       </button>
 
       <AnimatePresence>
         {open && (
-          <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4 bg-black/75 backdrop-blur-xl">
+          <div className="fixed inset-0 z-50 flex items-start justify-center px-4 pt-[12vh]">
             <motion.div
-              initial={{ opacity: 0, scale: 0.94, y: -12 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94, y: -12 }}
-              transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-xl overflow-hidden rounded-3xl border border-white/15 bg-[#141417]/95 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] text-white"
+              variants={scrimVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={TRANSITION_MICRO}
+              onClick={closePalette}
+              className="absolute inset-0 bg-scrim"
+              aria-hidden
+            />
+
+            <motion.div
+              ref={panelRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Command palette"
+              onKeyDown={onPanelKeyDown}
+              variants={overlayVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={TRANSITION_STANDARD}
+              className="relative w-full max-w-xl overflow-hidden rounded-lg border border-line bg-overlay shadow-elev-3"
             >
-              {/* Clean search bar input */}
-              <div className="flex items-center border-b border-white/10 px-5 py-4 bg-white/5">
-                <Search className="size-5 text-lavender shrink-0 mr-3" />
+              <div className="flex items-center gap-3 border-b border-line-subtle px-4 py-3">
+                <Search className="size-4 shrink-0 text-fg-subtle" aria-hidden />
                 <input
+                  ref={inputRef}
                   autoFocus
+                  type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Type a command or search destination…"
-                  className="w-full bg-transparent text-white placeholder:text-white/40 outline-none text-sm font-medium tracking-wide"
+                  onKeyDown={onInputKeyDown}
+                  placeholder="Search destinations…"
+                  className="w-full bg-transparent text-body-lg text-fg outline-none placeholder:text-fg-faint"
+                  role="combobox"
+                  aria-expanded="true"
+                  aria-controls={LISTBOX_ID}
+                  aria-autocomplete="list"
+                  aria-activedescendant={
+                    filtered[activeIndex] ? `cmd-${filtered[activeIndex].id}` : undefined
+                  }
                 />
-                <kbd className="tnum rounded-lg bg-white/10 px-2 py-1 text-xs text-white/50 font-mono shrink-0 border border-white/10">
-                  ESC
+                <kbd className="shrink-0 rounded border border-line bg-elevated px-1.5 py-0.5 font-mono text-[10px] text-fg-subtle">
+                  Esc
                 </kbd>
               </div>
 
-              {/* Items List */}
-              <div className="max-h-84 overflow-y-auto p-3 space-y-1">
-                {filtered.length === 0 ? (
-                  <div className="p-10 text-center text-xs text-white/40 font-medium">
-                    No operating system commands match &quot;{query}&quot;
-                  </div>
-                ) : (
-                  <>
-                    <div className="px-3 py-1.5 eyebrow text-white/40 text-[10px]">
-                      Navigation Commands ({filtered.length})
-                    </div>
-                    {filtered.map((item, idx) => {
-                      const isSelected = idx === selectedIndex
-                      return (
-                        <button
-                          key={item.id}
-                          onClick={() => selectItem(item)}
-                          onMouseEnter={() => setSelectedIndex(idx)}
-                          className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-left transition-all ${
-                            isSelected
-                              ? "bg-gradient-to-r from-blue-900/60 to-slate-900/60 border border-blue-500/40 text-white shadow-lg translate-x-1"
-                              : "hover:bg-white/5 text-white/80 border border-transparent"
-                          }`}
-                        >
-                          <div className="flex items-center gap-3.5 min-w-0">
-                            <div
-                              className={`p-2.5 rounded-xl transition-transform ${
-                                isSelected ? "bg-white/15 scale-105" : "bg-white/5"
-                              }`}
-                            >
-                              {item.icon}
-                            </div>
-                            <div className="min-w-0 space-y-0.5">
-                              <div className="text-sm font-semibold truncate tracking-tight">
-                                {item.title}
-                              </div>
-                              <div className="text-xs text-white/50 truncate">
-                                {item.subtitle}
-                              </div>
-                            </div>
-                          </div>
+              {/* Announces result counts to screen readers as the user types. */}
+              <p className="sr-only" role="status" aria-live="polite">
+                {filtered.length} result{filtered.length === 1 ? "" : "s"}
+              </p>
 
-                          <div className="flex items-center gap-2 shrink-0 ml-2">
-                            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-white/10 text-white/60 border border-white/5">
-                              {item.badge}
+              <div
+                ref={listRef}
+                id={LISTBOX_ID}
+                role="listbox"
+                aria-label="Destinations"
+                className="max-h-[22rem] overflow-y-auto p-1.5"
+              >
+                {filtered.length === 0 ? (
+                  <p className="px-4 py-10 text-center text-body-md text-fg-muted">
+                    Nothing matches “{query}”.
+                  </p>
+                ) : (
+                  filtered.map((item, idx) => {
+                    const active = idx === activeIndex
+                    const showGroup = item.group !== renderedGroup
+                    renderedGroup = item.group
+                    return (
+                      <React.Fragment key={item.id}>
+                        {showGroup && (
+                          <p className="eyebrow px-3 pb-1.5 pt-3 first:pt-1.5">
+                            {item.group}
+                          </p>
+                        )}
+                        <div
+                          id={`cmd-${item.id}`}
+                          role="option"
+                          aria-selected={active}
+                          data-index={idx}
+                          tabIndex={-1}
+                          onClick={() => selectItem(item)}
+                          onMouseMove={() => setActiveIndex(idx)}
+                          className={cn(
+                            "flex cursor-pointer items-center gap-3 rounded px-3 py-2.5",
+                            "transition-colors duration-[120ms] ease-[cubic-bezier(0.2,0.8,0.2,1)]",
+                            active ? "bg-elevated text-fg" : "text-fg-muted",
+                          )}
+                        >
+                          <span
+                            className={cn(
+                              "shrink-0",
+                              active ? "text-accent" : "text-fg-subtle",
+                            )}
+                          >
+                            {item.icon}
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-title-md text-fg">
+                              {item.title}
                             </span>
-                            <ArrowRight
-                              className={`size-4 transition-transform ${
-                                isSelected ? "translate-x-1 text-lavender opacity-100" : "opacity-0"
-                              }`}
+                            <span className="block truncate text-body-sm text-fg-muted">
+                              {item.subtitle}
+                            </span>
+                          </span>
+                          {active && (
+                            <CornerDownLeft
+                              className="size-3.5 shrink-0 text-fg-subtle"
+                              aria-hidden
                             />
-                          </div>
-                        </button>
-                      )
-                    })}
-                  </>
+                          )}
+                        </div>
+                      </React.Fragment>
+                    )
+                  })
                 )}
               </div>
 
-              {/* Footer */}
-              <div className="flex items-center justify-between border-t border-white/10 bg-black/40 px-5 py-2.5 text-xs text-white/40 font-mono">
-                <div className="flex items-center gap-3 text-[11px]">
-                  <span>↑↓ Navigate</span>
-                  <span>•</span>
-                  <span>↵ Select</span>
-                </div>
-                <div className="text-[10px] text-lavender font-bold">CHANAKYA Enterprise OS</div>
+              <div className="flex items-center gap-4 border-t border-line-subtle px-4 py-2 text-label-md text-fg-subtle">
+                <span>↑↓ Navigate</span>
+                <span>↵ Open</span>
+                <span>Esc Close</span>
               </div>
             </motion.div>
           </div>

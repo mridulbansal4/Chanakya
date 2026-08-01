@@ -13,7 +13,7 @@ export default function UIDemoPage() {
           <Sparkles className="size-4" />
           <span>UI Libraries Configured</span>
         </div>
-        <h1 className="text-4xl font-extrabold tracking-tight">
+        <h1 className="text-4xl font-semibold tracking-tight">
           Kibo UI & Forge UI Integration
         </h1>
         <p className="text-muted-foreground text-lg">
@@ -22,7 +22,7 @@ export default function UIDemoPage() {
       </div>
 
       {/* Kibo UI Live Demo */}
-      <section className="space-y-4 border border-border rounded-xl p-6 bg-card/50 shadow-sm">
+      <section className="space-y-4 border border-border rounded-xl p-6 bg-card/50 shadow-elev-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Layers className="size-5 text-primary" />
@@ -69,9 +69,9 @@ export default function UIDemoPage() {
       </section>
 
       {/* CLI Installation Cheat Sheet */}
-      <section className="space-y-4 border border-border rounded-xl p-6 bg-card/50 shadow-sm">
+      <section className="space-y-4 border border-border rounded-xl p-6 bg-card/50 shadow-elev-1">
         <div className="flex items-center gap-2">
-          <Zap className="size-5 text-amber-500" />
+          <Zap className="size-5 text-warn" />
           <h2 className="text-xl font-bold">Quick CLI Commands</h2>
         </div>
 
@@ -79,14 +79,14 @@ export default function UIDemoPage() {
           {/* Kibo UI Commands */}
           <div className="space-y-2 p-4 rounded-lg bg-background border border-border">
             <h3 className="font-semibold flex items-center gap-2">
-              <CheckCircle2 className="size-4 text-emerald-500" />
+              <CheckCircle2 className="size-4 text-ok" />
               Add Kibo UI Components
             </h3>
             <p className="text-xs text-muted-foreground">
               Run inside <code className="text-xs font-mono">frontend/apps/web</code>:
             </p>
             <div className="p-3 bg-muted rounded font-mono text-xs overflow-x-auto space-y-1">
-              <p className="text-emerald-400"># Add any Kibo UI component</p>
+              <p className="text-ok"># Add any Kibo UI component</p>
               <p>npx kibo-ui add gantt</p>
               <p>npx kibo-ui add kanban</p>
               <p>npx kibo-ui add dropzone</p>
@@ -97,14 +97,14 @@ export default function UIDemoPage() {
           {/* Forge UI Commands */}
           <div className="space-y-2 p-4 rounded-lg bg-background border border-border">
             <h3 className="font-semibold flex items-center gap-2">
-              <CheckCircle2 className="size-4 text-emerald-500" />
+              <CheckCircle2 className="size-4 text-ok" />
               Add Forge UI Components
             </h3>
             <p className="text-xs text-muted-foreground">
               Run inside <code className="text-xs font-mono">frontend/apps/web</code>:
             </p>
             <div className="p-3 bg-muted rounded font-mono text-xs overflow-x-auto space-y-1">
-              <p className="text-blue-400"># Add Forge UI components via shadcn CLI</p>
+              <p className="text-accent"># Add Forge UI components via shadcn CLI</p>
               <p>npx shadcn@latest add &quot;https://forgeui.in/r/animated-form.json&quot;</p>
               <p>npx shadcn@latest add &quot;https://forgeui.in/r/animated-tabs.json&quot;</p>
               <p>npx shadcn@latest add &quot;https://forgeui.in/r/bot-detection.json&quot;</p>

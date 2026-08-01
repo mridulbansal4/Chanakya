@@ -61,7 +61,7 @@ export default function FeedPage() {
       {f && (
         <>
           {/* Metadata Banner */}
-          <div className="rounded-2xl border border-line bg-surface p-5 shadow-xs flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-mono">
+          <div className="rounded-lg border border-line bg-surface p-5 shadow-xs flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-mono">
             <Meta label="feed_version" value={f.feed_version} />
             <Meta label="source" value={f.source} />
             <Meta label="regulator" value={f.regulator} />
@@ -75,7 +75,7 @@ export default function FeedPage() {
             {f.obligations.map((o) => (
               <li
                 key={o.id}
-                className="rounded-2xl border border-line bg-surface p-5 text-sm shadow-xs transition-all duration-200 hover:shadow-md hover:border-foreground/30 space-y-3"
+                className="rounded-lg border border-line bg-surface p-5 text-sm shadow-xs transition-all duration-200 hover:shadow-elev-1 hover:border-foreground/30 space-y-3"
               >
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="tnum font-bold text-primary bg-cream-200/80 px-2.5 py-1 rounded-lg text-xs">

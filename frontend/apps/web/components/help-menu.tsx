@@ -32,9 +32,11 @@ export function HelpMenu({
         onClick={() => setOpen((o) => !o)}
         title="Help & guide"
         aria-label="Help"
-        className="grid size-10 place-items-center rounded-lg border border-white/15 bg-white/10 text-slate-200 hover:text-white hover:border-white/30 hover:bg-white/15 transition-all shadow-inner"
+        className="shiny-cta size-8 shrink-0 place-items-center rounded-full !p-0 text-white/80 hover:text-white"
       >
-        <HelpCircle className="size-4.5" />
+        <span>
+          <HelpCircle className="size-4 text-blue-400" />
+        </span>
       </button>
       {open && (
         <div className="hairline absolute right-0 z-40 mt-1 w-44 rounded-md bg-surface p-1 text-sm">

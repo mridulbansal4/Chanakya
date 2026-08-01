@@ -51,14 +51,14 @@ const TERMS: Array<{ term: string; def: string }> = [
 export function GlossaryModal({ onClose }: { onClose: () => void }) {
   const dialogRef = useDialog<HTMLDivElement>(onClose)
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-scrim backdrop-blur-sm p-4">
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label="Glossary — in plain English"
         tabIndex={-1}
-        className="flex max-h-[85vh] w-[580px] max-w-full flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl outline-none"
+        className="flex max-h-[85vh] w-[580px] max-w-full flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-elev-3 outline-none"
       >
         <header className="flex items-center justify-between border-b border-line px-6 py-4 bg-surface">
           <div className="flex items-center gap-2.5">

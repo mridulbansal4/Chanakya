@@ -1,29 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { motion } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
 
-import { DeonticBadge } from "@/components/badges"
+import { DeonticBadge, StatusDot } from "@/components/badges"
 import { ConfidenceMeter } from "@/components/confidence"
-import { STATUS_LABEL } from "@/lib/format"
+import { staggerDelay, DUR_STANDARD, EASE_OUT } from "@/lib/motion"
 import type { Clause, Obligation, ObligationStatus } from "@/lib/api"
-
-const STATUS_DOT: Record<ObligationStatus, string> = {
-  approved: "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]",
-  needs_review: "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.6)]",
-  pending: "bg-slate-500",
-  rejected: "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]",
-}
-
-function StatusDot({ status }: { status: ObligationStatus }) {
-  return (
-    <span
-      title={STATUS_LABEL[status]}
-      className={`inline-block size-2.5 shrink-0 rounded-full ${STATUS_DOT[status]}`}
-      aria-hidden
-    />
-  )
-}
 
 interface Section {
   ref: string
@@ -62,6 +45,7 @@ function buildSections(obligations: Obligation[], clauses: Clause[]): Section[] 
     })
 }
 
+/** Ordered by urgency, so the count that needs action is read first. */
 const SUMMARY_ORDER: ObligationStatus[] = [
   "needs_review",
   "pending",
@@ -76,53 +60,61 @@ export function OverviewHierarchy({
   obligations: Obligation[]
   clauses: Clause[]
 }) {
+  const reduce = useReducedMotion()
   const sections = React.useMemo(
     () => buildSections(obligations, clauses),
     [obligations, clauses],
   )
 
   return (
-    <div className="h-full overflow-hidden p-6 pt-14 bg-background">
-      <div className="grid h-full auto-rows-fr grid-cols-1 gap-5 md:grid-cols-2">
+    <div className="p-6 pt-16">
+      <div className="grid auto-rows-fr grid-cols-1 gap-4 xl:grid-cols-2">
         {sections.map((sec, idx) => (
           <motion.section
             key={sec.ref}
-            initial={{ opacity: 0, y: 10 }}
+            initial={reduce ? false : { opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: idx * 0.05 }}
-            className="card-3d flex min-h-0 flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl hover:border-ring/40"
+            transition={{
+              duration: DUR_STANDARD,
+              ease: EASE_OUT,
+              // Capped so a long register does not make the last card wait.
+              delay: staggerDelay(idx),
+            }}
+            className="surface-interactive flex min-h-0 flex-col overflow-hidden"
           >
-            <header className="flex shrink-0 items-center justify-between border-b border-line bg-foreground/5 px-6 py-4">
-              <div className="flex items-center gap-3 min-w-0">
-                <span className="tnum rounded-md bg-foreground/10 px-2.5 py-0.5 text-xs font-bold text-foreground font-mono border border-line">
+            <header className="flex shrink-0 items-center justify-between gap-4 border-b border-line-subtle px-5 py-3.5">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span className="tnum shrink-0 rounded border border-line bg-elevated px-1.5 py-0.5 font-mono text-[11px] text-fg-muted">
                   §{sec.ref}
                 </span>
-                <h3 className="truncate font-display text-base font-bold text-foreground">
-                  {sec.heading}
-                </h3>
+                <h3 className="truncate text-title-lg text-fg">{sec.heading}</h3>
               </div>
-              <div className="flex shrink-0 items-center gap-3 text-xs text-muted-foreground font-mono">
+              <div className="flex shrink-0 items-center gap-3">
                 {SUMMARY_ORDER.filter((s) => sec.counts[s]).map((s) => (
-                  <span key={s} className="inline-flex items-center gap-1.5 font-semibold">
+                  <span key={s} className="inline-flex items-center gap-1.5">
                     <StatusDot status={s} />
-                    <span className="tnum font-extrabold text-foreground">{sec.counts[s]}</span>
+                    <span className="tnum text-label-lg text-fg">{sec.counts[s]}</span>
                   </span>
                 ))}
-                <span className="tnum text-muted-foreground font-medium">· {sec.obligations.length} total</span>
+                <span className="tnum text-label-md text-fg-subtle">
+                  {sec.obligations.length} total
+                </span>
               </div>
             </header>
 
-            <ul className="min-h-0 flex-1 overflow-y-auto divide-y divide-line">
+            <ul className="min-h-0 flex-1 divide-y divide-line-subtle overflow-y-auto">
               {sec.obligations.map((o) => (
                 <li
                   key={o.id}
-                  className="flex items-center gap-3.5 px-6 py-3.5 transition-colors hover:bg-surface-2"
+                  className="flex items-center gap-3 px-5 py-2.5 transition-colors duration-[120ms] hover:bg-elevated"
                 >
                   <StatusDot status={o.status} />
-                  <span className="tnum font-bold text-xs text-primary font-mono w-10 shrink-0">
+                  {/* Clause refs are monospaced and fixed-width so they form a
+                      scannable column rather than a ragged left edge. */}
+                  <span className="tnum w-11 shrink-0 font-mono text-[11px] text-fg-subtle">
                     {o.clause_ref}
                   </span>
-                  <span className="min-w-0 flex-1 truncate text-xs font-semibold text-foreground">
+                  <span className="min-w-0 flex-1 truncate text-body-md text-fg">
                     {o.clause_heading}
                   </span>
                   <DeonticBadge deontic={o.deontic_type} />

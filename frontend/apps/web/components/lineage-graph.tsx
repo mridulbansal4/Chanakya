@@ -15,6 +15,7 @@ import {
 } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
 
+import { GRAPH, lineageDot } from "@/lib/graph-theme"
 import type { Lineage, LineageNode, LineageNodeType } from "@/lib/api"
 
 const COLS: LineageNodeType[] = [
@@ -37,19 +38,7 @@ const LAYER: Record<LineageNodeType, number> = {
 const COL_GAP = 280
 const ROW_GAP = 86
 
-function typeDot(t: LineageNodeType): string {
-  switch (t) {
-    case "control":
-    case "signoff":
-      return "#10B981"
-    case "policy":
-      return "#F59E0B"
-    case "obligation":
-      return "#3B82F6"
-    default:
-      return "#94A3B8"
-  }
-}
+const typeDot = lineageDot
 
 interface CardData extends LineageNode {
   dim: boolean
@@ -60,33 +49,33 @@ function LineageNodeCard({ data }: NodeProps) {
   const d = data as unknown as CardData
   return (
     <div
-      className={`w-[200px] rounded-2xl border bg-surface px-4 py-3 text-xs shadow-xl transition-all duration-200 hover:-translate-y-0.5 ${
+      className={`w-[200px] rounded-2xl border bg-raised px-4 py-3 text-xs shadow-elev-2 transition-all duration-200 hover:-translate-y-0.5 ${
         d.focused
-          ? "border-primary ring-2 ring-primary/40 shadow-primary/20 opacity-100 scale-105"
+          ? "border-accent ring-2 ring-accent/40 opacity-100 scale-105"
           : d.dim
-          ? "border-line opacity-20"
-          : "border-line hover:border-primary/50 opacity-100"
+          ? "border-line-subtle opacity-20"
+          : "border-line-subtle hover:border-accent-line opacity-100"
       }`}
     >
-      <Handle type="target" position={Position.Left} className="!bg-muted-foreground !w-1.5 !h-1.5 !border-none" />
+      <Handle type="target" position={Position.Left} className="!w-1.5 !h-1.5 !border-none" style={{ background: GRAPH.handle }} />
       <div className="flex items-center gap-2">
         <span
           className="inline-block size-2.5 shrink-0 rounded-full"
           style={{ background: typeDot(d.type) }}
         />
-        <span className="tnum font-bold text-foreground truncate" title={d.label}>
+        <span className="tnum truncate font-bold text-fg" title={d.label}>
           {d.ref ?? d.label}
         </span>
       </div>
       {d.sublabel && (
         <div
           title={d.sublabel}
-          className="mt-1 line-clamp-2 leading-snug text-muted-foreground text-[11px]"
+          className="mt-1 line-clamp-2 text-[11px] leading-snug text-fg-muted"
         >
           {d.sublabel}
         </div>
       )}
-      <Handle type="source" position={Position.Right} className="!bg-muted-foreground !w-1.5 !h-1.5 !border-none" />
+      <Handle type="source" position={Position.Right} className="!w-1.5 !h-1.5 !border-none" style={{ background: GRAPH.handle }} />
     </div>
   )
 }
@@ -207,7 +196,7 @@ export function LineageGraph({ lineage }: { lineage: Lineage }) {
           type: "smoothstep",
           animated: onChain && !!chain,
           style: {
-            stroke: onChain && chain ? "#3B82F6" : "#475569",
+            stroke: onChain && chain ? GRAPH.edgeProvenance : GRAPH.edgeDefault,
             strokeWidth: onChain && chain ? 2.5 : 1.25,
             opacity: chain && !onChain ? 0.15 : 1,
           },
@@ -217,7 +206,7 @@ export function LineageGraph({ lineage }: { lineage: Lineage }) {
   )
 
   return (
-    <div className="h-full w-full relative bg-background">
+    <div className="h-full w-full relative" style={{ background: GRAPH.canvas }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -231,21 +220,21 @@ export function LineageGraph({ lineage }: { lineage: Lineage }) {
         onNodeClick={(_, n) => setFocus((f) => (f === n.id ? null : n.id))}
         onPaneClick={() => setFocus(null)}
       >
-        <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="var(--line-dark)" />
-        <Controls showInteractive={false} className="!border-line !shadow-2xl" />
+        <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color={GRAPH.dots} />
+        <Controls showInteractive={false} className="!border-line-subtle !shadow-elev-2" />
         {focus ? (
           <Panel position="top-right" className="!m-3">
             <button
               type="button"
               onClick={() => setFocus(null)}
-              className="rounded-xl border border-primary/40 bg-primary px-4 py-2 text-xs font-bold text-primary-foreground shadow-lg hover:bg-primary/90 transition-all"
+              className="rounded-xl border border-accent-line bg-accent-solid px-4 py-2 text-xs font-bold text-accent-on shadow-elev-1 transition-colors hover:bg-accent-hover"
             >
               Clear focus
             </button>
           </Panel>
         ) : (
           <Panel position="top-right" className="!m-3">
-            <span className="rounded-xl border border-line bg-surface/90 px-4 py-2 text-xs font-medium text-muted-foreground shadow-2xl backdrop-blur-2xl">
+            <span className="rounded-xl border border-line-subtle bg-overlay/90 px-4 py-2 text-xs font-medium text-fg-muted shadow-elev-2 backdrop-blur-2xl">
               Click any node to trace its full lineage chain
             </span>
           </Panel>

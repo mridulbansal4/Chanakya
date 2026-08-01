@@ -290,7 +290,7 @@ function PolicyDetail({
       </div>
 
       {!compiled ? (
-        <div className="rounded-2xl border border-line bg-surface p-6 space-y-4 shadow-sm">
+        <div className="rounded-lg border border-line bg-surface p-6 space-y-4 shadow-elev-1">
           <p className="text-sm text-text-dim leading-relaxed">
             This signed obligation has not been compiled into an automated check yet. Compiling it converts regulatory logic into deterministic Open Policy Agent (OPA) code.
           </p>
@@ -308,7 +308,7 @@ function PolicyDetail({
         <>
           {/* Plain English Rule Card */}
           {rule && (
-            <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm space-y-4">
+            <div className="rounded-lg border border-line bg-surface p-6 shadow-elev-1 space-y-4">
               <RuleLine label="Applies When">{rule.appliesWhen}</RuleLine>
               <RuleLine label={obligationLabel(candidate?.deontic_type)}>
                 {rule.thenMust}
@@ -342,7 +342,7 @@ function PolicyDetail({
               isLoading={evaluate.isPending}
               loadingText="Running Policy Engine Check…"
               onClick={() => evaluate.mutate()}
-              className="shadow-md"
+              className="shadow-elev-1"
             >
               <Play className="size-4" />
               <span>Evaluate Rule Against Firm State</span>
@@ -449,7 +449,7 @@ function Banner({
     neutral: "border-line bg-cream-200/50 text-text-dim",
   }
   return (
-    <div className={`rounded-2xl border p-5 shadow-xs ${styles[tone]}`}>
+    <div className={`rounded-lg border p-5 shadow-xs ${styles[tone]}`}>
       <div className="flex items-center gap-3">
         {icon}
         <span className="font-display text-lg font-bold">{title}</span>
@@ -470,7 +470,7 @@ function ModeControl({
   pending: boolean
 }) {
   return (
-    <div className="rounded-2xl border border-line bg-surface p-5 space-y-2 shadow-xs">
+    <div className="rounded-lg border border-line bg-surface p-5 space-y-2 shadow-xs">
       <div className="flex flex-wrap items-center gap-3">
         <span className="eyebrow">Enforcement Stage</span>
         <div className="inline-flex rounded-full border border-line p-1 bg-background">
@@ -512,7 +512,7 @@ function TechnicalDetail({
   trace?: string
 }) {
   return (
-    <details className="group rounded-2xl border border-line bg-surface shadow-xs">
+    <details className="group rounded-lg border border-line bg-surface shadow-xs">
       <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4 text-xs font-bold text-foreground">
         <div className="flex items-center gap-2">
           <Code2 className="size-4 text-text-dim" />

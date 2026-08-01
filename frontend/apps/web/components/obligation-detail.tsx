@@ -5,6 +5,7 @@ import { X } from "lucide-react"
 
 import { DeonticBadge, StatusBadge } from "@/components/badges"
 import { ConfidenceMeter } from "@/components/confidence"
+import TextReveal from "@/components/ui/text-reveal"
 import { formatDeadline } from "@/lib/format"
 import { getObligation, type ObligationDetail } from "@/lib/api"
 
@@ -64,7 +65,7 @@ function DetailBody({ d }: { d: ObligationDetail }) {
           <StatusBadge status={d.status} />
         </div>
         <h2 className="font-display mt-1 text-lg leading-tight">
-          {d.clause_heading}
+          <TextReveal text={d.clause_heading} by="word" />
         </h2>
       </div>
 

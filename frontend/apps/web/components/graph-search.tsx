@@ -4,30 +4,35 @@ import * as React from "react"
 import { Panel, useReactFlow } from "@xyflow/react"
 import { Search } from "lucide-react"
 
+import { cn } from "@workspace/ui/lib/utils"
+
 /**
- * GraphSearch provides instant, ultra-fast jump-to-node search on graph canvases.
- * - Enter / Live Search: Fast zoom-in to target node with glowing halo.
- * - Backspace / Empty: Guaranteed zoom-out reset to fit full graph.
+ * Jump-to-node search for graph canvases.
+ *
+ * Typing centres the camera on the first match; clearing the field returns
+ * the view to fit the whole graph. The camera glide is 300ms — long enough
+ * that the eye can follow the movement and understand where in the graph it
+ * landed, which is the entire reason for animating a viewport change rather
+ * than cutting to it.
  */
-export function GraphSearch({ placeholder = "Find a clause or obligation…" }: { placeholder?: string }) {
+export function GraphSearch({
+  placeholder = "Find a clause or obligation…",
+}: {
+  placeholder?: string
+}) {
   const rf = useReactFlow()
   const [q, setQ] = React.useState("")
   const [miss, setMiss] = React.useState(false)
 
-  // Guaranteed zoom-out reset to fit the whole graph
   const resetToDefaultZoom = React.useCallback(() => {
     setMiss(false)
     rf.setNodes((nodes) => nodes.map((n) => ({ ...n, selected: false })))
 
-    // Execute fitView after React Flow processes node unselection
+    // Wait for React Flow to commit the deselection before fitting, or the
+    // fit is computed against stale node state.
     requestAnimationFrame(() => {
       setTimeout(() => {
-        const allNodes = rf.getNodes()
-        rf.fitView({
-          nodes: allNodes,
-          duration: 300,
-          padding: 0.15,
-        })
+        rf.fitView({ nodes: rf.getNodes(), duration: 300, padding: 0.15 })
       }, 40)
     })
   }, [rf])
@@ -40,90 +45,79 @@ export function GraphSearch({ placeholder = "Find a clause or obligation…" }: 
         return
       }
 
-      const allNodes = rf.getNodes()
-      const match = allNodes.find((n) => {
+      const match = rf.getNodes().find((n) => {
         const d = (n.data as Record<string, unknown>) ?? {}
-        const fields = [
-          n.id,
-          d.label,
-          d.sublabel,
-          d.ref,
-          d.rawLabel,
-          d.rawSublabel,
-        ]
-        return fields
+        return [n.id, d.label, d.sublabel, d.ref, d.rawLabel, d.rawSublabel]
           .map((v) => String(v ?? "").toLowerCase())
           .some((s) => s.includes(term))
       })
 
-      if (match) {
-        setMiss(false)
-
-        // Highlight matching node with glowing selection halo
-        rf.setNodes((nodes) =>
-          nodes.map((n) => ({
-            ...n,
-            selected: n.id === match.id,
-          }))
-        )
-
-        // Calculate node center coordinates
-        const nodeWidth = (match.width as number) || (match.measured?.width as number) || 250
-        const nodeHeight = (match.height as number) || (match.measured?.height as number) || 52
-        const centerX = match.position.x + nodeWidth / 2
-        const centerY = match.position.y + nodeHeight / 2
-
-        // Fast camera glide centered on target node
-        requestAnimationFrame(() => {
-          rf.setCenter(centerX, centerY, {
-            zoom: 1.6,
-            duration: 300,
-          })
-        })
-      } else {
+      if (!match) {
         setMiss(true)
+        return
       }
+
+      setMiss(false)
+      rf.setNodes((nodes) =>
+        nodes.map((n) => ({ ...n, selected: n.id === match.id })),
+      )
+
+      const nodeWidth =
+        (match.width as number) || (match.measured?.width as number) || 250
+      const nodeHeight =
+        (match.height as number) || (match.measured?.height as number) || 52
+
+      requestAnimationFrame(() => {
+        rf.setCenter(
+          match.position.x + nodeWidth / 2,
+          match.position.y + nodeHeight / 2,
+          { zoom: 1.6, duration: 300 },
+        )
+      })
     },
-    [rf, resetToDefaultZoom]
+    [rf, resetToDefaultZoom],
   )
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value
     setQ(val)
-
-    if (val.trim() === "") {
-      resetToDefaultZoom()
-    } else {
-      findNode(val)
-    }
+    if (val.trim() === "") resetToDefaultZoom()
+    else findNode(val)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      findNode(q)
-    } else if (e.key === "Backspace" && (q.length <= 1 || q.trim() === "")) {
-      resetToDefaultZoom()
-    }
+    if (e.key === "Enter") findNode(q)
+    else if (e.key === "Backspace" && q.trim().length <= 1) resetToDefaultZoom()
   }
 
   return (
     <Panel position="top-right" className="!m-4">
       <div
-        className={`flex items-center gap-2.5 rounded-2xl border bg-surface/95 px-4 py-2.5 shadow-2xl backdrop-blur-2xl transition-all ${
+        className={cn(
+          "flex items-center gap-2.5 rounded-md border bg-overlay px-3 py-2 shadow-elev-2",
+          "transition-colors duration-[120ms] ease-[cubic-bezier(0.2,0.8,0.2,1)]",
           miss
-            ? "border-red-500/80 ring-2 ring-red-500/30"
-            : "border-line focus-within:border-primary/80 focus-within:ring-2 focus-within:ring-primary/30"
-        }`}
+            ? "border-risk"
+            : "border-line-subtle focus-within:border-accent-line",
+        )}
       >
-        <Search className="size-4 text-muted-foreground shrink-0" aria-hidden />
+        <Search className="size-4 shrink-0 text-fg-subtle" aria-hidden />
         <input
+          type="search"
           value={q}
-          onChange={handleSearchChange}
+          onChange={handleChange}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-56 bg-transparent text-xs font-semibold text-foreground outline-none placeholder:text-muted-foreground"
+          aria-label="Find a node in the graph"
+          aria-invalid={miss || undefined}
+          className="w-56 bg-transparent text-body-sm text-fg outline-none placeholder:text-fg-faint"
         />
       </div>
+      {/* The camera move is invisible to a screen reader, so the outcome of
+          the search is announced explicitly. */}
+      <p role="status" aria-live="polite" className="sr-only">
+        {q.trim() === "" ? "" : miss ? "No matching node" : "Node found"}
+      </p>
     </Panel>
   )
 }

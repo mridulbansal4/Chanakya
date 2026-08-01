@@ -5,7 +5,7 @@ import type { ReactNode } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
-import { motion } from "framer-motion"
+import { motion, useReducedMotion } from "framer-motion"
 
 import { AsOfControl } from "@/components/as-of-control"
 import { HelpMenu } from "@/components/help-menu"
@@ -13,10 +13,12 @@ import { ScreenBanner } from "@/components/screen-banner"
 import { WelcomeModal } from "@/components/welcome-modal"
 import { GlossaryModal } from "@/components/glossary-modal"
 import { CommandPalette } from "@/components/command-palette"
-import { PageTransition } from "@/components/page-transition"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { PageTransition } from "@/components/page-transition"
 import { useAsOf } from "@/components/as-of-provider"
 import { getReviewQueue } from "@/lib/api"
+import { RandomLetterSwap } from "@/components/ui/random-letter-swap"
+import { SPRING_LAYOUT } from "@/lib/motion"
 import { cn } from "@workspace/ui/lib/utils"
 
 const OFFICER = {
@@ -58,6 +60,7 @@ function bannerFor(pathname: string): { id: string; text: ReactNode } | null {
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const { asOf } = useAsOf()
+  const reduce = useReducedMotion()
 
   const reviewCount = useQuery({
     queryKey: ["review-queue", asOf],
@@ -78,53 +81,78 @@ export function AppShell({ children }: { children: ReactNode }) {
   }
 
   const banner = bannerFor(pathname)
+  const pending = reviewCount.data ?? 0
 
   return (
-    <div className="flex h-svh flex-col overflow-hidden bg-background text-foreground">
-      <header className="flex h-16 shrink-0 items-center justify-between border-b border-line bg-background/95 px-4 lg:px-6 text-foreground shadow-xl backdrop-blur-xl z-30 gap-2">
-        {/* Brand wordmark - Clean CHANAKYA Logo without SUPTECH badge */}
-        <div className="flex items-center gap-2 shrink-0">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <img src="/logo.svg" alt="CHANAKYA Logo" className="h-7 w-auto transition-transform group-hover:scale-105" />
-            <span className="font-display text-2xl lg:text-[26px] leading-none tracking-tight text-foreground font-extrabold">
-              CHANAKYA
-            </span>
-          </Link>
-        </div>
+    <div className="flex h-svh flex-col overflow-hidden bg-canvas text-fg">
+      {/*
+        The chrome sits on --sunken, one step below the content canvas, so
+        the app surface reads as sitting *in* a frame. It is solid rather
+        than translucent: a blurred bar over a scrolling data table is
+        visual noise in an instrument, and it costs a compositing layer on
+        every scroll frame.
+      */}
+      <header className="z-30 relative flex h-14 shrink-0 items-center gap-4 border-b border-line-subtle bg-sunken/90 backdrop-blur-md px-4 lg:px-5 shadow-elev-2">
+        {/* Animated rotating/glowing bottom border accent line */}
+        <div className="absolute inset-x-0 bottom-0 h-[1.5px] bg-gradient-to-r from-transparent via-accent to-transparent opacity-80 animate-pulse pointer-events-none" />
 
-        {/* Navigation Tabs - Perfectly fitted */}
-        <nav className="flex min-w-0 flex-1 items-center justify-center gap-1 text-sm lg:text-[15px] overflow-x-auto no-scrollbar py-1 px-1">
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-2.5 rounded group transition-opacity hover:opacity-90"
+          aria-label="CHANAKYA — go to overview"
+        >
+          <img src="/logo.svg" alt="" aria-hidden className="h-5 w-auto" />
+          <span className="text-headline-sm tracking-tight font-semibold text-fg">CHANAKYA</span>
+        </Link>
+
+        {/*
+          Nine destinations is a lot for one row, but these are the product's
+          operating surfaces and a compliance officer moves between them
+          constantly — burying them in a menu would cost more than it saves.
+          The command palette (⌘K) is the fast path for anyone who prefers it.
+        */}
+        <nav
+          aria-label="Primary"
+          className="no-scrollbar flex min-w-0 flex-1 items-center justify-center gap-0.5 overflow-x-auto"
+        >
           {NAV.map((item) => {
             const active =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(item.href)
-            const badge =
-              item.href === "/review" && (reviewCount.data ?? 0) > 0
-                ? reviewCount.data
-                : null
+              item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
+            const badge = item.href === "/review" && pending > 0 ? pending : null
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 title={item.hint}
+                aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm lg:text-[15px] font-bold transition-all duration-150 whitespace-nowrap shrink-0",
+                  "relative inline-flex h-8.5 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-[13px] font-medium tracking-tight",
+                  "transition-all duration-200 ease-out",
                   active
-                    ? "text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-foreground/10"
+                    ? "text-fg font-semibold"
+                    : "text-fg-muted hover:text-fg hover:bg-elevated",
                 )}
               >
                 {active && (
-                  <motion.div
-                    layoutId="activeNavTab"
-                    className="absolute inset-0 rounded-full bg-primary/90 border border-primary/40 shadow-[0_0_15px_rgba(var(--primary),0.3)]"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  <motion.span
+                    // Shared layoutId lets the indicator travel between tabs
+                    layoutId={reduce ? undefined : "nav-active"}
+                    aria-hidden
+                    className="shiny-cta absolute inset-0 rounded-full !p-0 shadow-elev-1"
+                    transition={SPRING_LAYOUT}
                   />
                 )}
-                <span className="relative z-10">{item.label}</span>
+                <RandomLetterSwap
+                  className="relative z-10 text-[13px]"
+                  label={item.label}
+                  staggerDuration={0.04}
+                  transition={{ duration: 0.8, type: "spring" }}
+                />
                 {badge != null && (
-                  <span className="relative z-10 tnum inline-flex min-w-4 items-center justify-center rounded-full bg-amber-500 px-1.5 py-0.2 text-[10px] font-extrabold text-black shadow-sm">
+                  <span
+                    className="relative z-10 tnum inline-flex min-w-[17px] h-4.5 items-center justify-center rounded-full bg-warn px-1.5 text-[10px] font-bold text-[var(--warn-foreground)] shadow-elev-1"
+                    aria-label={`${badge} awaiting review`}
+                  >
                     {badge}
                   </span>
                 )}
@@ -133,8 +161,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        {/* Action Controls */}
-        <div className="flex items-center justify-end gap-2 shrink-0">
+        <div className="flex shrink-0 items-center gap-2.5">
           <CommandPalette />
           <AsOfControl />
           <ThemeToggle />
@@ -142,23 +169,20 @@ export function AppShell({ children }: { children: ReactNode }) {
             onTour={() => setWelcomeOpen(true)}
             onGlossary={() => setGlossaryOpen(true)}
           />
-          <div
+          <button
+            type="button"
             title={`${OFFICER.name} · ${OFFICER.role} · ${OFFICER.firm}`}
-            className="hidden size-8 place-items-center rounded-full border border-line bg-surface md:grid shadow-inner cursor-pointer hover:border-foreground/30 transition-all"
+            aria-label={`Signed in as ${OFFICER.name}, ${OFFICER.role} at ${OFFICER.firm}`}
+            className="hidden shiny-cta size-8 shrink-0 place-items-center rounded-full !p-0 font-medium text-xs text-fg md:grid"
           >
-            <span className="grid size-7 place-items-center rounded-full bg-foreground/10 text-[11px] font-bold text-foreground">
-              {OFFICER.name
-                .split(" ")
-                .map((w) => w[0])
-                .join("")}
-            </span>
-          </div>
+            <span>{OFFICER.name.split(" ").map((w) => w[0]).join("")}</span>
+          </button>
         </div>
       </header>
 
       {banner && <ScreenBanner id={banner.id}>{banner.text}</ScreenBanner>}
 
-      <main className="min-h-0 flex-1 overflow-y-auto bg-background">
+      <main id="main-content" className="min-h-0 flex-1 overflow-y-auto bg-canvas">
         <PageTransition key={pathname}>{children}</PageTransition>
       </main>
 

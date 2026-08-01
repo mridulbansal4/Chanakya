@@ -16,6 +16,8 @@ import {
   Sparkles,
 } from "lucide-react"
 
+import EnterpriseAIPipeline from "@/components/ui/ai-agent-pipeline"
+import TextReveal from "@/components/ui/text-reveal"
 import { ConfidenceMeter } from "@/components/confidence"
 import {
   AUDIT_LINEAGE,
@@ -177,14 +179,14 @@ export function ClauseDiff({ onNext }: { onNext: () => void }) {
               <div className="space-y-1.5">
                 <div className="rounded-md border border-risk/30 bg-risk/5 px-3 py-2 text-xs leading-relaxed text-foreground">
                   <span className="mr-1.5 text-[10px] font-semibold text-risk uppercase">Before</span>
-                  {d.before}
+                  <TextReveal text={d.before} by="word" stagger={0.03} />
                 </div>
                 <div className="flex justify-center text-text-dim">
                   <ArrowDown className="size-3.5" />
                 </div>
                 <div className="rounded-md border border-ok/30 bg-ok/5 px-3 py-2 text-xs leading-relaxed text-foreground">
                   <span className="mr-1.5 text-[10px] font-semibold text-ok uppercase">After</span>
-                  {d.after}
+                  <TextReveal text={d.after} by="word" stagger={0.03} />
                 </div>
               </div>
             </div>
@@ -227,7 +229,9 @@ export function Obligations({ onNext }: { onNext: () => void }) {
                   <ConfidenceMeter value={o.confidence} />
                 </span>
               </div>
-              <p className="mt-1.5 text-sm text-foreground">{o.summary}</p>
+              <p className="mt-1.5 text-sm text-foreground">
+                <TextReveal text={o.summary} by="word" stagger={0.03} />
+              </p>
               <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-text-dim">
                 <span className="tnum">Source: {o.source}</span>
                 <span className="tnum">Citation: {o.citation}</span>
@@ -264,34 +268,8 @@ export function GraphUpdate({ onNext }: { onNext: () => void }) {
         title="Obligation graph updated"
         description="The new obligation joins the existing graph; affected controls are highlighted."
       />
-      <div className="rounded-xl border border-line bg-surface p-5">
-        <div className="mb-3 grid grid-cols-[1fr_auto_1.4fr_auto_1.4fr] items-center gap-2 text-[10px] tracking-wide text-text-dim uppercase">
-          <span>Regulation</span>
-          <span />
-          <span>Obligation</span>
-          <span />
-          <span>Control</span>
-        </div>
-        <div className="space-y-2">
-          {GRAPH_ROWS.map((r, i) => (
-            <Reveal key={r.obl} delay={0.15 + i * 0.18}>
-              <div className="grid grid-cols-[1fr_auto_1.4fr_auto_1.4fr] items-center gap-2">
-                <div className="rounded-lg border border-line bg-cream-200/40 px-2.5 py-2 text-[11px] text-text-dim">
-                  {i === 0 ? "MITC Circular" : "↳"}
-                </div>
-                <ArrowRight className="size-3.5 text-text-dim" />
-                <GraphNode label={r.obl} kind={r.kind} />
-                <ArrowRight className="size-3.5 text-text-dim" />
-                <GraphNode label={r.control} control={r.ctrl} />
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-      <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-text-dim">
-        <span className="inline-flex items-center gap-1.5"><Dot c="warn" /> 3 modified</span>
-        <span className="inline-flex items-center gap-1.5"><Dot c="lavender" /> 1 added</span>
-        <span className="inline-flex items-center gap-1.5"><Dot c="warn" /> 2 existing controls updated</span>
+      <div className="my-6">
+        <EnterpriseAIPipeline />
       </div>
       <div className="mt-5 flex justify-end">
         <PrimaryButton onClick={onNext}>
@@ -513,7 +491,9 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   return (
     <div>
       <div className="eyebrow mb-1">{label}</div>
-      <p className="text-sm leading-relaxed text-foreground">{children}</p>
+      <p className="text-sm leading-relaxed text-foreground">
+        {typeof children === "string" ? <TextReveal text={children} by="word" stagger={0.02} /> : children}
+      </p>
     </div>
   )
 }

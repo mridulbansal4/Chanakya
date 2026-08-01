@@ -18,27 +18,10 @@ import "@xyflow/react/dist/style.css"
 import { DeonticBadge } from "@/components/badges"
 import { GraphLegend } from "@/components/graph-legend"
 import { GraphSearch } from "@/components/graph-search"
-import type {
-  DeonticType,
-  GraphPayload,
-  ObligationStatus,
-} from "@/lib/api"
+import { GRAPH, GRAPH_STATUS, OVERVIEW_LEGEND } from "@/lib/graph-theme"
+import type { DeonticType, GraphPayload, ObligationStatus } from "@/lib/api"
 
-const OVERVIEW_LEGEND = [
-  { color: "#94A3B8", label: "Clause (Regulation source)" },
-  { color: "#F8FAFC", label: "Obligation (Deontic duty)" },
-  { color: "#10B981", label: "Approved" },
-  { color: "#F59E0B", label: "Needs review / pending" },
-  { color: "#EF4444", label: "Rejected" },
-  { color: "#3B82F6", label: "Causal provenance link", line: true },
-]
-
-const STATUS_DOT: Record<ObligationStatus, string> = {
-  approved: "#10B981",
-  needs_review: "#F59E0B",
-  pending: "#94A3B8",
-  rejected: "#EF4444",
-}
+const STATUS_DOT: Record<ObligationStatus, string> = GRAPH_STATUS
 
 interface CardData {
   kind: "clause" | "obligation"
@@ -60,54 +43,50 @@ function OverviewNode({ data, selected }: NodeProps) {
   if (d.kind === "clause") {
     return (
       <div
-        className={`rounded-2xl border px-4 py-3 text-xs shadow-xl transition-all duration-300 hover:-translate-y-0.5 ${
+        className={`rounded-2xl border px-4 py-3 text-xs shadow-2xl transition-all duration-300 hover:-translate-y-0.5 ${
           selected
-            ? "border-primary bg-primary/10 ring-4 ring-primary/80 shadow-[0_0_35px_rgba(59,130,246,0.8)] scale-105 z-50"
-            : "border-line bg-surface hover:border-primary/60"
+            ? "border-accent bg-accent-weak ring-4 ring-accent/60 scale-105 z-50"
+            : "border-line-subtle bg-raised hover:border-accent-line"
         }`}
       >
-        <Handle type="target" position={Position.Left} className="!bg-muted-foreground !w-1.5 !h-1.5 !border-none" />
+        <Handle type="target" position={Position.Left} className="!w-1.5 !h-1.5 !border-none" style={{ background: GRAPH.handle }} />
         <div className="flex items-center gap-2.5">
-          <span className="tnum font-bold text-foreground bg-foreground/10 px-2 py-0.5 rounded-md font-mono text-xs border border-line">
+          <span className="tnum rounded-md border border-line bg-elevated px-2 py-0.5 font-mono text-xs font-bold text-fg">
             Clause {d.ref}
           </span>
-          <span title={d.sublabel} className="max-w-[180px] truncate text-muted-foreground font-semibold text-xs">
+          <span title={d.sublabel} className="max-w-[180px] truncate text-xs font-semibold text-fg-muted">
             {d.sublabel}
           </span>
         </div>
-        <Handle type="source" position={Position.Right} className="!bg-muted-foreground !w-1.5 !h-1.5 !border-none" />
+        <Handle type="source" position={Position.Right} className="!w-1.5 !h-1.5 !border-none" style={{ background: GRAPH.handle }} />
       </div>
     )
   }
 
   return (
     <div
-      className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-xs shadow-xl transition-all duration-300 hover:-translate-y-0.5 ${
+      className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-xs shadow-2xl transition-all duration-300 hover:-translate-y-0.5 ${
         selected
-          ? "border-primary bg-primary/10 ring-4 ring-primary/80 shadow-[0_0_35px_rgba(59,130,246,0.8)] scale-105 z-50"
+          ? "border-accent bg-accent-weak ring-4 ring-accent/60 scale-105 z-50"
           : isApproved
-          ? "border-emerald-500/40 bg-surface hover:border-emerald-400"
+          ? "border-ok-line bg-raised hover:border-ok"
           : isReview
-          ? "border-amber-500/40 bg-surface hover:border-amber-400"
+          ? "border-warn-line bg-raised hover:border-warn"
           : isRisk
-          ? "border-red-500/40 bg-surface hover:border-red-400"
-          : "border-line bg-surface hover:border-primary/60"
+          ? "border-risk-line bg-raised hover:border-risk"
+          : "border-line-subtle bg-raised hover:border-accent-line"
       }`}
     >
-      <Handle type="target" position={Position.Left} className="!bg-muted-foreground !w-1.5 !h-1.5 !border-none" />
+      <Handle type="target" position={Position.Left} className="!w-1.5 !h-1.5 !border-none" style={{ background: GRAPH.handle }} />
       <span
         className="inline-block size-2.5 shrink-0 rounded-full"
         style={{ background: STATUS_DOT[d.status ?? "pending"] }}
       />
-      <div className="flex min-w-0 flex-col">
-        <span className="truncate font-bold text-foreground" title={d.ref}>
-          {d.ref}
-        </span>
-        <span className="mt-0.5 truncate text-muted-foreground" title={d.label}>
-          {d.label}
-        </span>
-      </div>
-      <Handle type="source" position={Position.Right} className="!bg-muted-foreground !w-1.5 !h-1.5 !border-none" />
+      <span title={d.label} className="max-w-[200px] truncate text-xs font-bold text-fg">
+        {d.label}
+      </span>
+      {d.deontic && <DeonticBadge deontic={d.deontic} />}
+      <Handle type="source" position={Position.Right} className="!w-1.5 !h-1.5 !border-none" style={{ background: GRAPH.handle }} />
     </div>
   )
 }
@@ -184,7 +163,7 @@ function layout(payload: GraphPayload): { nodes: Node[]; edges: Edge[] } {
     type: "smoothstep",
     animated: true,
     style: {
-      stroke: e.kind === "clause_obligation" ? "#3B82F6" : "#475569",
+      stroke: e.kind === "clause_obligation" ? GRAPH.edgeProvenance : GRAPH.edgeDefault,
       strokeWidth: 2,
     },
   }))
@@ -194,7 +173,7 @@ function layout(payload: GraphPayload): { nodes: Node[]; edges: Edge[] } {
 export function OverviewGraph({ payload }: { payload: GraphPayload }) {
   const { nodes, edges } = React.useMemo(() => layout(payload), [payload])
   return (
-    <div className="h-full w-full relative bg-background">
+    <div className="h-full w-full relative" style={{ background: GRAPH.canvas }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -206,8 +185,8 @@ export function OverviewGraph({ payload }: { payload: GraphPayload }) {
         nodesDraggable={true}
         nodesConnectable={false}
       >
-        <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="var(--line-dark)" />
-        <Controls showInteractive={false} className="!border-line !shadow-2xl" />
+        <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color={GRAPH.dots} />
+        <Controls showInteractive={false} className="!border-line-subtle !shadow-elev-2" />
         <GraphLegend items={OVERVIEW_LEGEND} />
         <GraphSearch placeholder="Find a clause or obligation…" />
       </ReactFlow>

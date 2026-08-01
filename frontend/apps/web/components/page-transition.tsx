@@ -3,20 +3,29 @@
 import * as React from "react"
 import { motion, useReducedMotion } from "framer-motion"
 
+import { TRANSITION_STRUCTURAL, pageVariants } from "@/lib/motion"
+
+/**
+ * Route-level enter animation.
+ *
+ * The movement is 4px. On a screen the user navigates between all day, a
+ * larger travel distance stops reading as polish and starts reading as
+ * waiting — the animation becomes the slowest part of the navigation.
+ */
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const reduce = useReducedMotion()
 
   if (reduce) {
-    return <>{children}</>
+    return <div className="flex h-full w-full flex-col">{children}</div>
   }
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6, scale: 0.995 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -6, scale: 0.995 }}
-      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-      className="h-full w-full flex flex-col"
+      initial="hidden"
+      animate="visible"
+      variants={pageVariants}
+      transition={TRANSITION_STRUCTURAL}
+      className="flex h-full w-full flex-col"
     >
       {children}
     </motion.div>

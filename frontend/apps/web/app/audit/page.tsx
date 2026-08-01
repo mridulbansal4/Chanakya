@@ -66,7 +66,7 @@ export default function AuditPage() {
             className="rounded-xl border border-line bg-surface p-3.5 text-center transition-all duration-200 hover:border-foreground/20 hover:bg-surface-2 shadow-sm"
           >
             <div className="eyebrow">{COLUMN[t]}</div>
-            <div className="tnum font-display mt-1 text-base font-bold text-foreground">
+            <div className="tnum mt-1 text-metric-sm text-fg">
               {counts[t] ?? 0}
             </div>
           </div>

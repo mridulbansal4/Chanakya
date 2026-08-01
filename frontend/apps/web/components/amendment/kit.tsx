@@ -153,14 +153,14 @@ export const STAGE_LABELS = [
 
 export function StageRail({ step }: { step: number }) {
   return (
-    <div className="flex items-center gap-2 overflow-x-auto border-b border-line bg-surface px-6 py-3.5">
+    <div className="flex items-center gap-1 overflow-x-auto border-b border-line bg-surface px-6 py-2.5">
       {STAGE_LABELS.map((label, i) => {
         const state = i < step ? "done" : i === step ? "current" : "future"
         return (
           <React.Fragment key={label}>
-            <div className="flex shrink-0 items-center gap-2">
+            <div className="flex shrink-0 items-center gap-1.5">
               <span
-                className={`grid size-5 place-items-center rounded-full text-xs font-bold ${
+                className={`grid size-4 place-items-center rounded-full text-[9px] font-medium ${
                   state === "done"
                     ? "bg-ok text-white"
                     : state === "current"
@@ -168,22 +168,22 @@ export function StageRail({ step }: { step: number }) {
                       : "border border-line text-text-dim"
                 }`}
               >
-                {state === "done" ? <Check className="size-3" /> : i + 1}
+                {state === "done" ? <Check className="size-2.5" /> : i + 1}
               </span>
               <span
-                className={`text-xs lg:text-sm whitespace-nowrap ${
+                className={`text-[11px] whitespace-nowrap ${
                   state === "current"
-                    ? "font-bold text-foreground"
+                    ? "font-medium text-foreground"
                     : state === "done"
-                      ? "font-medium text-text-dim"
-                      : "font-medium text-text-dim/60"
+                      ? "text-text-dim"
+                      : "text-text-dim/60"
                 }`}
               >
                 {label}
               </span>
             </div>
             {i < STAGE_LABELS.length - 1 && (
-              <span className={`h-px w-5 shrink-0 ${i < step ? "bg-ok" : "bg-line"}`} />
+              <span className={`h-px w-4 shrink-0 ${i < step ? "bg-ok" : "bg-line"}`} />
             )}
           </React.Fragment>
         )
@@ -204,19 +204,14 @@ export function PrimaryButton({
   disabled?: boolean
   tone?: "ink" | "ok" | "risk"
 }) {
-  const tones: Record<string, string> = {
-    ink: "bg-ink text-on-ink",
-    ok: "bg-ok text-white",
-    risk: "bg-risk text-white",
-  }
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-base font-semibold transition-opacity disabled:opacity-40 ${tones[tone]}`}
+      className="shiny-cta"
     >
-      {children}
+      <span>{children}</span>
     </button>
   )
 }
@@ -232,9 +227,9 @@ export function GhostButton({
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-2 rounded-full border border-line px-5 py-2.5 text-base font-semibold text-foreground hover:bg-cream-200"
+      className="shiny-cta"
     >
-      {children}
+      <span>{children}</span>
     </button>
   )
 }
@@ -250,10 +245,10 @@ export function ScreenTitle({
   description?: string
 }) {
   return (
-    <div className="mb-6">
-      <div className="eyebrow mb-1.5 text-xs font-bold uppercase tracking-wider">{eyebrow}</div>
-      <h2 className="font-display text-3xl font-extrabold leading-tight tracking-tight">{title}</h2>
-      {description && <p className="mt-1.5 max-w-2xl text-base text-text-dim leading-relaxed">{description}</p>}
+    <div className="mb-5">
+      <div className="eyebrow mb-1">{eyebrow}</div>
+      <h2 className="font-display text-2xl leading-tight tracking-tight">{title}</h2>
+      {description && <p className="mt-1 max-w-2xl text-sm text-text-dim">{description}</p>}
     </div>
   )
 }

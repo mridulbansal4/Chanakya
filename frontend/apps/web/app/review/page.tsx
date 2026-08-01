@@ -78,7 +78,7 @@ export default function ReviewPage() {
         {items.map((o) => (
           <li
             key={o.id}
-            className="rounded-2xl border border-line bg-surface p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:border-foreground/30 hover:-translate-y-0.5 space-y-4"
+            className="rounded-lg border border-line bg-surface p-6 shadow-elev-1 transition-all duration-200 hover:shadow-elev-1 hover:border-foreground/30 hover:-translate-y-0.5 space-y-4"
           >
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="min-w-0 flex-1 space-y-2">
@@ -109,7 +109,7 @@ export default function ReviewPage() {
                 variant="default"
                 size="default"
                 onClick={() => setSelected(o)}
-                className="shrink-0 shadow-sm"
+                className="shrink-0 shadow-elev-1"
               >
                 <span>Review &amp; Sign</span>
                 <ArrowRight className="size-4" />

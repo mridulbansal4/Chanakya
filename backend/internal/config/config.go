@@ -40,7 +40,7 @@ func Load() (Config, error) {
 	cfg := Config{
 		Addr:           getenv("CHANAKYA_ADDR", ":8080"),
 		DBPath:         getenv("CHANAKYA_DB_PATH", "./chanakya.db"),
-		CORSOrigins:    splitAndTrim(getenv("CHANAKYA_CORS_ORIGINS", "http://localhost:3000")),
+		CORSOrigins:    splitAndTrim(getenv("CHANAKYA_CORS_ORIGINS", "http://localhost:3000,http://localhost:3001,http://localhost:3002,http://127.0.0.1:3000,http://127.0.0.1:3001,http://127.0.0.1:3002")),
 		SigningKeyPath: getenv("CHANAKYA_SIGNING_KEY_PATH", "./chanakya_signing.key"),
 	}
 	return cfg, nil

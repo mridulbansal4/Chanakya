@@ -14,25 +14,27 @@ export function AsOfControl() {
   return (
     <label
       title="Reconstruct the compliance state as of this date"
-      className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-3.5 py-2 text-sm text-white font-medium shadow-inner hover:border-white/30 transition-all"
+      className="shiny-cta !py-1 !px-3 !text-xs font-medium !rounded-full shadow-sm"
     >
-      <CalendarClock className="size-4 text-slate-300" aria-hidden />
-      <input
-        type="date"
-        value={asOf}
-        max={today}
-        onChange={(e) => setAsOf(e.target.value || today)}
-        className="tnum bg-transparent text-on-ink outline-none [color-scheme:dark]"
-      />
-      {!isToday && (
-        <button
-          type="button"
-          onClick={() => setAsOf(today)}
-          className="tnum text-lavender hover:underline"
-        >
-          today
-        </button>
-      )}
+      <span>
+        <CalendarClock className="size-3.5 text-blue-400 shrink-0" aria-hidden />
+        <input
+          type="date"
+          value={asOf}
+          max={today}
+          onChange={(e) => setAsOf(e.target.value || today)}
+          className="tnum bg-transparent text-white outline-none [color-scheme:dark] cursor-pointer"
+        />
+        {!isToday && (
+          <button
+            type="button"
+            onClick={() => setAsOf(today)}
+            className="tnum text-blue-400 hover:underline font-semibold ml-1"
+          >
+            today
+          </button>
+        )}
+      </span>
     </label>
   )
 }

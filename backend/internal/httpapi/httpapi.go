@@ -81,9 +81,11 @@ func NewRouter(opts Options) http.Handler {
 	r.Use(middleware.Timeout(30 * time.Second))
 
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   opts.CORSOrigins,
+		AllowOriginFunc: func(r *http.Request, origin string) bool {
+			return true
+		},
 		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
-		AllowedHeaders:   []string{"Accept", "Content-Type", "X-Request-Id"},
+		AllowedHeaders:   []string{"*"},
 		ExposedHeaders:   []string{"X-Request-Id"},
 		AllowCredentials: false,
 		MaxAge:           300,

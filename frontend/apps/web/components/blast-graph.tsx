@@ -16,35 +16,13 @@ import {
 import "@xyflow/react/dist/style.css"
 
 import { GraphLegend } from "@/components/graph-legend"
+import { BLAST_LEGEND, GRAPH, blastKind } from "@/lib/graph-theme"
 import type { BlastNode, BlastRadius } from "@/lib/api"
-
-const BLAST_LEGEND = [
-  { color: "#3B82F6", label: "Amended / directly affected" },
-  { color: "#F59E0B", label: "Related match (semantic)" },
-  { color: "#10B981", label: "Control" },
-  { color: "#94A3B8", label: "Evidence" },
-  { color: "#F59E0B", label: "Semantic link", line: true, dashed: true },
-]
 
 const COL_GAP = 280
 const ROW_GAP = 82
 
-function nodeStyle(kind: string): { color: string; tag: string } {
-  switch (kind) {
-    case "amended":
-      return { color: "#3B82F6", tag: "AMENDED" }
-    case "direct":
-      return { color: "#3B82F6", tag: "DIRECT" }
-    case "semantic":
-      return { color: "#F59E0B", tag: "SEMANTIC" }
-    case "control":
-      return { color: "#10B981", tag: "CONTROL" }
-    case "evidence":
-      return { color: "#94A3B8", tag: "EVIDENCE" }
-    default:
-      return { color: "#64748B", tag: kind }
-  }
-}
+const nodeStyle = blastKind
 
 function BlastNodeCard({ data, selected }: NodeProps) {
   const d = data as unknown as BlastNode
@@ -60,19 +38,19 @@ function BlastNodeCard({ data, selected }: NodeProps) {
           ? { duration: 0 }
           : { delay: d.layer * 0.25, duration: 0.35, ease: [0.16, 1, 0.3, 1] }
       }
-      className={`rounded-2xl border px-4 py-3 text-xs shadow-xl transition-all duration-200 hover:-translate-y-0.5 ${
+      className={`rounded-2xl border px-4 py-3 text-xs shadow-2xl transition-all duration-200 hover:-translate-y-0.5 ${
         d.kind === "amended"
-          ? "border-blue-500 bg-[#12141D] text-white ring-2 ring-blue-500/40 shadow-blue-500/20"
+          ? "border-accent bg-raised ring-2 ring-accent/40"
           : selected
-          ? "border-blue-500 bg-[#12141D] ring-2 ring-blue-500/40"
+          ? "border-accent bg-raised ring-2 ring-accent/40"
           : d.kind === "semantic"
-          ? "border-amber-500/40 bg-[#12141D] hover:border-amber-400"
+          ? "border-warn-line bg-raised hover:border-warn"
           : d.kind === "control"
-          ? "border-emerald-500/40 bg-[#12141D] hover:border-emerald-400"
-          : "border-white/10 bg-[#12141D] hover:border-blue-400/50"
+          ? "border-ok-line bg-raised hover:border-ok"
+          : "border-line-subtle bg-raised hover:border-accent-line"
       }`}
     >
-      <Handle type="target" position={Position.Left} className="!bg-[#64748B] !w-1.5 !h-1.5 !border-none" />
+      <Handle type="target" position={Position.Left} className="!w-1.5 !h-1.5 !border-none" style={{ background: GRAPH.handle }} />
       <div className="flex items-center gap-2.5">
         <span
           className="inline-block size-2.5 shrink-0 rounded-full"
@@ -80,27 +58,27 @@ function BlastNodeCard({ data, selected }: NodeProps) {
         />
         <span
           title={d.label}
-          className="tnum max-w-[180px] truncate font-bold text-white"
+          className="tnum max-w-[180px] truncate font-bold text-fg"
         >
           {d.label}
         </span>
         {d.ref && d.type !== "obligation" ? null : (
-          <span className="text-slate-400 text-xs">
+          <span className="text-xs text-fg-muted">
             {d.sublabel}
           </span>
         )}
       </div>
-      <div className="mt-1.5 flex items-center gap-2 pl-4 text-[10px] text-slate-400 font-mono">
+      <div className="mt-1.5 flex items-center gap-2 pl-4 font-mono text-[10px] text-fg-subtle">
         <span className="font-bold tracking-wider" style={{ color }}>
           {tag}
         </span>
         {typeof d.similarity === "number" && d.kind === "semantic" && (
-          <span className="tnum font-medium text-slate-300">
+          <span className="tnum font-medium text-fg-muted">
             · {Math.round(d.similarity * 100)}% related
           </span>
         )}
       </div>
-      <Handle type="source" position={Position.Right} className="!bg-[#64748B] !w-1.5 !h-1.5 !border-none" />
+      <Handle type="source" position={Position.Right} className="!w-1.5 !h-1.5 !border-none" style={{ background: GRAPH.handle }} />
     </motion.div>
   )
 }
@@ -138,10 +116,10 @@ function layout(
     style: {
       stroke:
         e.kind === "semantic"
-          ? "#F59E0B"
+          ? "var(--warn)"
           : e.kind === "control_evidence"
-            ? "#64748B"
-            : "#3B82F6",
+            ? GRAPH.edgeDefault
+            : GRAPH.edgeProvenance,
       strokeWidth: 2,
       strokeDasharray: e.kind === "semantic" ? "5 4" : undefined,
     },
@@ -162,7 +140,7 @@ export function BlastGraph({
     [payload, reduce],
   )
   return (
-    <div key={runKey} className="h-full w-full relative bg-[#090A0F]">
+    <div key={runKey} className="h-full w-full relative" style={{ background: GRAPH.canvas }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -174,8 +152,8 @@ export function BlastGraph({
         nodesDraggable={true}
         nodesConnectable={false}
       >
-        <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="#1E2235" />
-        <Controls showInteractive={false} className="!border-white/10 !shadow-2xl" />
+        <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color={GRAPH.dots} />
+        <Controls showInteractive={false} className="!border-line-subtle !shadow-elev-2" />
         <GraphLegend items={BLAST_LEGEND} />
       </ReactFlow>
     </div>

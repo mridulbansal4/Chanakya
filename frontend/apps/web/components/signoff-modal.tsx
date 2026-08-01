@@ -68,14 +68,14 @@ export function SignoffModal({
   const dialogRef = useDialog<HTMLDivElement>(onClose)
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-scrim backdrop-blur-sm p-4">
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={`Sign off clause ${obligation.clause_ref}`}
         tabIndex={-1}
-        className="flex max-h-[88vh] w-[580px] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl outline-none"
+        className="flex max-h-[88vh] w-[580px] flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-elev-3 outline-none"
       >
         <header className="flex items-center justify-between border-b border-line px-6 py-4 bg-surface">
           <div className="flex items-center gap-2.5">
@@ -203,7 +203,7 @@ export function SignoffModal({
                   </>
                 )}
               </p>
-              <div className="rounded-2xl border border-line bg-cream/30 p-4 space-y-2">
+              <div className="rounded-lg border border-line bg-cream/30 p-4 space-y-2">
                 <Summary label="Obligation" value={`Clause ${obligation.clause_ref} — ${obligation.clause_heading}`} />
                 <Summary label="Signer" value={signedBy} />
                 <Summary label="Justification" value={justification} />
@@ -225,7 +225,7 @@ export function SignoffModal({
                 </span>
               </div>
               {mutation.data.signoff.action === "approve" && (
-                <div className="rounded-2xl border border-ok/30 bg-ok/5 p-4 space-y-2">
+                <div className="rounded-lg border border-ok/30 bg-ok/5 p-4 space-y-2">
                   <Summary label="Signature Verification" value={mutation.data.verified ? "✓ Ed25519 Signature Verified" : "—"} />
                   <Mono label="Obligation Hash (sha256)" value={mutation.data.signoff.obligation_hash} />
                   <Mono label="Ed25519 Signature" value={mutation.data.signoff.signature ?? ""} />

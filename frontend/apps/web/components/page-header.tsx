@@ -1,9 +1,16 @@
 import type { ReactNode } from "react"
 
 /**
- * PageHeader is the one editorial page-title pattern used across screens:
- * a small ALL-CAPS eyebrow, a large serif title, and a one-line description —
- * always in the same position, with optional right-aligned actions.
+ * The one page-title pattern used across every screen: an ALL-CAPS eyebrow
+ * naming the domain, a serif title, and a single line of plain language
+ * describing what the screen is for.
+ *
+ * The serif appears here and in dialog titles only. It is the app's one
+ * editorial gesture — used sparingly it signals "this is a document of
+ * record"; used inside tables and cards it would just be noise.
+ *
+ * The description is capped at ~68 characters per line. Measure matters
+ * more than font choice for whether a paragraph actually gets read.
  */
 export function PageHeader({
   eyebrow,
@@ -17,15 +24,17 @@ export function PageHeader({
   actions?: ReactNode
 }) {
   return (
-    <div className="flex shrink-0 items-start justify-between gap-4 border-b border-line px-7 py-5">
+    <div className="flex shrink-0 items-start justify-between gap-6 border-b border-line-subtle px-7 py-6">
       <div className="min-w-0">
-        <div className="eyebrow mb-1.5">{eyebrow}</div>
-        <h1 className="font-display text-3xl leading-tight tracking-tight">{title}</h1>
+        <p className="eyebrow mb-2">{eyebrow}</p>
+        <h1 className="text-display-sm text-fg">{title}</h1>
         {description && (
-          <p className="mt-1.5 max-w-2xl text-[15px] text-text-dim">{description}</p>
+          <p className="mt-2 max-w-[68ch] text-body-md text-fg-muted">
+            {description}
+          </p>
         )}
       </div>
-      {actions && <div className="shrink-0">{actions}</div>}
+      {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
     </div>
   )
 }
