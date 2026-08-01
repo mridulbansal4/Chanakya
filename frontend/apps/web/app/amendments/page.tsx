@@ -88,7 +88,7 @@ export default function AmendmentsPage() {
             >
               {clauseList.map((c) => (
                 <option key={c.id} value={c.clause_ref}>
-                  Clause {c.clause_ref} — {c.heading}
+                  Clause {c.clause_ref} - {c.heading}
                 </option>
               ))}
             </select>

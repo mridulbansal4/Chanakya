@@ -25,7 +25,7 @@ func (h *handlers) resolveCircular(w http.ResponseWriter, r *http.Request) (stri
 	return id, true
 }
 
-// lineage: GET /api/lineage?as_of=&circular= — the bi-temporal audit lineage.
+// lineage: GET /api/lineage?as_of=&circular= - the bi-temporal audit lineage.
 func (h *handlers) lineage(w http.ResponseWriter, r *http.Request) {
 	asOf, ok := parseAsOf(r)
 	if !ok {
@@ -44,7 +44,7 @@ func (h *handlers) lineage(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, lin)
 }
 
-// regulatorFeed: GET /api/feed?as_of=&circular= — the machine-readable SupTech
+// regulatorFeed: GET /api/feed?as_of=&circular= - the machine-readable SupTech
 // feed. It is validated against its schema before emission; a schema failure is
 // a server error, so downstream consumers can trust the shape.
 func (h *handlers) regulatorFeed(w http.ResponseWriter, r *http.Request) {
@@ -83,7 +83,7 @@ func (h *handlers) regulatorFeed(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(payload)
 }
 
-// feedSchema: GET /api/feed/schema — the JSON schema the feed validates against.
+// feedSchema: GET /api/feed/schema - the JSON schema the feed validates against.
 func (h *handlers) feedSchema(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)

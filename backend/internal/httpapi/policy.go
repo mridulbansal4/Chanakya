@@ -12,7 +12,7 @@ import (
 	"chanakya/internal/store"
 )
 
-// listPolicies: GET /api/policies?as_of= — approved obligations + policy status.
+// listPolicies: GET /api/policies?as_of= - approved obligations + policy status.
 func (h *handlers) listPolicies(w http.ResponseWriter, r *http.Request) {
 	asOf, ok := parseAsOf(r)
 	if !ok {
@@ -30,7 +30,7 @@ func (h *handlers) listPolicies(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// firmState: GET /api/firm-state?as_of= — suggested evaluation input.
+// firmState: GET /api/firm-state?as_of= - suggested evaluation input.
 func (h *handlers) firmState(w http.ResponseWriter, r *http.Request) {
 	asOf, ok := parseAsOf(r)
 	if !ok {
@@ -45,7 +45,7 @@ func (h *handlers) firmState(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, fs)
 }
 
-// getPolicy: GET /api/policy?obligation_id= — the compiled policy + latest eval.
+// getPolicy: GET /api/policy?obligation_id= - the compiled policy + latest eval.
 func (h *handlers) getPolicy(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimSpace(r.URL.Query().Get("obligation_id"))
 	if id == "" {
@@ -72,7 +72,7 @@ type compilePolicyInput struct {
 	ObligationID string `json:"obligation_id"`
 }
 
-// compilePolicy: POST /api/policy/compile — SAFETY GATE: only an approved
+// compilePolicy: POST /api/policy/compile - SAFETY GATE: only an approved
 // (signed) obligation can be compiled into an enforceable policy.
 func (h *handlers) compilePolicy(w http.ResponseWriter, r *http.Request) {
 	var in compilePolicyInput
@@ -114,7 +114,7 @@ func (h *handlers) compilePolicy(w http.ResponseWriter, r *http.Request) {
 		ID: "pol:" + in.ObligationID, ObligationID: in.ObligationID,
 		PackageName: policy.PackageName, Rego: rego, Stage: string(domain.StageAudit),
 	}
-	// A policy exists in world time from when it is compiled (now) — the audit
+	// A policy exists in world time from when it is compiled (now) - the audit
 	// lineage as-of a date before compilation shows the obligation un-enforced.
 	now := domain.RFC3339UTC(time.Now())
 	if err := h.store.UpsertPolicy(ctx, rec, now, now); err != nil {
@@ -130,7 +130,7 @@ type stageInput struct {
 	Stage        string `json:"stage"`
 }
 
-// setPolicyStage: POST /api/policy/stage — promote/demote audit|soft|hard.
+// setPolicyStage: POST /api/policy/stage - promote/demote audit|soft|hard.
 func (h *handlers) setPolicyStage(w http.ResponseWriter, r *http.Request) {
 	var in stageInput
 	if err := decodeJSON(r, &in); err != nil {
@@ -159,7 +159,7 @@ type evaluateInput struct {
 	Stage        string         `json:"stage,omitempty"`
 }
 
-// evaluatePolicy: POST /api/policy/evaluate — deterministically evaluate firm
+// evaluatePolicy: POST /api/policy/evaluate - deterministically evaluate firm
 // state against the compiled policy, record the result, and (only at stage
 // hard) mark it blocked.
 func (h *handlers) evaluatePolicy(w http.ResponseWriter, r *http.Request) {

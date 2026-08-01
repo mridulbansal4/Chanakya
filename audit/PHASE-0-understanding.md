@@ -1,4 +1,4 @@
-# Phase 0 — Project Understanding (no findings)
+# Phase 0 - Project Understanding (no findings)
 
 ## 0.1 Inventory (188 tracked files; `node_modules` excluded, manifests/lockfiles inspected)
 
@@ -28,7 +28,7 @@ No directory of unknown purpose.
 - Scripts: backend `go run ./backend/cmd/{api,seed,compile}`; frontend `turbo {dev,build,lint,format,typecheck}`; `dev.ps1` launches both.
 
 ## 0.3 Configuration surface
-- Env vars read (all documented in `.env.example` files — **no undocumented vars**): `CHANAKYA_ADDR`, `CHANAKYA_DB_PATH`, `CHANAKYA_CORS_ORIGINS`, `CHANAKYA_SIGNING_KEY_PATH`, `CHANAKYA_SIGNING_KEY_B64`, `CHANAKYA_LLM_API_KEY`, `CHANAKYA_LLM_MODEL` (backend); `NEXT_PUBLIC_API_BASE_URL` (frontend).
+- Env vars read (all documented in `.env.example` files - **no undocumented vars**): `CHANAKYA_ADDR`, `CHANAKYA_DB_PATH`, `CHANAKYA_CORS_ORIGINS`, `CHANAKYA_SIGNING_KEY_PATH`, `CHANAKYA_SIGNING_KEY_B64`, `CHANAKYA_LLM_API_KEY`, `CHANAKYA_LLM_MODEL` (backend); `NEXT_PUBLIC_API_BASE_URL` (frontend).
 - Configs: `.eslintrc.js`, `eslint.config.js`, `.prettierrc/.prettierignore`, `tsconfig.*`, `postcss.config.mjs`, `next.config.ts`, `turbo.json`, `components.json`, `.npmrc` (empty), `go.work`. No CI config, no Dockerfile, no IaC.
 
 ## 0.4 Runtime flow (primary path, POST /api/signoff)
@@ -50,7 +50,7 @@ One outbound: Anthropic Messages API (`llm/anthropic.go:52`, fixed URL, `x-api-k
 Wrapped errors (`fmt.Errorf("...: %w")`); exclusively `?`-parameterized SQL; the as-of predicate repeated verbatim; deterministic surrogate IDs; RFC3339-UTC strings (lexical=chronological); frontend typed models (no `any`), TanStack Query for all fetches, semantic design tokens (`bg-surface`, `text-foreground`, `border-line`) in most components.
 
 ## 0.10 Narrative
-CHANAKYA is a "regulatory operating system" for the SEBI TechSprint. It ingests a SEBI circular (seeded fixture: the IA Master Circular), parses it into a bi-temporal clause tree, and runs a Regulation Compiler that extracts typed, cited obligations — every obligation must carry a verbatim source sentence (enforced) and a confidence score; low-confidence ones route to human review. A compliance officer reviews each obligation and produces an Ed25519 cryptographic sign-off over the obligation's canonical content; only a signed obligation can be compiled into a deterministic OPA/Rego policy, which is evaluated against firm state under staged enforcement (audit → soft → hard). Everything is reconstructable "as of" any date via the bi-temporal model, and a schema-validated regulator feed republishes obligations with provenance. The frontend is 11 Next.js screens over a typed client; one screen (`/regulatory-feed`) is a self-contained scripted demo (`lib/amendment-sim.ts`) not backed by the API.
+CHANAKYA is a "regulatory operating system" for the SEBI TechSprint. It ingests a SEBI circular (seeded fixture: the IA Master Circular), parses it into a bi-temporal clause tree, and runs a Regulation Compiler that extracts typed, cited obligations - every obligation must carry a verbatim source sentence (enforced) and a confidence score; low-confidence ones route to human review. A compliance officer reviews each obligation and produces an Ed25519 cryptographic sign-off over the obligation's canonical content; only a signed obligation can be compiled into a deterministic OPA/Rego policy, which is evaluated against firm state under staged enforcement (audit → soft → hard). Everything is reconstructable "as of" any date via the bi-temporal model, and a schema-validated regulator feed republishes obligations with provenance. The frontend is 11 Next.js screens over a typed client; one screen (`/regulatory-feed`) is a self-contained scripted demo (`lib/amendment-sim.ts`) not backed by the API.
 
 **Open questions:** Is any authentication planned before real use? Is the `/regulatory-feed` simulation meant to be understood as mocked? Is the timezone convention for `as_of` intentional?
 

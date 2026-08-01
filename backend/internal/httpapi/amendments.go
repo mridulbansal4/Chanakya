@@ -69,7 +69,7 @@ const defaultBlastThreshold = 0.30
 // blastRadius: POST /api/amendments/blast-radius
 //
 // Computes the downstream impact of an amendment as a WHAT-IF preview. Nothing
-// is persisted and nothing is enforced — this is a read-only simulation.
+// is persisted and nothing is enforced - this is a read-only simulation.
 func (h *handlers) blastRadius(w http.ResponseWriter, r *http.Request) {
 	var req blastRadiusRequest
 	dec := json.NewDecoder(io.LimitReader(r.Body, 1<<20)) // 1 MiB cap

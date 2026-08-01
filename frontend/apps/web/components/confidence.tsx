@@ -8,7 +8,7 @@ const REVIEW_THRESHOLD = 75
  *
  * The percentage is always rendered, not just the bar: colour and length
  * both encode the same thing, and neither survives a printed audit pack on
- * its own. The bar is amber below the review threshold — the same meaning
+ * its own. The bar is amber below the review threshold - the same meaning
  * amber carries everywhere else, i.e. "a person needs to look at this".
  */
 export function ConfidenceMeter({ value }: { value: number }) {

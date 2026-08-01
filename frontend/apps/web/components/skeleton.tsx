@@ -6,7 +6,7 @@ import { AiLoader } from "@/components/ui/ai-loader"
  * Loading placeholders.
  *
  * Each skeleton mirrors the geometry of the content it replaces, so the
- * layout does not shift when real data arrives. That is the entire point —
+ * layout does not shift when real data arrives. That is the entire point -
  * a skeleton that is the wrong size is worse than a spinner, because it
  * promises a shape and then breaks it.
  *
@@ -77,8 +77,8 @@ export function CardSkeleton({ className }: { className?: string }) {
 }
 
 /**
- * Matches the KPI cell geometry in the posture strip exactly — same
- * padding, same label height, same 2rem metric height — so the strip does
+ * Matches the KPI cell geometry in the posture strip exactly - same
+ * padding, same label height, same 2rem metric height - so the strip does
  * not reflow when the numbers land.
  */
 export function MetricSkeleton() {

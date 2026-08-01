@@ -1,4 +1,4 @@
-# CHANAKYA — Enterprise Codebase Audit (Pass 2)
+# CHANAKYA - Enterprise Codebase Audit (Pass 2)
 
 **Repository:** `C:\Projects\SEBI\CHANAKYA` · branch `master` · HEAD `d724ebb`
 **Scope:** 188 tracked files, ~10k LOC first-party source. `node_modules`/generated dirs excluded; manifests, lockfiles, migrations, configs, scripts, and docs inspected.
@@ -14,16 +14,16 @@ CHANAKYA is a "regulatory operating system" for the SEBI TechSprint: it compiles
 
 **The critical enforcement-integrity bug found in Pass 1 is fixed.** The Rego policy compiler no longer interpolates obligation data into policy code; the exact end-to-end exploit that made a non-compliant firm report compliant now correctly reports non-compliant, and a regression test guards it.
 
-**The one remaining serious issue is the absence of an authentication/authorization layer.** Every state-changing endpoint is open, including `POST /api/signoff` — the code's own "ONLY path that can move an obligation to approved" — whose signer name is free text. Anyone who can reach the port can forge a compliance officer's cryptographic sign-off and promote a policy to blocking enforcement. For a demo this is acceptable; before this is anything a regulator relies on, it is the blocker.
+**The one remaining serious issue is the absence of an authentication/authorization layer.** Every state-changing endpoint is open, including `POST /api/signoff` - the code's own "ONLY path that can move an obligation to approved" - whose signer name is free text. Anyone who can reach the port can forge a compliance officer's cryptographic sign-off and promote a policy to blocking enforcement. For a demo this is acceptable; before this is anything a regulator relies on, it is the blocker.
 
 **The three things to fix before anything else:**
-1. **HIGH — Add authentication + authorization** on `/api` writes; bind `signed_by` to the authenticated principal (S-1).
-2. **MEDIUM — Test the HTTP layer** (the sign-off gate and body validation have zero tests) (B-1).
-3. **MEDIUM — Harden the rate-limiter / RealIP** header trust, or document the trusted-proxy requirement (S-2).
+1. **HIGH - Add authentication + authorization** on `/api` writes; bind `signed_by` to the authenticated principal (S-1).
+2. **MEDIUM - Test the HTTP layer** (the sign-off gate and body validation have zero tests) (B-1).
+3. **MEDIUM - Harden the rate-limiter / RealIP** header trust, or document the trusted-proxy requirement (S-2).
 
 **Biggest structural risk:** the sign-off is presented everywhere (UI, feed, schema) as a trustworthy cryptographic attestation by a named human, but nothing authenticates that human. The cryptography is sound; the identity behind it is unverified.
 
-**Overall health: 78/100** — up from 72 after the critical fix. High craft; the missing auth seam is the dominant remaining gap, fixable within a sprint.
+**Overall health: 78/100** - up from 72 after the critical fix. High craft; the missing auth seam is the dominant remaining gap, fixable within a sprint.
 
 ---
 
@@ -56,7 +56,7 @@ Primary request path (`POST /api/signoff`, with citations): `httpapi.NewRouter` 
 
 **None open.** The Pass-1 critical is resolved:
 
-### C-1 (RESOLVED) — Rego injection: compiled policy misreports compliance
+### C-1 (RESOLVED) - Rego injection: compiled policy misreports compliance
 - **File:** `backend/internal/policy/compile.go` · **Status:** ✅ FIXED in `d724ebb`, verified this pass.
 - The compiler now emits every obligation value as a JSON-encoded Rego string literal (`regoString`) or sanitized comment (`regoComment`), builds deny messages from `sprintf` arguments (not the format string), and `validatePrepares` rejects any un-parseable module before it can be returned/persisted. Re-running the exact end-to-end exploit (malicious `threshold.metric` via unauthenticated `POST /api/signoff` → compile → evaluate) now yields `compliant=false` for the non-compliant firm. Regression: `policy/injection_test.go::TestNoRegoInjectionViaThresholdMetric`.
 
@@ -64,47 +64,47 @@ Primary request path (`POST /api/signoff`, with citations): `httpapi.NewRouter` 
 
 ## 4. High Priority Issues
 
-### S-1 — No authentication or authorization on any endpoint
+### S-1 - No authentication or authorization on any endpoint
 - **File:** `backend/internal/httpapi/httpapi.go:74-123` (no auth middleware); `signoff.go:55` (`postSignoff`, free-text `signed_by`); `policy.go:134` (`setPolicyStage`→`hard`)
 - **Category:** Broken Access Control (OWASP A01) · **Severity:** HIGH · **Confidence:** CONFIRMED · **Effort:** M (4–8h)
 - **Attack scenario:** an unauthenticated client forges an approving Ed25519 sign-off under any name (`signoff.go:52` calls this *"the ONLY path that can move an obligation to approved"*), promotes a policy to blocking `hard` enforcement, or applies arbitrary field corrections. The regulator feed republishes the forged sign-off as provenance (`store/feed.go:118`).
-- **Exploitability:** Trivial. This was also the delivery vector for the now-fixed C-1 — the injection is dead, but the open write surface remains.
+- **Exploitability:** Trivial. This was also the delivery vector for the now-fixed C-1 - the injection is dead, but the open write surface remains.
 - **Fix:** authenticate `/api` writes; derive `signed_by` from the authenticated principal; require a compliance-officer role for `signoff` and `policy/stage`→`hard`. Even a single shared bearer token bound to `signed_by` closes the forgery for the demo.
 
 ---
 
 ## 5. Medium Priority Issues
 
-### S-2 — Rate limiter / RealIP trusts client-settable headers
+### S-2 - Rate limiter / RealIP trusts client-settable headers
 - **File:** `httpapi.go:77` (`middleware.RealIP`) + `:99` (`httprate.LimitByIP`) · **Severity:** MEDIUM · **Confidence:** LIKELY (not reproduced; depends on topology) · **Effort:** S
 - `RealIP` overwrites `RemoteAddr` from `X-Forwarded-For`/`X-Real-IP`; with no proxy stripping them, an attacker rotates the header for a fresh 240/min bucket per spoofed IP and to poison logs. Use `RealIP` only behind a trusted proxy, or key the limiter on the socket address.
 
-### S-3 — LLM `threshold.metric` unconstrained (fails open)
+### S-3 - LLM `threshold.metric` unconstrained (fails open)
 - **File:** `backend/internal/compiler/schema.json:34` (`metric` typed only as string) → `store/policy.go` · **Severity:** MEDIUM · **Confidence:** LIKELY (offline extractor is default) · **Effort:** M
 - With C-1 fixed, a hallucinated/garbage metric can no longer inject code, but it makes the compiled trigger policy silently never-apply (→ "not applicable → compliant"), a fail-open correctness risk. Constrain `threshold.metric` to a known enum shared with the firm-state builder.
 
-### B-1 — HTTP layer has zero tests
+### B-1 - HTTP layer has zero tests
 - **File:** `backend/internal/httpapi/` (no `_test.go`) · **Severity:** MEDIUM · **Confidence:** CONFIRMED · **Effort:** M
 - Every other backend package is tested and green; the sign-off gate, body validation, and the write surface are not. Add handler tests (sign-off validation, approve→compile→evaluate, and a malicious-threshold regression at the HTTP boundary).
 
-### B-2 — `as_of` interpreted as end-of-day UTC (timezone edge cases)
+### B-2 - `as_of` interpreted as end-of-day UTC (timezone edge cases)
 - **File:** `httpapi/obligations.go:28-30` · **Severity:** MEDIUM · **Confidence:** LIKELY (no boundary test) · **Effort:** S
 - `YYYY-MM-DD` → `23:59:59Z`; for an IST firm, day-boundary obligations can land on the wrong side by up to 5.5h. Make the convention explicit and tested.
 
-### HC-1 / HC-2 — Business constants in code (retention=5; metric-key remap)
+### HC-1 / HC-2 - Business constants in code (retention=5; metric-key remap)
 - `store/policy.go:218` and `:210-214` · **Severity:** MEDIUM · **Confidence:** CONFIRMED · See Phase 1. The retention default and the `annual_fees_inr`→`annual_fees` remap should live in shared constants / entity meta; both currently can make policies pass or never-apply silently.
 
 ---
 
 ## 6. Low Priority Issues
 
-- **Q-1 — Dead code:** `store/store.go:76-78` (`url.Values` allocated then discarded). XS.
-- **Q-2 — 33 ESLint warnings (0 errors):** `react-hooks/set-state-in-effect` + `immutability` (e.g. `screen-banner.tsx:17`, `overview-graph.tsx:182`).
-- **HC-3/HC-4 — Duplicated cross-boundary constants:** review threshold `75`/`0.75` (`format.ts:73` vs `compiler.go:34`); justification min `20` (`signoff-modal.tsx:19` vs `signoff.go:15`).
-- **HC-5 — Hardcoded mock officer** (`app-shell.tsx:21`); **HC-6 — fabricated "1.2s" metric** (`page.tsx:72`).
-- **HC-7 — Absolute Windows paths** in `scripts/generate_documents.py:20`, `capture_screenshots.py:5`.
-- **HC-8 / F-1 — Design-token inconsistency:** Overview + shell use raw hex/palette vs semantic tokens elsewhere.
-- **L — `go.work.sum` untracked;** no down-migrations (forward-only, acceptable); sign-off correction path not wrapped in one transaction (low risk under `MaxOpenConns(1)`).
+- **Q-1 - Dead code:** `store/store.go:76-78` (`url.Values` allocated then discarded). XS.
+- **Q-2 - 33 ESLint warnings (0 errors):** `react-hooks/set-state-in-effect` + `immutability` (e.g. `screen-banner.tsx:17`, `overview-graph.tsx:182`).
+- **HC-3/HC-4 - Duplicated cross-boundary constants:** review threshold `75`/`0.75` (`format.ts:73` vs `compiler.go:34`); justification min `20` (`signoff-modal.tsx:19` vs `signoff.go:15`).
+- **HC-5 - Hardcoded mock officer** (`app-shell.tsx:21`); **HC-6 - fabricated "1.2s" metric** (`page.tsx:72`).
+- **HC-7 - Absolute Windows paths** in `scripts/generate_documents.py:20`, `capture_screenshots.py:5`.
+- **HC-8 / F-1 - Design-token inconsistency:** Overview + shell use raw hex/palette vs semantic tokens elsewhere.
+- **L - `go.work.sum` untracked;** no down-migrations (forward-only, acceptable); sign-off correction path not wrapped in one transaction (low risk under `MaxOpenConns(1)`).
 
 ---
 
@@ -127,7 +127,7 @@ Primary request path (`POST /api/signoff`, with citations): `httpapi.NewRouter` 
 - **Split `steps.tsx` (660 LOC)** into per-step components + a small state machine (effort S; demo-only).
 
 ## 9. Performance Opportunities
-Demo-scale; nothing measured as hot. `PostureAsOf` recomputes the full evidence map on every screen (P-1, suspected amplification at scale — measure before acting). No bundle analysis was run (coverage gap). Details in `PHASE-3-to-5.md`.
+Demo-scale; nothing measured as hot. `PostureAsOf` recomputes the full evidence map on every screen (P-1, suspected amplification at scale - measure before acting). No bundle analysis was run (coverage gap). Details in `PHASE-3-to-5.md`.
 
 ## 10. Security Risk Register
 Full OWASP table in `audit/PHASE-2-security.md`. Headlines: A01 **absent** (S-1); A03 injection now **handled** (SQL parameterized, Rego injection fixed, no XSS sinks); A10 SSRF not reachable (embedded OPA has no `http.send`). Crypto is sound (content-signing, `crypto/rand`).
@@ -136,9 +136,9 @@ Full OWASP table in `audit/PHASE-2-security.md`. Headlines: A01 **absent** (S-1)
 Full report + summary table in `audit/PHASE-1-hardcoded-values.md`. **No secrets** in code or git history. 4 business constants (2 MEDIUM), 2 duplications, 2 absolute paths, 1 design-token bypass. Fixture/CSV PII is synthetic demo data.
 
 ## 12. Dead Code Report
-- `store/store.go:76-78` — discarded `url.Values` (safe to delete).
-- `app/ui-demo/page.tsx` — dev showcase route (reachable, not dead; confirm before prod).
-- No unused exports/functions/files in first-party source (grep-verified; dynamic string imports accounted for — none hide references).
+- `store/store.go:76-78` - discarded `url.Values` (safe to delete).
+- `app/ui-demo/page.tsx` - dev showcase route (reachable, not dead; confirm before prod).
+- No unused exports/functions/files in first-party source (grep-verified; dynamic string imports accounted for - none hide references).
 
 ## 13. Dependency Report
 Go deps current, no known vulns, none unused. npm: `next` 16.2.12; `npm audit` → 9 high, all upstream-blocked (no non-breaking fix; forcing downgrades `next` to 9.x). Details in `PHASE-6-to-10.md §10`.
@@ -163,9 +163,9 @@ See `PHASE-0 §0.1` (inventory) and the phase files. Health: `domain`/`compiler`
 | `scripts/generate_documents.py` / `capture_screenshots.py` | 624/94 | 0/0/1 | absolute Windows paths (HC-7). |
 | `backend/internal/policy/compile.go` | ~175 | 0/0/0 | ✅ C-1/H-2 fixed + regression-tested. |
 
-**Clean bill (representative):** all `domain/*`, `signoff/*`, `feed/*`, `vec/*`, `compiler/*.go`, `llm/*`, `fixtures/*`, `bootstrap/*`, `config/*`, migrations, `lib/api.ts`, most `components/*`, `packages/ui` — read, no findings.
+**Clean bill (representative):** all `domain/*`, `signoff/*`, `feed/*`, `vec/*`, `compiler/*.go`, `llm/*`, `fixtures/*`, `bootstrap/*`, `config/*`, migrations, `lib/api.ts`, most `components/*`, `packages/ui` - read, no findings.
 
-## 16. Project Health Score — 78/100
+## 16. Project Health Score - 78/100
 
 | Dimension | Score | Rubric |
 |---|---|---|
@@ -207,7 +207,7 @@ Up from 72 (Pass 1): Security 45→62 on the critical fix. The missing auth seam
 5. HC-3/HC-4 single-source the duplicated constants (S).
 
 ## 20. Long-Term Improvements
-- Real identity + client-side/HSM signing (the code anticipates this, `signoff.go:6-9`) — makes the sign-off mean what the UI says.
+- Real identity + client-side/HSM signing (the code anticipates this, `signoff.go:6-9`) - makes the sign-off mean what the UI says.
 - CI running `go test`+`vet`+`typecheck`+`lint`+`npm audit` on every PR.
 - Frontend test tier (client, formatters, sign-off flow) + an accessibility pass (F-2).
 - Audit log of enforcement-stage changes tied to authenticated identity.
@@ -216,7 +216,7 @@ Up from 72 (Pass 1): Security 45→62 on the critical fix. The missing auth seam
 **Coverage: 188 of 188 in-scope first-party files read across two passes (100%).** Lockfiles scanned not line-read; binary assets (PDF/PNG/ICO/SVG) not opened; `node_modules` excluded.
 
 Lower-confidence / unverified:
-- **S-2** (RealIP bypass) reasoned from chi middleware behavior, not reproduced — depends on deployment topology.
+- **S-2** (RealIP bypass) reasoned from chi middleware behavior, not reproduced - depends on deployment topology.
 - **B-2** (timezone) reasoned from code; no IST-boundary probe run.
 - **F-2** (accessibility) not tested with assistive tech / contrast tooling.
 - **Performance** amplification (P-1) suspected, not measured; no bundle analysis run.

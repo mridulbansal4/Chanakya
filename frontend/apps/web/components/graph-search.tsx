@@ -10,7 +10,7 @@ import { cn } from "@workspace/ui/lib/utils"
  * Jump-to-node search for graph canvases.
  *
  * Typing centres the camera on the first match; clearing the field returns
- * the view to fit the whole graph. The camera glide is 300ms — long enough
+ * the view to fit the whole graph. The camera glide is 300ms - long enough
  * that the eye can follow the movement and understand where in the graph it
  * landed, which is the entire reason for animating a viewport change rather
  * than cutting to it.

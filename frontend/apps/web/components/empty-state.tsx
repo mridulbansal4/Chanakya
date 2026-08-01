@@ -22,7 +22,7 @@ interface EmptyStateProps {
 
 /**
  * An empty state has one job: say what is not here, why, and what to do
- * next. The recovery action is the important part — an empty state without
+ * next. The recovery action is the important part - an empty state without
  * one is a dead end.
  *
  * Only the error variant is coloured. "Nothing here yet" is not a problem

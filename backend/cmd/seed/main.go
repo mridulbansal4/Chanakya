@@ -63,6 +63,6 @@ func run() error {
 			total++
 		}
 	}
-	fmt.Printf("\nseed: traversal returned %d clause nodes across %d chapters — OK\n", total, len(roots))
+	fmt.Printf("\nseed: traversal returned %d clause nodes across %d chapters - OK\n", total, len(roots))
 	return nil
 }

@@ -104,7 +104,7 @@ export default function FeedPage() {
                   </div>
                 ) : (
                   <div className="text-xs text-text-dim font-mono italic">
-                    Status: Unsigned — Not Enforceable
+                    Status: Unsigned - Not Enforceable
                   </div>
                 )}
               </li>

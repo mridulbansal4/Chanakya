@@ -26,7 +26,7 @@ export default function UIDemoPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Layers className="size-5 text-primary" />
-            <h2 className="text-xl font-bold">Kibo UI Demo — Avatar Stack</h2>
+            <h2 className="text-xl font-bold">Kibo UI Demo - Avatar Stack</h2>
           </div>
           <span className="text-xs px-2.5 py-1 rounded bg-muted font-mono text-muted-foreground">
             @/components/kibo-ui/avatar-stack

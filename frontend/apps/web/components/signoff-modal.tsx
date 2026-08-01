@@ -204,7 +204,7 @@ export function SignoffModal({
                 )}
               </p>
               <div className="rounded-lg border border-line bg-cream/30 p-4 space-y-2">
-                <Summary label="Obligation" value={`Clause ${obligation.clause_ref} — ${obligation.clause_heading}`} />
+                <Summary label="Obligation" value={`Clause ${obligation.clause_ref} - ${obligation.clause_heading}`} />
                 <Summary label="Signer" value={signedBy} />
                 <Summary label="Justification" value={justification} />
               </div>
@@ -226,7 +226,7 @@ export function SignoffModal({
               </div>
               {mutation.data.signoff.action === "approve" && (
                 <div className="rounded-lg border border-ok/30 bg-ok/5 p-4 space-y-2">
-                  <Summary label="Signature Verification" value={mutation.data.verified ? "✓ Ed25519 Signature Verified" : "—"} />
+                  <Summary label="Signature Verification" value={mutation.data.verified ? "✓ Ed25519 Signature Verified" : "-"} />
                   <Mono label="Obligation Hash (sha256)" value={mutation.data.signoff.obligation_hash} />
                   <Mono label="Ed25519 Signature" value={mutation.data.signoff.signature ?? ""} />
                   <Mono label="Public Key" value={mutation.data.signoff.public_key ?? ""} />

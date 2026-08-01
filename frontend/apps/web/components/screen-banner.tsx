@@ -10,7 +10,7 @@ import { Info, X } from "lucide-react"
  * which avoids a flash of the banner on every navigation for users who have
  * already dismissed it.
  *
- * It is deliberately not tinted. This is orientation copy, not a warning —
+ * It is deliberately not tinted. This is orientation copy, not a warning -
  * giving it an amber or blue wash would put it in the same visual class as
  * the alerts that actually need acting on.
  */

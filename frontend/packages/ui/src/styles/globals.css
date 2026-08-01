@@ -8,13 +8,13 @@
 @source "../**/*.{ts,tsx}";
 
 /* ════════════════════════════════════════════════════════════════════════
-   CHANAKYA — Regulatory Operating System
+   CHANAKYA - Regulatory Operating System
    Design tokens. This file is the single source of truth for colour,
    type, elevation, radius and motion. Components must not hardcode a
    hex value or a raw Tailwind palette class (bg-blue-600, text-slate-400).
 
    Colour discipline: the canvas is neutral. Colour is spent on exactly
-   five jobs — accent (interactive/brand), ok, warn, risk, info. Nothing
+   five jobs - accent (interactive/brand), ok, warn, risk, info. Nothing
    is coloured for decoration.
    ════════════════════════════════════════════════════════════════════════ */
 
@@ -39,11 +39,11 @@
   /* ── Foreground ───────────────────────────────────────────────────────
      Every step below --fg-faint is verified ≥ 4.5:1 on --canvas.
      --fg-faint is 3.3:1 and is for decorative glyphs and disabled states
-     ONLY — never body text, never a label a user must read. */
-  --fg: #14171c;        /* 17.1:1 — primary text */
-  --fg-muted: #4a515e;  /*  7.5:1 — secondary text, descriptions */
-  --fg-subtle: #667083; /*  4.7:1 — tertiary, eyebrows, column headers */
-  --fg-faint: #7d8797;  /*  3.4:1 — decorative / disabled only */
+     ONLY - never body text, never a label a user must read. */
+  --fg: #14171c;        /* 17.1:1 - primary text */
+  --fg-muted: #4a515e;  /*  7.5:1 - secondary text, descriptions */
+  --fg-subtle: #667083; /*  4.7:1 - tertiary, eyebrows, column headers */
+  --fg-faint: #7d8797;  /*  3.4:1 - decorative / disabled only */
 
   /* ── Accent ───────────────────────────────────────────────────────────
      One accent. --accent is the readable-on-dark stop (5.5:1) used for
@@ -58,17 +58,17 @@
 
   /* ── Status ───────────────────────────────────────────────────────────
      Desaturated relative to stock Tailwind. In an instrument, alarm comes
-     from contrast against a calm field — not from saturation. All four
+     from contrast against a calm field - not from saturation. All four
      verified ≥ 4.5:1 as text on --canvas. */
-  --ok: #047857;        /* 5.2:1 — verified, in force, covered */
+  --ok: #047857;        /* 5.2:1 - verified, in force, covered */
   --ok-weak: rgba(4, 120, 87, 0.10);
   --ok-line: rgba(4, 120, 87, 0.28);
 
-  --warn: #a15c07;      /* 4.8:1 — needs judgement, pending, drift */
+  --warn: #a15c07;      /* 4.8:1 - needs judgement, pending, drift */
   --warn-weak: rgba(161, 92, 7, 0.10);
   --warn-line: rgba(161, 92, 7, 0.28);
 
-  --risk: #c62a2f;      /* 5.2:1 — gap, violation, rejected */
+  --risk: #c62a2f;      /* 5.2:1 - gap, violation, rejected */
   --risk-weak: rgba(198, 42, 47, 0.10);
   --risk-line: rgba(198, 42, 47, 0.28);
 
@@ -82,7 +82,7 @@
   --radius: 0.5rem;
 
   /* ── Elevation ────────────────────────────────────────────────────────
-     Neutral shadow only — no coloured glow. Each raised level also gets a
+     Neutral shadow only - no coloured glow. Each raised level also gets a
      1px inner top highlight, which is what makes a surface read as
      physically above its neighbour without shadow noise. */
   --elev-1: 0 1px 2px rgba(15, 23, 42, 0.06);
@@ -103,9 +103,9 @@
      --ease-out is the workhorse: fast departure, soft arrival. */
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --dur-1: 120ms; /* micro — colour, opacity, hover */
-  --dur-2: 180ms; /* standard — small enter/exit, dropdowns */
-  --dur-3: 260ms; /* structural — page, dialog, layout */
+  --dur-1: 120ms; /* micro - colour, opacity, hover */
+  --dur-2: 180ms; /* standard - small enter/exit, dropdowns */
+  --dur-3: 260ms; /* structural - page, dialog, layout */
 
   /* ── shadcn / Radix compatibility surface ─────────────────────────────
      Mapped onto the tokens above so third-party primitives inherit the
@@ -130,7 +130,7 @@
   --ring: var(--accent);
 
   /* Categorical series for graphs. Ordered by perceptual distance, not by
-     hue wheel. Never the sole carrier of meaning — always pair with a
+     hue wheel. Never the sole carrier of meaning - always pair with a
      shape, label or position. */
   --chart-1: var(--accent);
   --chart-2: var(--ok);
@@ -173,8 +173,8 @@
 }
 
 /* ── Dark theme ─────────────────────────────────────────────────────────
-   Only the raw values are restated here. Everything derived from them —
-   the shadcn/Radix mapping and the legacy aliases above — is declared with
+   Only the raw values are restated here. Everything derived from them -
+   the shadcn/Radix mapping and the legacy aliases above - is declared with
    var() on :root, and `next-themes` puts .dark on the same <html> element,
    so those declarations recompute against whichever palette wins. Adding a
    token means adding it in both blocks; adding a *mapping* means adding it
@@ -201,9 +201,9 @@
   --fg: #f2f4f7;        /* 17.8:1 */
   --fg-muted: #a8b0bc;  /*  8.9:1 */
   --fg-subtle: #7b8494; /*  5.2:1 */
-  --fg-faint: #5a6373;  /*  3.3:1 — decorative / disabled only */
+  --fg-faint: #5a6373;  /*  3.3:1 - decorative / disabled only */
 
-  /* Accent — --accent is the readable-on-dark stop, --accent-solid the fill */
+  /* Accent - --accent is the readable-on-dark stop, --accent-solid the fill */
   --accent: #4c82f7;
   --accent-solid: #1d4ed8;
   --accent-hover: #2563eb;
@@ -224,7 +224,7 @@
   --risk-weak: rgba(229, 72, 77, 0.12);
   --risk-line: rgba(229, 72, 77, 0.32);
 
-  /* Elevation — a dark surface needs a heavier shadow and a light inner
+  /* Elevation - a dark surface needs a heavier shadow and a light inner
      top edge to read as physically above its neighbour. */
   --elev-1: 0 1px 2px rgba(0, 0, 0, 0.4);
   --elev-2:
@@ -319,7 +319,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Legacy aliases — migrating out */
+  /* Legacy aliases - migrating out */
   --color-ink: var(--ink);
   --color-ink-800: var(--ink-800);
   --color-cream: var(--cream);
@@ -378,7 +378,7 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     /* cv05 = straight-tailed l, ss03 = disambiguated punctuation.
-       tnum is NOT global — proportional figures read better in prose;
+       tnum is NOT global - proportional figures read better in prose;
        tabular figures are opted into per component via .tnum. */
     font-feature-settings: "cv05", "ss03";
   }
@@ -388,7 +388,7 @@
     color: var(--accent-on);
   }
 
-  /* One focus treatment, everywhere. Never removed — an invisible focus
+  /* One focus treatment, everywhere. Never removed - an invisible focus
      ring is a keyboard user losing their place on the page. */
   :focus-visible {
     outline: 2px solid var(--accent);
@@ -424,12 +424,12 @@
    (Plus Jakarta Sans + Inter) put two humanist sans faces next to each
    other, so the display/body split created no hierarchy at all.
 
-   --font-serif  Source Serif 4 — page-level editorial moments only:
+   --font-serif  Source Serif 4 - page-level editorial moments only:
                  page titles, dialog titles, empty-state headings. Never
                  inside dense data (table headers, card titles, KPIs);
                  a serif at 13px in a table is noise, not authority.
-   --font-sans   Inter — every piece of interface and data text.
-   --font-mono   JetBrains Mono — clause refs, IDs, hashes, and any
+   --font-sans   Inter - every piece of interface and data text.
+   --font-mono   JetBrains Mono - clause refs, IDs, hashes, and any
                  figure that must align in a column.
    ════════════════════════════════════════════════════════════════════════ */
 
@@ -606,7 +606,7 @@ pre {
   box-shadow: var(--highlight);
 }
 
-/* Interactive panel. Lifts by border and fill, not by transform —
+/* Interactive panel. Lifts by border and fill, not by transform -
    translating a card on hover shifts everything optically around it and
    costs a layer promotion for no informational gain. */
 .surface-interactive {
@@ -826,7 +826,7 @@ pre {
   }
 }
 
-/* Legacy alias — the old blue-glow lift, now neutral. */
+/* Legacy alias - the old blue-glow lift, now neutral. */
 .card-3d {
   transition:
     background-color var(--dur-1) var(--ease-out),
@@ -873,7 +873,7 @@ pre {
 
 /* ════════════════════════════════════════════════════════════════════════
    REACT FLOW
-   The graph canvas is a sunken well — it sits below the app surface,
+   The graph canvas is a sunken well - it sits below the app surface,
    which is what signals "this is a viewport into data" rather than
    "this is another card".
    ════════════════════════════════════════════════════════════════════════ */
@@ -923,7 +923,7 @@ pre {
 }
 
 /* Hide only the Next.js dev-tools launcher badge. The error overlay
-   (nextjs-portal) is deliberately left visible — suppressing it hides
+   (nextjs-portal) is deliberately left visible - suppressing it hides
    real runtime errors during development. */
 [data-nextjs-dev-tools-button] {
   display: none !important;

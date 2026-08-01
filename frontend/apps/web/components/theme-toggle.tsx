@@ -10,7 +10,7 @@ import { useTheme } from "next-themes"
  * The two glyphs are stacked and cross-faded rather than swapped, so the
  * control never reflows the header row mid-transition. Until `next-themes`
  * has read the stored preference on the client a same-size placeholder holds
- * the slot — rendering the wrong icon first and correcting it is a visible
+ * the slot - rendering the wrong icon first and correcting it is a visible
  * flicker on every page load.
  */
 export function ThemeToggle() {

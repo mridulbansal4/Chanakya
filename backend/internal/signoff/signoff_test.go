@@ -77,7 +77,7 @@ func TestVerifyFailsOnTamper(t *testing.T) {
 				t.Fatalf("Verify: %v", err)
 			}
 			if valid {
-				t.Errorf("tampered obligation (%s) verified as valid — tampering not detected", tc.name)
+				t.Errorf("tampered obligation (%s) verified as valid - tampering not detected", tc.name)
 			}
 		})
 	}

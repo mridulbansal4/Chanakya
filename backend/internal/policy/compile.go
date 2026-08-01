@@ -9,7 +9,7 @@
 //
 // INJECTION SAFETY: obligation fields are DATA, never code. Every value that
 // reaches the generated module does so either as a JSON-encoded Rego string
-// literal (regoString) — which cannot break out of its quotes for any input —
+// literal (regoString) - which cannot break out of its quotes for any input -
 // or as a sanitized single-line comment (regoComment). No obligation field is
 // ever interpolated into Rego's code structure. As a final backstop, Compile
 // verifies the generated module actually parses and prepares for evaluation
@@ -69,7 +69,7 @@ func regoString(s string) string {
 }
 
 // commentUnsafe matches control characters that must not survive into a
-// single-line `#` comment — most importantly newlines, which would terminate
+// single-line `#` comment - most importantly newlines, which would terminate
 // the comment and let the remainder of the value be parsed as Rego code.
 var commentUnsafe = regexp.MustCompile(`[\x00-\x1f\x7f]+`)
 
@@ -113,7 +113,7 @@ func Compile(o domain.Obligation) (string, error) {
 	isRequirement := hasThreshold && th.Kind == "requirement"
 
 	var b strings.Builder
-	fmt.Fprintf(&b, "# CHANAKYA compiled policy — deterministic, generated from a SIGNED obligation.\n")
+	fmt.Fprintf(&b, "# CHANAKYA compiled policy - deterministic, generated from a SIGNED obligation.\n")
 	fmt.Fprintf(&b, "# obligation: %s\n# clause: %s\n# deontic: %s\n\n",
 		regoComment(o.ID), regoComment(ref), regoComment(deontic))
 	fmt.Fprintf(&b, "package %s\n\n", PackageName)
@@ -122,7 +122,7 @@ func Compile(o domain.Obligation) (string, error) {
 	switch {
 	case isRequirement:
 		// The threshold IS the duty: always applies; compliant iff the firm's
-		// metric meets it. No attestation — the metric is the check. The metric
+		// metric meets it. No attestation - the metric is the check. The metric
 		// name is a JSON-encoded string map key and the value is a numeric
 		// literal; the operator is one of the fixed safe tokens from opSymbol.
 		op := opSymbol(th.Operator)
@@ -131,7 +131,7 @@ func Compile(o domain.Obligation) (string, error) {
 		fmt.Fprintf(&b, "applicable := true\n\n")
 		fmt.Fprintf(&b, "compliant if {\n\tinput.metrics[%s] %s %s\n}\n\n", regoString(th.Metric), op, val)
 		// Every dynamic part of the message is a sprintf ARGUMENT (pure data),
-		// never part of the constant format string — so no value can change the
+		// never part of the constant format string - so no value can change the
 		// message's (or module's) structure.
 		fmt.Fprintf(&b, "deny contains msg if {\n\tnot compliant\n")
 		fmt.Fprintf(&b, "\tmsg := sprintf(\"clause %%s (%%s): requirement on %%s (%%s %%s) not met\", [%s, %s, %s, %s, %s])\n",
@@ -149,7 +149,7 @@ func Compile(o domain.Obligation) (string, error) {
 
 	default:
 		// No threshold: always applies; attestation is compliance.
-		fmt.Fprintf(&b, "# No numeric threshold — the obligation always applies.\n")
+		fmt.Fprintf(&b, "# No numeric threshold - the obligation always applies.\n")
 		fmt.Fprintf(&b, "applicable := true\n\n")
 		writeAttestationCompliance(&b, o.ID, ref, deontic, false)
 	}

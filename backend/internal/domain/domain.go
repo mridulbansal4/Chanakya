@@ -9,7 +9,7 @@ import (
 )
 
 // RFC3339UTC formats t as an RFC3339 string in UTC. All timestamps are stored
-// this way so that lexical string comparison equals chronological comparison —
+// this way so that lexical string comparison equals chronological comparison -
 // the property the bi-temporal as-of queries depend on.
 func RFC3339UTC(t time.Time) string {
 	return t.UTC().Format(time.RFC3339)
@@ -132,7 +132,7 @@ func (s ObligationStatus) Valid() bool {
 }
 
 // TicketState is the lifecycle state of a remediation ticket. CHANAKYA only
-// ever creates 'draft' tickets — it never files them into a customer system.
+// ever creates 'draft' tickets - it never files them into a customer system.
 type TicketState string
 
 const (

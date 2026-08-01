@@ -191,7 +191,7 @@ function ViewToggle({
  * The action bar. This is the one row on the screen that answers "what do I
  * do now", so it carries the only high-emphasis button in the layout.
  *
- * Chips render only when their count is non-zero — a row of greyed-out
+ * Chips render only when their count is non-zero - a row of greyed-out
  * zeroes is noise that pushes the real signal off to the side.
  */
 function NeedsAttention({ posture }: { posture?: Posture }) {
@@ -211,7 +211,7 @@ function NeedsAttention({ posture }: { posture?: Posture }) {
       {allClear ? (
         <p className="inline-flex items-center gap-2 text-body-sm text-ok">
           <CheckCircle2 className="size-4" aria-hidden />
-          Nothing pending — no reviews, sign-offs or evidence gaps today.
+          Nothing pending - no reviews, sign-offs or evidence gaps today.
         </p>
       ) : (
         <div className="flex flex-wrap items-center gap-2">

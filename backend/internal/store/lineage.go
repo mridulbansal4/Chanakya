@@ -39,7 +39,7 @@ type Lineage struct {
 // Lineage reconstructs the audit lineage in force as-of a date (world time,
 // current system knowledge). Because sign-offs and policies become world-time
 // facts when they are made, reconstructing as-of a date before they existed
-// shows the obligations un-signed and un-enforced — the bi-temporal audit view.
+// shows the obligations un-signed and un-enforced - the bi-temporal audit view.
 func (s *Store) Lineage(ctx context.Context, circularID string, asOf time.Time) (Lineage, error) {
 	at := domain.RFC3339UTC(asOf)
 	lin := Lineage{AsOf: at, Nodes: []LineageNode{}, Edges: []LineageEdge{}, Counts: map[string]int{}}

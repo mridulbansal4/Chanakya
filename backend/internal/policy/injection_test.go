@@ -82,7 +82,7 @@ func TestCompileNeverReturnsUnparseableModule(t *testing.T) {
 	}
 	mod, err := Compile(ob)
 	if err != nil {
-		return // rejected at compile time — good
+		return // rejected at compile time - good
 	}
 	// If Compile returned a module, it MUST be evaluable (validatePrepares ran).
 	if _, err := Evaluate(context.Background(), mod,

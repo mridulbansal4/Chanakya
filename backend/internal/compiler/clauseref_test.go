@@ -21,7 +21,7 @@ func TestClauseRefMatchesToleratesLabels(t *testing.T) {
 	}
 
 	noMatch := []struct{ got, want string }{
-		{"Clause 5.2", "3.1"}, // genuinely different clause — must still reject
+		{"Clause 5.2", "3.1"}, // genuinely different clause - must still reject
 		{"4", "3"},
 		{"3.2", "3.1"},
 	}

@@ -128,7 +128,7 @@ func Verify(pubB64 string, o domain.Obligation, sigB64 string) (bool, string, er
 // LoadOrCreateKey resolves the Ed25519 signing key: from CHANAKYA_SIGNING_KEY_B64
 // (a base64 32-byte seed) if set, else from the seed file at path, else it
 // generates a new key and persists the seed to path (0600). The seed file must
-// be gitignored — it is the demo signing authority.
+// be gitignored - it is the demo signing authority.
 func LoadOrCreateKey(path string) (ed25519.PrivateKey, error) {
 	if env := os.Getenv("CHANAKYA_SIGNING_KEY_B64"); env != "" {
 		seed, err := base64.StdEncoding.DecodeString(env)

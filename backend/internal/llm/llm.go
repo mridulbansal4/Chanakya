@@ -1,7 +1,7 @@
 // Package llm defines the extraction boundary for the Regulation Compiler.
 //
 // SAFETY MODEL (invariant #1): an Extractor turns clause text into a raw JSON
-// document — pure DATA that must validate against the compiler's strict schema.
+// document - pure DATA that must validate against the compiler's strict schema.
 // It NEVER returns code that gets executed and it NEVER enforces anything. Two
 // implementations exist: a deterministic offline extractor (the default, no API
 // key, fully testable) and a real Anthropic client (used only when an API key

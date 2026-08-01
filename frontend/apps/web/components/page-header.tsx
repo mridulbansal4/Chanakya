@@ -6,7 +6,7 @@ import type { ReactNode } from "react"
  * describing what the screen is for.
  *
  * The serif appears here and in dialog titles only. It is the app's one
- * editorial gesture — used sparingly it signals "this is a document of
+ * editorial gesture - used sparingly it signals "this is a document of
  * record"; used inside tables and cards it would just be noise.
  *
  * The description is capped at ~68 characters per line. Measure matters

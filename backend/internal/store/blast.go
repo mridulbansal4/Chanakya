@@ -246,7 +246,7 @@ func (s *Store) BlastRadius(ctx context.Context, circularID, clauseRef, amendedT
 		}
 		br.Changes = append(br.Changes, BlastChange{
 			Category: "obligation", Ref: o.ref,
-			Detail: fmt.Sprintf("Re-review %s obligation on clause %s — %s", o.deontic, o.ref, how),
+			Detail: fmt.Sprintf("Re-review %s obligation on clause %s - %s", o.deontic, o.ref, how),
 		})
 	}
 	for _, id := range ctlIDs {

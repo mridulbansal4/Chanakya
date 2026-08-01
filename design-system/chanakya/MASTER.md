@@ -1,4 +1,4 @@
-# CHANAKYA — Design System (Master)
+# CHANAKYA - Design System (Master)
 
 The global source of truth for CHANAKYA's interface. Page-specific overrides,
 if any, live in `design-system/chanakya/pages/<page>.md` and take precedence
@@ -24,7 +24,7 @@ palette that can be bypassed is documentation, not a system.
 
 Graph components are the tempting exception, because React Flow needs real
 colour strings for SVG strokes. They are handled by `lib/graph-theme.ts`, which
-exports `var(--token)` references — real CSS values that resolve in the DOM, so
+exports `var(--token)` references - real CSS values that resolve in the DOM, so
 the graph cannot drift from the app.
 
 ---
@@ -80,21 +80,21 @@ everything is vivid, nothing is urgent.
 
 **Nothing is coloured for decoration.** The clearest violation in the previous
 build was the command palette assigning emerald / cyan / purple / amber to nine
-navigation entries — nine colours carrying zero information, in a system where
+navigation entries - nine colours carrying zero information, in a system where
 those same hues mean "verified" and "needs judgement" elsewhere. Spending a
 semantic colour on decoration is what makes the real signal stop registering.
 
-Accent is a single hue with two stops: `--accent` (#4C82F7, 5.5:1 — for text,
-icons, strokes) and `--accent-solid` (#1D4ED8, 6.7:1 with white — for fills).
+Accent is a single hue with two stops: `--accent` (#4C82F7, 5.5:1 - for text,
+icons, strokes) and `--accent-solid` (#1D4ED8, 6.7:1 with white - for fills).
 The previous build had `--steel-blue` in tokens competing with `blue-600`,
 `blue-500`, `blue-400` and `indigo-500` in markup.
 
 ### Never colour alone
 
 Colour is never the sole carrier of meaning. `StatusDot` encodes state in
-**shape** as well as hue — approved is filled, needs-review is ringed, pending
+**shape** as well as hue - approved is filled, needs-review is ringed, pending
 is hollow. Semantic edges in the blast graph are **dashed**, not just amber.
-This survives greyscale, colour vision deficiency, and a printed audit pack —
+This survives greyscale, colour vision deficiency, and a printed audit pack -
 which for a regulatory system is not a hypothetical.
 
 ---
@@ -107,29 +107,29 @@ display/body split created no hierarchy at all.
 
 | Family | Variable | Job |
 |---|---|---|
-| **Source Serif 4** | `--font-serif` | Page titles, dialog titles, empty-state headings — **only** |
+| **Source Serif 4** | `--font-serif` | Page titles, dialog titles, empty-state headings - **only** |
 | **Inter** | `--font-sans` | All interface and data text |
 | **JetBrains Mono** | `--font-mono` | Clause refs, IDs, hashes, aligned figures |
 
 The serif is the app's one editorial gesture. Used sparingly it signals
-"document of record". Used inside tables and cards it is just noise — a serif
+"document of record". Used inside tables and cards it is just noise - a serif
 at 13px in a dense table is decoration, not authority.
 
 ### Scale
 
-- `.text-display-*` — serif, weight 400. Page titles.
-- `.text-headline-*` — sans, weight 600. Section and card headings.
-- `.text-title-*` — sans, weight 600. Dense headings, table headers.
-- `.text-body-*` — sans, weight 400. Prose.
-- `.text-label-*` — sans, weight 500–600. Controls, chips, eyebrows.
-- `.text-metric-*` — sans, weight **550**, tabular figures, −0.02em.
+- `.text-display-*` - serif, weight 400. Page titles.
+- `.text-headline-*` - sans, weight 600. Section and card headings.
+- `.text-title-*` - sans, weight 600. Dense headings, table headers.
+- `.text-body-*` - sans, weight 400. Prose.
+- `.text-label-*` - sans, weight 500–600. Controls, chips, eyebrows.
+- `.text-metric-*` - sans, weight **550**, tabular figures, −0.02em.
 
 **Numbers are never set in the display face and never above weight 600.** A KPI
 at weight 800 reads as advertising, not as data. The previous overview used
 `text-display-md` (2.8rem / weight 800) for posture figures.
 
 Prose uses proportional figures; anything that must align in a column opts into
-`.tnum`. Tabular figures are not applied globally — they are wider and looser,
+`.tnum`. Tabular figures are not applied globally - they are wider and looser,
 and they make running text worse.
 
 Measure is capped at ~68ch for descriptions. Line length governs whether a
@@ -143,7 +143,7 @@ paragraph gets read more than typeface choice does.
 consumer; institutional software sits between 4 and 8. The previous value was
 0.85rem (13.6px) with `rounded-2xl`/`rounded-3xl` scattered on top.
 
-**Elevation: three neutral levels.** `--elev-1/2/3`, plus `--highlight` — a 1px
+**Elevation: three neutral levels.** `--elev-1/2/3`, plus `--highlight` - a 1px
 inner top highlight that does most of the work of making a surface read as
 raised, without shadow noise.
 
@@ -151,7 +151,7 @@ No coloured glow. The previous `0 0 25px rgba(37,99,235,.15)` card-hover glow is
 the glassmorphism-showcase look, and it appeared on hover of every card.
 
 Shadows describe elevation. A drop shadow on a flush element is a shadow cast
-by nothing — the old KPI strip carried `shadow-2xl` while sitting flat against
+by nothing - the old KPI strip carried `shadow-2xl` while sitting flat against
 the chrome.
 
 ---
@@ -166,7 +166,7 @@ Defined once in `lib/motion.ts`, mirroring the `--dur-*` and `--ease-*` tokens.
 | `DUR_STANDARD` | 180ms | Dropdowns, popovers, small enter/exit |
 | `DUR_STRUCTURAL` | 260ms | Page, dialog, layout |
 
-`EASE_OUT` = `cubic-bezier(0.2, 0.8, 0.2, 1)` — fast departure, soft arrival.
+`EASE_OUT` = `cubic-bezier(0.2, 0.8, 0.2, 1)` - fast departure, soft arrival.
 Springs are reserved for things that physically move between two positions (the
 nav indicator, the view toggle). Everything else uses a duration curve, which is
 more predictable and cheaper.
@@ -181,7 +181,7 @@ Principles:
   change. A −2px lift on every element means the interface twitches as the
   pointer crosses it.
 - **Stagger is capped** (`staggerDelay`, 240ms ceiling). An uncapped
-  `index * step` means the 40th row waits two seconds — the stagger stops being
+  `index * step` means the 40th row waits two seconds - the stagger stops being
   a flourish and becomes latency.
 - **Perpetual animation needs a reason.** Only provenance edges animate in the
   overview graph; marching ants on every edge is motion that never stops and
@@ -197,7 +197,7 @@ Principles:
   applied via `:focus-visible` globally.
 - **Contrast ≥ 4.5:1** for all text. See the foreground table.
 - **Interactive elements are real elements.** The account control was a `<div>`
-  with `cursor-pointer` — visually interactive, unreachable by keyboard,
+  with `cursor-pointer` - visually interactive, unreachable by keyboard,
   announced as nothing. It is a `<button>` with an accessible name.
 - **Dialogs have the full contract:** `role="dialog"`, `aria-modal`, focus trap,
   focus restore to the trigger, Escape to close, body scroll lock.
@@ -241,7 +241,7 @@ Vercel.
 `blast-graph.tsx`, `lineage-graph.tsx`, `graph-legend.tsx`, `graph-search.tsx`.
 
 **Inherited** via legacy token aliases plus a mechanical radius/elevation/weight
-normalisation — correct colours and geometry, but not individually recomposed:
+normalisation - correct colours and geometry, but not individually recomposed:
 `register`, `evidence`, `policy`, `review`, `audit`, `feed`, `amendments`,
 `regulatory-feed`, `welcome-modal`, `glossary-modal`, `signoff-modal`,
 `obligation-detail`, `amendment/kit`, `amendment/steps`, `help-menu`,

@@ -33,7 +33,7 @@ const NAV = [
   { href: "/register", label: "Register", hint: "Every obligation extracted from the regulation, with its source." },
   { href: "/amendments", label: "Blast Radius", hint: "See everything a regulation change affects." },
   { href: "/evidence", label: "Evidence & Gaps", hint: "Which obligations are backed by evidence, and where the gaps are." },
-  { href: "/review", label: "Review Queue", hint: "Obligations awaiting your approval — your daily inbox." },
+  { href: "/review", label: "Review Queue", hint: "Obligations awaiting your approval - your daily inbox." },
   { href: "/policy", label: "Policy", hint: "Turn approved obligations into automated compliance checks." },
   { href: "/audit", label: "Audit", hint: "Reconstruct the full compliance trail as of any date." },
   { href: "/feed", label: "Feed", hint: "The machine-readable feed a regulator's systems can consume." },
@@ -41,13 +41,13 @@ const NAV = [
 
 const BANNER: Record<string, ReactNode> = {
   "/": "Your compliance posture at a glance. Start with what needs your attention, then explore the live obligation graph below.",
-  "/regulatory-feed": "CHANAKYA monitors SEBI for new circulars. Process the new MITC amendment to see the full lifecycle — diff, obligations, blast radius, workflows, approval, evidence, and an audit pack.",
+  "/regulatory-feed": "CHANAKYA monitors SEBI for new circulars. Process the new MITC amendment to see the full lifecycle - diff, obligations, blast radius, workflows, approval, evidence, and an audit pack.",
   "/register": "Every obligation CHANAKYA extracted from the regulation, with the exact source text behind each one. Click a row to see its citation.",
   "/amendments": "Preview what a regulation change would affect before you accept it. Pick a clause, edit its text, and compute the impact.",
   "/evidence": "Which obligations are backed by evidence from your firm's systems, and where the gaps are. Each gap becomes a draft remediation ticket.",
   "/review": "These obligations need your judgement before CHANAKYA can act on them. Approve, correct, or reject each one.",
   "/policy": "Turn a signed obligation into an automated compliance check, then test it against your firm's data. Enforcement stays in 'audit' until you promote it.",
-  "/audit": "Reconstruct the full compliance trail — clause to obligation to sign-off — as of any date. Change the date (top right) to travel through time.",
+  "/audit": "Reconstruct the full compliance trail - clause to obligation to sign-off - as of any date. Change the date (top right) to travel through time.",
   "/feed": "The machine-readable feed a regulator's systems consume, with the source text and cryptographic sign-off behind every obligation.",
 }
 
@@ -96,7 +96,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <Link
           href="/"
           className="flex shrink-0 items-center gap-2.5 rounded group transition-opacity hover:opacity-90"
-          aria-label="CHANAKYA — go to overview"
+          aria-label="CHANAKYA - go to overview"
         >
           {/* Dark mode logo */}
           <img

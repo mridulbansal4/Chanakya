@@ -28,7 +28,7 @@ const STEPS: Step[] = [
     body: (
       <>
         CHANAKYA converts complex SEBI circulars into a live, fully auditable compliance operating system.
-        The AI proposes obligations with source citations — <strong>you</strong>{" "}
+        The AI proposes obligations with source citations - <strong>you</strong>{" "}
         approve them with cryptographic signatures, and a deterministic engine enforces them.
       </>
     ),
@@ -49,7 +49,7 @@ const STEPS: Step[] = [
     title: "Regulation Change Simulation: Blast Radius",
     body: (
       <>
-        Preview the exact downstream impact of regulatory circular amendments — mapping affected obligations, controls, and evidence sources before enforcing changes.
+        Preview the exact downstream impact of regulatory circular amendments - mapping affected obligations, controls, and evidence sources before enforcing changes.
       </>
     ),
     cta: { label: "Explore Blast Radius Simulator", href: "/amendments" },

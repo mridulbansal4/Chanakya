@@ -1,7 +1,7 @@
 -- 0004_tickets.sql
 -- Phase 5: draft remediation tickets. A ticket is DRAFTED for each detected gap
 -- (an obligation with no satisfying evidence path). CHANAKYA never *files*
--- tickets into a customer system — they stay 'draft' as internal records; the
+-- tickets into a customer system - they stay 'draft' as internal records; the
 -- state enum includes filed/resolved only for completeness of the lifecycle.
 
 CREATE TABLE IF NOT EXISTS ticket (

@@ -80,7 +80,7 @@ func TestValidateRaw(t *testing.T) {
 }
 
 func TestCompileClause_RejectsMissingCitation(t *testing.T) {
-	// Schema-valid, but the source_sentence is NOT in the clause text — a
+	// Schema-valid, but the source_sentence is NOT in the clause text - a
 	// hallucinated citation. It must be rejected before entering the graph.
 	raw := `{"obligations":[{"bearer":"investment adviser","deontic_type":"MUST",` +
 		`"source_clause_ref":"3.1","source_sentence":"This sentence was never in the clause.",` +

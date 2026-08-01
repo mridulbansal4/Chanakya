@@ -10,7 +10,7 @@
  */
 
 export const GRAPH = {
-  /** The canvas is a sunken well — a viewport into data, not another card. */
+  /** The canvas is a sunken well - a viewport into data, not another card. */
   canvas: "var(--sunken)",
   dots: "var(--line-subtle)",
 
@@ -36,8 +36,8 @@ export const GRAPH_STATUS = {
  * with the thing it explains is worse than no legend at all.
  */
 export const OVERVIEW_LEGEND = [
-  { color: "var(--fg-subtle)", label: "Clause — regulation source" },
-  { color: "var(--fg)", label: "Obligation — deontic duty" },
+  { color: "var(--fg-subtle)", label: "Clause - regulation source" },
+  { color: "var(--fg)", label: "Obligation - deontic duty" },
   { color: "var(--ok)", label: "Approved" },
   { color: "var(--warn)", label: "Needs review or pending" },
   { color: "var(--risk)", label: "Rejected" },
@@ -48,7 +48,7 @@ export const OVERVIEW_LEGEND = [
  * Blast radius.
  *
  * `semantic` is amber because a semantic match is a *suggestion* that needs
- * human judgement — the same meaning amber carries everywhere else in the
+ * human judgement - the same meaning amber carries everywhere else in the
  * app. It is not amber merely to look different from the direct hits.
  */
 export const BLAST_KIND = {
@@ -70,7 +70,7 @@ export function blastKind(kind: string): { color: string; tag: string } {
 
 export const BLAST_LEGEND = [
   { color: "var(--accent)", label: "Amended or directly affected" },
-  { color: "var(--warn)", label: "Semantic match — needs judgement" },
+  { color: "var(--warn)", label: "Semantic match - needs judgement" },
   { color: "var(--ok)", label: "Control" },
   { color: "var(--fg-subtle)", label: "Evidence" },
   { color: "var(--warn)", label: "Semantic link", line: true, dashed: true },

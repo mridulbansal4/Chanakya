@@ -119,7 +119,7 @@ func TestCompileNoThresholdAlwaysApplies(t *testing.T) {
 }
 
 // TestRequirementThreshold verifies a requirement-type threshold ("retain >=5
-// years") is compliant only when the firm's metric meets it — NOT reported
+// years") is compliant only when the firm's metric meets it - NOT reported
 // compliant when the metric is below the requirement.
 func TestRequirementThreshold(t *testing.T) {
 	ctx := context.Background()
