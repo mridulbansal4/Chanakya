@@ -86,11 +86,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-svh flex-col overflow-hidden bg-canvas text-fg">
       {/*
-        The chrome sits on --sunken, one step below the content canvas, so
-        the app surface reads as sitting *in* a frame. It is solid rather
-        than translucent: a blurred bar over a scrolling data table is
-        visual noise in an instrument, and it costs a compositing layer on
-        every scroll frame.
+        The header uses bg-sunken/90 backdrop-blur-md with high-contrast text and icons
+        matching both dark and light modes.
       */}
       <header className="z-30 relative flex h-14 shrink-0 items-center gap-4 border-b border-line-subtle bg-sunken/90 backdrop-blur-md px-4 lg:px-5 shadow-elev-2">
         {/* Animated rotating/glowing bottom border accent line */}
@@ -101,15 +98,23 @@ export function AppShell({ children }: { children: ReactNode }) {
           className="flex shrink-0 items-center gap-2.5 rounded group transition-opacity hover:opacity-90"
           aria-label="CHANAKYA — go to overview"
         >
-          <img src="/logo.svg" alt="" aria-hidden className="h-5 w-auto" />
-          <span className="text-headline-sm tracking-tight font-semibold text-fg">CHANAKYA</span>
+          {/* Dark mode logo */}
+          <img
+            src="/logo-dark.png"
+            alt="CHANAKYA"
+            className="hidden dark:block h-7 w-auto object-contain"
+          />
+          {/* Light mode logo */}
+          <img
+            src="/logo-light.png"
+            alt="CHANAKYA"
+            className="block dark:hidden h-7 w-auto object-contain"
+          />
+          <span className="text-headline-sm tracking-tight font-bold text-fg">CHANAKYA</span>
         </Link>
 
         {/*
-          Nine destinations is a lot for one row, but these are the product's
-          operating surfaces and a compliance officer moves between them
-          constantly — burying them in a menu would cost more than it saves.
-          The command palette (⌘K) is the fast path for anyone who prefers it.
+          Nine destinations with active indicator and badges
         */}
         <nav
           aria-label="Primary"
