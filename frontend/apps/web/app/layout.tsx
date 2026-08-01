@@ -36,17 +36,41 @@ const fontMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "CHANAKYA — Regulatory Operating System",
+  title: "CHANAKYA",
   description:
     "Agentic compliance for the Indian securities market: from regulatory text to operational action.",
+  icons: {
+    /*
+      Tab chrome follows the OS appearance, not the app's own theme toggle,
+      so the mark is switched on prefers-color-scheme rather than on the
+      .dark class the header uses.
+
+      The light-scheme entry is declared last deliberately: a browser that
+      ignores `media` on rel=icon falls back to the final one, and a dark
+      mark on the light tab bar most browsers ship is the safer thing to be
+      wrong about than a white mark that disappears into it.
+    */
+    icon: [
+      {
+        url: "/logo-dark.png",
+        type: "image/png",
+        media: "(prefers-color-scheme: dark)",
+      },
+      {
+        url: "/logo-light.png",
+        type: "image/png",
+        media: "(prefers-color-scheme: light)",
+      },
+    ],
+  },
 }
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  // No maximumScale / userScalable:false — pinch zoom must never be disabled.
+  // No maximumScale / userScalable:false - pinch zoom must never be disabled.
   // Dark is the product default, but the theme toggle can switch to light, so
-  // the document must advertise both — pinning this to "dark" leaves the UA
+  // the document must advertise both - pinning this to "dark" leaves the UA
   // painting dark form controls and scrollbars over a light page.
   colorScheme: "dark light",
   themeColor: [
