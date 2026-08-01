@@ -1,5 +1,6 @@
 import * as React from "react"
 import { cn } from "@workspace/ui/lib/utils"
+import { AiLoader } from "@/components/ui/ai-loader"
 
 /**
  * Loading placeholders.
@@ -94,21 +95,9 @@ export function GraphSkeleton() {
   return (
     <LoadingRegion
       label="Loading graph"
-      className="relative flex h-full w-full flex-col justify-between overflow-hidden bg-sunken p-8"
+      className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-sunken p-8"
     >
-      <div className="flex items-center justify-between">
-        <Skeleton className="h-8 w-48 rounded-md" />
-        <Skeleton className="h-8 w-32 rounded-md" />
-      </div>
-      <div className="my-auto grid grid-cols-3 place-items-center gap-12">
-        <Skeleton className="h-14 w-44 rounded-md" />
-        <Skeleton className="h-14 w-44 rounded-md" />
-        <Skeleton className="h-14 w-44 rounded-md" />
-      </div>
-      <div className="flex items-center justify-between">
-        <Skeleton className="h-8 w-36 rounded-md" />
-        <Skeleton className="h-8 w-24 rounded-md" />
-      </div>
+      <AiLoader text="Generating Graph" />
     </LoadingRegion>
   )
 }

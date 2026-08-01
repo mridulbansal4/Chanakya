@@ -43,6 +43,13 @@ export async function apiFetch<T>(
   path: string,
   init?: RequestInit,
 ): Promise<T> {
+  // Artificial delay to ensure our sleek AI Loader is visible for 3-4 seconds 
+  // on graph generations and other heavy computations, as requested.
+  const shouldDelay = path.includes("/graph") || path.includes("/lineage") || path.includes("/simulate") || path.includes("/obligations");
+  if (shouldDelay) {
+    await new Promise(resolve => setTimeout(resolve, 3500))
+  }
+
   const url = `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`
   let res: Response
   try {
