@@ -10,11 +10,11 @@ import type { Transition, Variants } from "framer-motion"
  * Durations mirror the --dur-* tokens in globals.css. Keep them in sync.
  */
 
-/** Micro — colour, opacity, hover. Below ~100ms reads as an instant snap. */
+/** Micro - colour, opacity, hover. Below ~100ms reads as an instant snap. */
 export const DUR_MICRO = 0.12
-/** Standard — dropdowns, popovers, small enter/exit. */
+/** Standard - dropdowns, popovers, small enter/exit. */
 export const DUR_STANDARD = 0.18
-/** Structural — page and dialog transitions, layout changes. */
+/** Structural - page and dialog transitions, layout changes. */
 export const DUR_STRUCTURAL = 0.26
 
 /** Fast departure, soft arrival. Matches --ease-out. */
@@ -23,7 +23,7 @@ export const EASE_IN_OUT = [0.65, 0, 0.35, 1] as const
 
 /**
  * Springs are reserved for things the user is directly manipulating or
- * that physically move between two positions — a layout indicator sliding
+ * that physically move between two positions - a layout indicator sliding
  * to a new tab, a panel being dragged. Everything else uses a duration
  * curve, which is more predictable and cheaper.
  */
@@ -68,7 +68,7 @@ export const pageVariants: Variants = {
 
 /**
  * Overlay entry for dialogs and the command palette. Scale starts at 0.98,
- * not 0.94 — a large scale jump on a full-width panel reads as a zoom
+ * not 0.94 - a large scale jump on a full-width panel reads as a zoom
  * effect rather than an appearance.
  */
 export const overlayVariants: Variants = {
@@ -87,7 +87,7 @@ export const scrimVariants: Variants = {
  * Staggered list entry, capped.
  *
  * An uncapped `delay: index * step` means the 40th row in a table waits two
- * full seconds before appearing — the stagger stops being a flourish and
+ * full seconds before appearing - the stagger stops being a flourish and
  * becomes latency. This clamps total stagger time regardless of list length.
  */
 export function staggerDelay(index: number, step = 0.03, cap = 0.24): number {

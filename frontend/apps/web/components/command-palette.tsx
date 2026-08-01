@@ -37,8 +37,8 @@ interface NavItem {
 /**
  * Icons are monochrome and inherit from the row.
  *
- * The previous version gave each destination its own hue — emerald, cyan,
- * purple, amber — which meant nine colours carrying no information. In a
+ * The previous version gave each destination its own hue - emerald, cyan,
+ * purple, amber - which meant nine colours carrying no information. In a
  * system where amber means "needs judgement" and red means "gap", spending
  * those same hues on decoration is what makes the real signals stop
  * registering.
@@ -181,7 +181,7 @@ export function CommandPalette() {
     setActiveIndex(0)
   }, [query])
 
-  // Keep the highlighted row in view during keyboard navigation — otherwise
+  // Keep the highlighted row in view during keyboard navigation - otherwise
   // arrowing past the fold moves a selection the user cannot see.
   React.useEffect(() => {
     if (!open) return

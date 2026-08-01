@@ -15,7 +15,7 @@ import (
 // JSON output. Like the Anthropic extractor, it produces DATA only: the model is
 // told to emit the strict {"obligations":[...]} document and the compiler
 // re-validates that output against the same strict JSON schema and the mandatory
-// verbatim-citation rule — the model is never trusted to self-certify. It is used
+// verbatim-citation rule - the model is never trusted to self-certify. It is used
 // ONLY when GEMINI_API_KEY is configured; otherwise CHANAKYA runs the
 // deterministic OfflineExtractor.
 type GeminiExtractor struct {
@@ -113,7 +113,7 @@ func (e *GeminiExtractor) Extract(ctx context.Context, req ExtractionRequest) ([
 		SystemInstruction: &geminiContent{Parts: []geminiPart{{Text: system}}},
 		Contents: []geminiContent{{
 			Role: "user",
-			Parts: []geminiPart{{Text: fmt.Sprintf("Clause %s — %s\n\n%s",
+			Parts: []geminiPart{{Text: fmt.Sprintf("Clause %s - %s\n\n%s",
 				req.ClauseRef, req.Heading, req.Text)}},
 		}},
 		// Deterministic-as-possible: temperature 0, strict JSON mime type.

@@ -2,7 +2,7 @@
 // clauses, validates the returned DATA against a strict JSON schema, enforces
 // the mandatory causal citation (safety invariant #5), and routes low-confidence
 // extractions to human review instead of trusting them. Nothing here executes
-// model output or enforces anything — it only produces validated obligations.
+// model output or enforces anything - it only produces validated obligations.
 package compiler
 
 import (
@@ -29,7 +29,7 @@ var SchemaJSON []byte
 
 // DefaultReviewThreshold: obligations at or above this confidence are marked
 // "pending" (ready for the review queue); below it they are "needs_review"
-// (explicitly flagged as low-confidence). Nothing is ever auto-approved — that
+// (explicitly flagged as low-confidence). Nothing is ever auto-approved - that
 // requires a human sign-off in Phase 6.
 const DefaultReviewThreshold = 0.75
 
@@ -214,7 +214,7 @@ func obligationID(clauseID, deontic, sentence string) string {
 
 // containsNormalized reports whether needle appears in haystack after
 // collapsing all runs of whitespace to single spaces (so citation matching is
-// robust to formatting) — but it remains a substring check, not fuzzy matching.
+// robust to formatting) - but it remains a substring check, not fuzzy matching.
 func containsNormalized(haystack, needle string) bool {
 	return strings.Contains(normalizeWS(haystack), normalizeWS(needle))
 }

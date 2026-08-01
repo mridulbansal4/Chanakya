@@ -19,7 +19,7 @@ import {
 } from "@/components/amendment/steps"
 
 /**
- * Regulatory Amendment Simulation — a self-contained, guided demo of the full
+ * Regulatory Amendment Simulation - a self-contained, guided demo of the full
  * lifecycle of one real SEBI circular (MITC, 17 Feb 2025). It is an extension:
  * it adds a route and a nav item, and touches nothing else. All data is scripted
  * in lib/amendment-sim.ts; no backend calls, no existing pages changed.

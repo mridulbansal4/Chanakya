@@ -111,7 +111,7 @@ func (s *Store) CountClauses(ctx context.Context, circularID string) (int, error
 //
 // Passing the root's own id returns the whole tree under a chapter; passing a
 // circular's synthetic root is not required because top-level clauses have no
-// parent — call once per top-level clause, or use ListClauses for the flat set.
+// parent - call once per top-level clause, or use ListClauses for the flat set.
 func (s *Store) GetClauseSubtree(ctx context.Context, rootID string, asOf time.Time) ([]domain.ClauseNode, error) {
 	at := domain.RFC3339UTC(asOf)
 	const q = `

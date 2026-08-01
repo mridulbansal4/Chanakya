@@ -115,7 +115,7 @@ function plainRule(o: ObligationDetail): PlainRule {
   }
   const thenMust = action
     ? `${action}.`
-    : `comply with clause ${o.clause_ref} — ${o.clause_heading}.`
+    : `comply with clause ${o.clause_ref} - ${o.clause_heading}.`
 
   return {
     appliesWhen,
@@ -285,7 +285,7 @@ function PolicyDetail({
       <div>
         <div className="eyebrow mb-1">Clause {candidate?.clause_ref} Policy Rule</div>
         <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">
-          Rule: Clause {candidate?.clause_ref} — {candidate?.clause_heading}
+          Rule: Clause {candidate?.clause_ref} - {candidate?.clause_heading}
         </h2>
       </div>
 
@@ -350,7 +350,7 @@ function PolicyDetail({
 
             {evaluate.isError && (
               <p className="text-xs text-risk font-semibold">
-                Evaluation failed — please verify firm-state JSON formatting.
+                Evaluation failed - please verify firm-state JSON formatting.
               </p>
             )}
 

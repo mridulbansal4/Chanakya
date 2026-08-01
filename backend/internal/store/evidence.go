@@ -39,7 +39,7 @@ type EvidenceSource struct {
 	Name         string `json:"name"`
 	SourceSystem string `json:"source_system"`
 	Kind         string `json:"kind"`
-	ReadOnly     bool   `json:"read_only"` // always true — connectors never write back
+	ReadOnly     bool   `json:"read_only"` // always true - connectors never write back
 }
 
 // EvidenceMapping is the payload for the Evidence & Gaps screen.

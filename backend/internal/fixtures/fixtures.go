@@ -1,4 +1,4 @@
-// Package fixtures embeds and parses CHANAKYA's seed data — currently the SEBI
+// Package fixtures embeds and parses CHANAKYA's seed data - currently the SEBI
 // Investment Advisers Master Circular fixture. The JSON is compiled into the
 // binary with go:embed so `go run ./backend/cmd/seed` works from any directory
 // with no external files.

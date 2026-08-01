@@ -13,7 +13,7 @@ import { getObligation, type ObligationDetail } from "@/lib/api"
  * ObligationDetailPanel shows an obligation's full record beside its source: the
  * clause text with the EXACT cited sentence highlighted, plus the reasoning
  * chain (deontic, threshold, deadline, confidence). This is "the citation, one
- * click away" — every extracted claim is traceable to its source sentence.
+ * click away" - every extracted claim is traceable to its source sentence.
  */
 export function ObligationDetailPanel({
   id,
@@ -55,7 +55,7 @@ export function ObligationDetailPanel({
 function DetailBody({ d }: { d: ObligationDetail }) {
   const threshold = Object.keys(d.threshold ?? {}).length
     ? JSON.stringify(d.threshold)
-    : "—"
+    : "-"
   return (
     <div className="space-y-5 text-sm">
       <div>
@@ -80,18 +80,18 @@ function DetailBody({ d }: { d: ObligationDetail }) {
         <div>
           <dt className="text-muted-foreground">Deadline</dt>
           <dd className="text-foreground" title={d.deadline || undefined}>
-            {d.deadline ? formatDeadline(d.deadline) : "—"}
+            {d.deadline ? formatDeadline(d.deadline) : "-"}
           </dd>
         </div>
         <Field label="Threshold" value={threshold} mono />
         <Field label="In force from" value={d.valid_from} mono />
-        <Field label="Penalty" value={d.penalty || "—"} />
+        <Field label="Penalty" value={d.penalty || "-"} />
       </dl>
 
       {/* Reasoning chain / citation */}
       <section>
         <div className="text-[11px] tracking-wide text-muted-foreground uppercase">
-          Citation — source clause {d.source_clause_ref}
+          Citation - source clause {d.source_clause_ref}
         </div>
         <blockquote className="mt-2 border-l-2 border-verified pl-3 text-sm leading-relaxed">
           <ClauseWithCitation text={d.clause_text} cited={d.source_sentence} />

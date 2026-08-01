@@ -56,7 +56,7 @@ func run() error {
 		res.Created, res.Pending, res.NeedsReview, res.Rejected)
 	fmt.Printf("compile: wired %d controls, %d evidence, %d obligation→control links\n",
 		res.Controls, res.Evidence, res.Links)
-	fmt.Printf("compile: evidence mapping — %d satisfied, %d gaps; drafted %d remediation tickets (state=draft)\n",
+	fmt.Printf("compile: evidence mapping - %d satisfied, %d gaps; drafted %d remediation tickets (state=draft)\n",
 		res.Satisfied, res.Gaps, res.Tickets)
 	return nil
 }

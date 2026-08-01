@@ -48,7 +48,7 @@ type signoffInput struct {
 	Corrections   *correctionInput `json:"corrections"`
 }
 
-// postSignoff: POST /api/signoff — the human sign-off. On approve it (optionally
+// postSignoff: POST /api/signoff - the human sign-off. On approve it (optionally
 // applies corrections, then) Ed25519-signs the canonical obligation and records
 // the signature + mandatory justification; on reject it records the decision.
 // This is the ONLY path that can move an obligation to approved.
@@ -110,7 +110,7 @@ func (h *handlers) postSignoff(w http.ResponseWriter, r *http.Request) {
 		}
 		rec.ObligationHash = hash
 		// A sign-off becomes a world-time fact when it is made (now), not
-		// retroactively at the clause's issue date — so as-of a date before the
+		// retroactively at the clause's issue date - so as-of a date before the
 		// sign-off, the obligation reconstructs as unsigned.
 		if err := h.store.UpsertSignoff(ctx, rec, now, now); err != nil {
 			writeError(w, http.StatusInternalServerError, "failed to record sign-off")
@@ -124,7 +124,7 @@ func (h *handlers) postSignoff(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// approve — apply any corrections first, so the signature covers the final content.
+	// approve - apply any corrections first, so the signature covers the final content.
 	if in.Corrections != nil {
 		corr := store.ObligationCorrection{
 			DeonticType: in.Corrections.DeonticType,
@@ -164,7 +164,7 @@ func (h *handlers) postSignoff(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]any{"signoff": rec, "verified": true})
 }
 
-// getSignoff: GET /api/signoff?obligation_id= — returns the sign-off record and
+// getSignoff: GET /api/signoff?obligation_id= - returns the sign-off record and
 // a live verification of its signature against the CURRENT obligation content.
 func (h *handlers) getSignoff(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimSpace(r.URL.Query().Get("obligation_id"))

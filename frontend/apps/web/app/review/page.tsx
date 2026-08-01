@@ -69,7 +69,7 @@ export default function ReviewPage() {
       {items.length === 0 && !queue.isLoading && !queue.isError && (
         <EmptyState
           icon="sparkles"
-          title="Inbox Zero — All Caught Up"
+          title="Inbox Zero - All Caught Up"
           description={`Every obligation in force as of ${asOf} has been reviewed, approved, and signed off.`}
         />
       )}

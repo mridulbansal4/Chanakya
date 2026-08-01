@@ -125,7 +125,7 @@ def build(filename, story, doc_code):
     doc = BaseDocTemplate(path, pagesize=A4,
                           leftMargin=20*mm, rightMargin=20*mm,
                           topMargin=22*mm, bottomMargin=20*mm,
-                          title=filename.replace(".pdf",""), author=f"{COMPANY} — Compliance Department")
+                          title=filename.replace(".pdf",""), author=f"{COMPANY} - Compliance Department")
     frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height, id="f")
     doc.addPageTemplates([PageTemplate(id="main", frames=[frame], onPage=make_footer(doc_code))])
     doc.build(story)
@@ -142,13 +142,13 @@ def cover(title, subtitle, meta_rows, doc_code):
     return el
 
 # =============================================================================
-# 1 & 2 — INVESTMENT ADVISORY AGREEMENT
+# 1 & 2 - INVESTMENT ADVISORY AGREEMENT
 # =============================================================================
 def agreement(version, dated, with_mitc):
     code = f"AWA/IA-AGR/{ '2025-02' if with_mitc else '2024-01' }/v{version}"
     st = []
     st += cover("Investment Advisory Agreement",
-                f"Version {version}.0" + ("  —  Post-MITC Amendment" if with_mitc else "  —  Baseline"),
+                f"Version {version}.0" + ("  -  Post-MITC Amendment" if with_mitc else "  -  Baseline"),
                 [("Client Name", CLIENT), ("Adviser", COMPANY), ("SEBI Registration", SEBI_REG),
                  ("Agreement Version", f"{version}.0"), ("Effective Date", dated),
                  ("Status", "In force" if with_mitc else "Superseded by v2.0")], code)
@@ -167,7 +167,7 @@ def agreement(version, dated, with_mitc):
     st.append(kv_table([("Investment Adviser", f"{COMPANY}, {ADDRESS}"),
                         ("SEBI Registration No.", SEBI_REG),
                         ("Client", f"Mr. {CLIENT}"),
-                        ("Client Category", "Individual — Retail")]))
+                        ("Client Category", "Individual - Retail")]))
 
     st += [
         clause(1, "Definitions", [
@@ -205,7 +205,7 @@ def agreement(version, dated, with_mitc):
 
     if with_mitc:
         st.append(PageBreak())
-        st.append(Paragraph("Annexure A — Most Important Terms and Conditions (MITC)", H1))
+        st.append(Paragraph("Annexure A - Most Important Terms and Conditions (MITC)", H1))
         st.append(P(f"Pursuant to SEBI Circular {MITC_REF} dated {MITC_DATE}, the following standardized Most Important Terms "
                     f"and Conditions (MITC) form an integral part of this Agreement and have been read and understood by the Client."))
         mitc = [
@@ -252,13 +252,13 @@ def agreement(version, dated, with_mitc):
     build(f"IA_Agreement_v{version}.pdf", st, code)
 
 # =============================================================================
-# 3 & 4 — INTERNAL COMPLIANCE POLICY
+# 3 & 4 - INTERNAL COMPLIANCE POLICY
 # =============================================================================
 def compliance_policy(version, dated, updated):
     code = f"AWA/COMP-POL/{'2025-02' if updated else '2023-04'}/v{version}"
     st = []
     st += cover("Internal Compliance Policy",
-                f"Version {version}.0" + ("  —  Post-MITC Amendment" if updated else "  —  Baseline"),
+                f"Version {version}.0" + ("  -  Post-MITC Amendment" if updated else "  -  Baseline"),
                 [("Policy Owner", "Compliance Department"), ("Approving Authority", "Board of Directors"),
                  ("Version", f"{version}.0"), ("Effective Date", dated),
                  ("Applicable Regulation", "SEBI (Investment Advisers) Regulations, 2013 & IA Master Circular"),
@@ -334,20 +334,20 @@ def compliance_policy(version, dated, updated):
     st += revision_history(rows)
     st.append(gap(12))
     st += approval_block([
-        ["Prepared by — Compliance Officer", "Priya Menon", "", dated],
-        ["Reviewed by — Director", "A. Nair", "", dated],
-        ["Approved by — Board of Directors", "Board Resolution", "", dated],
+        ["Prepared by - Compliance Officer", "Priya Menon", "", dated],
+        ["Reviewed by - Director", "A. Nair", "", dated],
+        ["Approved by - Board of Directors", "Board Resolution", "", dated],
     ])
     build(f"Internal_Compliance_Policy_v{version}.pdf", st, code)
 
 # =============================================================================
-# 5 — AUDIT PACK (Reg 19(3)) — comprehensive, ~15 pages
+# 5 - AUDIT PACK (Reg 19(3)) - comprehensive, ~15 pages
 # =============================================================================
 def audit_pack():
     code = "AWA/AUDIT/2025/REG-19(3)"
     st = []
     st += cover("Compliance Audit Pack",
-                "Regulatory Amendment — Most Important Terms and Conditions (MITC)",
+                "Regulatory Amendment - Most Important Terms and Conditions (MITC)",
                 [("Prepared for", "Board of Directors / SEBI Inspection"),
                  ("Regulatory Event", f"{MITC_REF}"),
                  ("Circular Date", MITC_DATE), ("Compliance Deadline", DEADLINE),
@@ -362,7 +362,7 @@ def audit_pack():
            ["7", "Compliance Actions"], ["8", "Control Environment and Testing"], ["9", "Human Approval"],
            ["10", "Evidence Collected"], ["11", "Client Notifications"], ["12", "Agreement Updates"],
            ["13", "Policy Updates"], ["14", "Outstanding Risks"], ["15", "Final Compliance Status and Attestation"],
-           ["A", "Appendix A — Clause-to-Evidence Lineage"], ["B", "Appendix B — Document Register"]]
+           ["A", "Appendix A - Clause-to-Evidence Lineage"], ["B", "Appendix B - Document Register"]]
     st.append(grid(["Section", "Title"], toc, widths=[24*mm, None]))
     st.append(PageBreak())
 
@@ -371,7 +371,7 @@ def audit_pack():
                 f"{MITC_REF} dated {MITC_DATE} on the Most Important Terms and Conditions (MITC) for Investment Advisers. The Firm, "
                 "already compliant with the SEBI (Investment Advisers) Regulations, 2013 and the IA Master Circular, detected the new "
                 "circular, assessed its operational impact, generated and executed the required workflows under human approval, and "
-                "collected the supporting evidence — restoring a fully compliant, audit-ready state."))
+                "collected the supporting evidence - restoring a fully compliant, audit-ready state."))
     st.append(P("No obligation was actioned automatically. Every AI-proposed obligation was reviewed and approved by the Compliance "
                 "Officer before any operational action was taken, consistent with the Firm's governance framework."))
     st.append(gap(4))
@@ -379,7 +379,7 @@ def audit_pack():
                    [["Obligations modified", "3"], ["Obligations added", "1"], ["Agreements updated", "1 template (v1 → v2)"],
                     ["Existing clients notified", "2"], ["Acknowledgements received", "2"], ["Policies updated", "1 (v1 → v2)"],
                     ["Evidence artefacts collected", "5"], ["Human approvals", "1 (Compliance Officer)"],
-                    ["Final status", "Compliant — Reg 19(3)"]],
+                    ["Final status", "Compliant - Reg 19(3)"]],
                    widths=[70*mm, None]))
     st.append(gap(6))
     st.append(P("This pack has been prepared to a standard suitable for internal governance and for production to SEBI during "
@@ -423,7 +423,7 @@ def audit_pack():
     st.append(Paragraph("4. Regulatory Amendment", H1))
     st.append(kv_table([("Circular", MITC_REF), ("Date", MITC_DATE),
                         ("Subject", "Most Important Terms and Conditions (MITC) for Investment Advisers"),
-                        ("Issued by", "SEBI — MIRSD"), ("Compliance deadline (existing clients)", DEADLINE),
+                        ("Issued by", "SEBI - MIRSD"), ("Compliance deadline (existing clients)", DEADLINE),
                         ("Nature of change", "New disclosure + acknowledgement obligation")]))
     st.append(P("The circular standardizes the Most Important Terms and Conditions that an Investment Adviser must share with clients "
                 "in simple language, requires the MITC to be incorporated in the client engagement, mandates client acknowledgement, "
@@ -471,7 +471,7 @@ def audit_pack():
     st.append(Paragraph("9. Human Approval", H1))
     st.append(P("The AI-proposed obligations and operational plan were reviewed and approved by the Firm's Compliance Officer prior "
                 "to execution. No action was enforced automatically."))
-    st.append(kv_table([("Reviewer", "Priya Menon — Compliance Officer"), ("Decision", "Approved"),
+    st.append(kv_table([("Reviewer", "Priya Menon - Compliance Officer"), ("Decision", "Approved"),
                         ("Confidence", "98%"), ("Basis", f"Source clause of {MITC_REF}"),
                         ("Approved on", "20 May 2025 14:32 IST")]))
 
@@ -523,13 +523,13 @@ def audit_pack():
                    widths=[80*mm, None]))
     st.append(gap(10))
     st += approval_block([
-        ["Prepared by — Compliance Officer", "Priya Menon", "", "05 Jun 2025"],
-        ["Reviewed by — Director", "A. Nair", "", "05 Jun 2025"],
-        ["Noted by — Board of Directors", "Board", "", "05 Jun 2025"],
+        ["Prepared by - Compliance Officer", "Priya Menon", "", "05 Jun 2025"],
+        ["Reviewed by - Director", "A. Nair", "", "05 Jun 2025"],
+        ["Noted by - Board of Directors", "Board", "", "05 Jun 2025"],
     ])
     st.append(PageBreak())
 
-    st.append(Paragraph("Appendix A — Clause-to-Evidence Lineage", H1))
+    st.append(Paragraph("Appendix A - Clause-to-Evidence Lineage", H1))
     st.append(grid(["Clause", "Obligation", "Workflow", "Evidence"],
                    [["MITC ¶2", "MITC-1 Provide MITC + acknowledge", "Update agreement; notify clients", "IA_Agreement_v2.pdf; Email_Notification_Log.pdf"],
                     ["MITC ¶3", "3.1 Agreement incorporates MITC", "Update agreement template", "IA_Agreement_v2.pdf"],
@@ -537,12 +537,12 @@ def audit_pack():
                     ["MITC ¶5", "5.2 Inform existing clients", "Notify clients by " + DEADLINE, "Email_Notification_Log.pdf"]],
                    widths=[22*mm, None, 42*mm, 52*mm]))
     st.append(gap(10))
-    st.append(Paragraph("Appendix B — Document Register", H1))
+    st.append(Paragraph("Appendix B - Document Register", H1))
     st.append(grid(["#", "Document"], [[i+1, d] for i, d in enumerate(DOC_LIST)], widths=[12*mm, None]))
     build("Audit_Pack_Reg19(3).pdf", st, code)
 
 # =============================================================================
-# 6 — BLAST RADIUS REPORT
+# 6 - BLAST RADIUS REPORT
 # =============================================================================
 def blast_report():
     code = "AWA/BLAST/2025/MITC"
@@ -555,7 +555,7 @@ def blast_report():
     st.append(Paragraph("Propagation of the Regulatory Change", H1))
     flow = ["Regulatory Change (MITC Circular)", "Affected Obligations (3 modified, 1 added)",
             "Affected Policies (Internal Compliance Policy v1 → v2)", "Affected Agreements (Template v1 → v2)",
-            "Affected Clients (2 existing clients)", "Evidence Required (5 artefacts)", "Compliance Status (Restored — Compliant)"]
+            "Affected Clients (2 existing clients)", "Evidence Required (5 artefacts)", "Compliance Status (Restored - Compliant)"]
     rows = [[str(i+1), s] for i, s in enumerate(flow)]
     st.append(grid(["Step", "Impact Layer"], rows, widths=[16*mm, None]))
     st.append(gap(8))
@@ -568,10 +568,10 @@ def blast_report():
     st.append(gap(8))
     st.append(Paragraph("Semantic Note", H1))
     st.append(P("Beyond the direct structural links, a semantic similarity analysis surfaced the client-notification control as "
-                "affected by the fee-and-terms disclosure change — a dependency that a purely structural view would miss. This "
+                "affected by the fee-and-terms disclosure change - a dependency that a purely structural view would miss. This "
                 "confirms the completeness of the impact assessment."))
     st.append(gap(10))
-    st += approval_block([["Prepared by — Compliance Officer", "Priya Menon", "", "20 May 2025"]])
+    st += approval_block([["Prepared by - Compliance Officer", "Priya Menon", "", "20 May 2025"]])
     build("Blast_Radius_Report.pdf", st, code)
 
 # =============================================================================
@@ -579,13 +579,13 @@ def blast_report():
 # =============================================================================
 def compliance_change_report():
     code = "AWA/CCR/2025/MITC"
-    st = cover("Compliance Change Report", "MITC Amendment — Summary of Change",
+    st = cover("Compliance Change Report", "MITC Amendment - Summary of Change",
                [("Regulatory Event", MITC_REF), ("Date", MITC_DATE), ("Status", "Implemented")], code)
     st.append(PageBreak())
     st.append(Paragraph("Summary", H1))
     st.append(P(f"SEBI Circular {MITC_REF} dated {MITC_DATE} introduced the standardized Most Important Terms and Conditions (MITC) "
                 "for Investment Advisers. The Firm updated its client agreement (v2), internal compliance policy (v2), notified "
-                f"existing clients, collected acknowledgements, and retained evidence — completed on or before {DEADLINE}."))
+                f"existing clients, collected acknowledgements, and retained evidence - completed on or before {DEADLINE}."))
     st.append(grid(["Item", "Before", "After"],
                    [["Agreement", "v1.0 (no MITC)", "v2.0 (MITC incorporated)"],
                     ["Policy", "v1.0", "v2.0 (MITC workflow)"],
@@ -596,7 +596,7 @@ def compliance_change_report():
 
 def lineage_report():
     code = "AWA/LINEAGE/2025/MITC"
-    st = cover("Clause-to-Evidence Lineage", "Traceability — MITC Amendment",
+    st = cover("Clause-to-Evidence Lineage", "Traceability - MITC Amendment",
                [("Regulatory Event", MITC_REF), ("Date", MITC_DATE)], code)
     st.append(PageBreak())
     st.append(Paragraph("Lineage", H1))
@@ -634,11 +634,11 @@ def ack_register():
 
 def approval_record():
     code = "AWA/APPROVAL/2025/MITC"
-    st = cover("Human Approval Record", "Governance — MITC Amendment",
+    st = cover("Human Approval Record", "Governance - MITC Amendment",
                [("Regulatory Event", MITC_REF), ("Decision", "Approved")], code)
     st.append(PageBreak())
     st.append(Paragraph("Approval", H1))
-    st.append(kv_table([("Reviewer", "Priya Menon — Compliance Officer"),
+    st.append(kv_table([("Reviewer", "Priya Menon - Compliance Officer"),
                         ("Item reviewed", "AI-extracted MITC obligations and operational plan"),
                         ("Decision", "Approved"), ("Confidence", "98%"),
                         ("Citation", MITC_REF), ("Approved on", "20 May 2025 14:32 IST"),

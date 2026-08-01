@@ -2,12 +2,12 @@
 -- Phase 1: the bi-temporal Living Obligation Graph.
 --
 -- BI-TEMPORAL MODEL (every node/edge table carries all four columns):
---   valid_from / valid_to : WORLD time  — when the fact is/was true in reality
+--   valid_from / valid_to : WORLD time  - when the fact is/was true in reality
 --                           (e.g. a clause in force from its issue date).
---   tx_from   / tx_to     : SYSTEM time — when CHANAKYA knew/knows the fact.
+--   tx_from   / tx_to     : SYSTEM time - when CHANAKYA knew/knows the fact.
 -- Open-ended intervals use NULL for valid_to / tx_to. All timestamps are stored
 -- as RFC3339 UTC strings ("2024-05-15T00:00:00Z") so lexical comparison equals
--- chronological comparison — which is what the as-of queries rely on.
+-- chronological comparison - which is what the as-of queries rely on.
 --
 -- "Current, as-of :asof" therefore means:
 --   valid_from <= :asof AND (valid_to IS NULL OR valid_to > :asof)  -- world

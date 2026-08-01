@@ -2,7 +2,7 @@
 //
 // The base URL comes from NEXT_PUBLIC_API_BASE_URL (see .env.example); it
 // defaults to the local dev backend. Every response shape is typed here so
-// screens consume real, checked data — never `any`.
+// screens consume real, checked data - never `any`.
 
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ??

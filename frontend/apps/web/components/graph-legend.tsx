@@ -14,7 +14,7 @@ export interface LegendItem {
  * The key to the graph's colour vocabulary.
  *
  * It sits directly on the canvas as an opaque panel rather than a blurred
- * one — a legend read against moving nodes underneath is harder to use, and
+ * one - a legend read against moving nodes underneath is harder to use, and
  * backdrop blur over a pannable canvas repaints on every frame of the pan.
  */
 export function GraphLegend({ items }: { items: readonly LegendItem[] }) {

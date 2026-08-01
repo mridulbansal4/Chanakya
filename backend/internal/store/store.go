@@ -1,6 +1,6 @@
 // Package store owns the SQLite database: connection lifecycle, the embedded
 // migration runner, and (from Phase 1) parameterized query methods over the
-// bi-temporal obligation graph. All SQL uses ? placeholders — never string
+// bi-temporal obligation graph. All SQL uses ? placeholders - never string
 // concatenation (rule 4).
 package store
 

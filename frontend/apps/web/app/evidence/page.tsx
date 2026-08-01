@@ -42,9 +42,9 @@ export default function EvidencePage() {
 
         {/* Summary strip - Rounded Cards with Spacing */}
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 border-b border-line bg-surface/50">
-          <Stat label="Satisfied Obligations" value={em?.satisfied ?? "—"} tone="verified" />
-          <Stat label="Remediation Gaps" value={em?.gaps ?? "—"} tone={em?.gaps ? "danger" : "default"} />
-          <Stat label="Connected Systems" value={em?.sources.length ?? "—"} />
+          <Stat label="Satisfied Obligations" value={em?.satisfied ?? "-"} tone="verified" />
+          <Stat label="Remediation Gaps" value={em?.gaps ?? "-"} tone={em?.gaps ? "danger" : "default"} />
+          <Stat label="Connected Systems" value={em?.sources.length ?? "-"} />
         </section>
 
         <div className="min-h-0 flex-1 overflow-auto">

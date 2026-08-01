@@ -16,7 +16,7 @@ import (
 //
 // Determinism note: even here the model produces DATA only. The tool's
 // input_schema is the compiler's strict schema, tool_choice forces that tool,
-// and the compiler re-validates the returned input against the same schema —
+// and the compiler re-validates the returned input against the same schema -
 // the model is never trusted to self-certify.
 type AnthropicExtractor struct {
 	apiKey     string
@@ -60,7 +60,7 @@ func (e *AnthropicExtractor) Name() string { return "anthropic:" + e.model }
 const extractionSystemPrompt = `You are a regulation compiler for the Indian securities market. ` +
 	`Extract every distinct legal obligation from the given clause as DATA only. ` +
 	`For each obligation you MUST provide source_clause_ref (the clause id) and ` +
-	`source_sentence (the EXACT verbatim sentence from the clause text that supports it — ` +
+	`source_sentence (the EXACT verbatim sentence from the clause text that supports it - ` +
 	`copy it character-for-character, do not paraphrase). If the clause states no ` +
 	`obligation (e.g. it is a definition or heading), return an empty obligations array. ` +
 	`Never invent a citation. Report your confidence in [0,1] for each obligation.`
@@ -113,7 +113,7 @@ func (e *AnthropicExtractor) Extract(ctx context.Context, req ExtractionRequest)
 		System:    extractionSystemPrompt,
 		Messages: []anthropicMessage{{
 			Role: "user",
-			Content: fmt.Sprintf("Clause %s — %s\n\n%s",
+			Content: fmt.Sprintf("Clause %s - %s\n\n%s",
 				req.ClauseRef, req.Heading, req.Text),
 		}},
 		Tools: []anthropicTool{{

@@ -10,7 +10,7 @@ import { TRANSITION_STRUCTURAL, pageVariants } from "@/lib/motion"
  *
  * The movement is 4px. On a screen the user navigates between all day, a
  * larger travel distance stops reading as polish and starts reading as
- * waiting — the animation becomes the slowest part of the navigation.
+ * waiting - the animation becomes the slowest part of the navigation.
  */
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const reduce = useReducedMotion()

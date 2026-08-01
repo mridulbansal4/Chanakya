@@ -52,13 +52,13 @@ export const DEONTIC_META: Record<
   DeonticType,
   { label: string; code: string; help: string }
 > = {
-  MUST: { label: "Required", code: "MUST", help: "Required — the firm must do this." },
+  MUST: { label: "Required", code: "MUST", help: "Required - the firm must do this." },
   MUST_NOT: {
     label: "Prohibited",
     code: "MUST NOT",
-    help: "Prohibited — the firm must not do this.",
+    help: "Prohibited - the firm must not do this.",
   },
-  MAY: { label: "Permitted", code: "MAY", help: "Permitted — optional for the firm." },
+  MAY: { label: "Permitted", code: "MAY", help: "Permitted - optional for the firm." },
 }
 
 /** Plain-language label for each review status. */

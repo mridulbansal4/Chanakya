@@ -6,7 +6,7 @@
 
 A Regulatory Operating System for the Indian securities market. It compiles a SEBI circular into
 a **live, bi-temporal obligation graph**, routes every AI-proposed obligation through a human
-Ed25519 sign-off, and only then lets a **deterministic OPA/Rego** engine enforce it — with a
+Ed25519 sign-off, and only then lets a **deterministic OPA/Rego** engine enforce it - with a
 causal citation behind every claim and an auditable trail as of any date.
 
 <br/>
@@ -29,24 +29,24 @@ causal citation behind every claim and an auditable trail as of any date.
 ---
 
 > **The AI never enforces. It only ever *proposes* obligations as data, validated against a strict
-> JSON schema.** A human cryptographically signs each one, and a deterministic policy engine — not
-> the model — decides compliance. Nothing is blocked before a human promotes it.
+> JSON schema.** A human cryptographically signs each one, and a deterministic policy engine - not
+> the model - decides compliance. Nothing is blocked before a human promotes it.
 
 > **Note on screenshots.** Every figure below is captured live from the running app via
-> [`scripts/capture_screenshots.py`](scripts/capture_screenshots.py) — no mockups; the graphs are
+> [`scripts/capture_screenshots.py`](scripts/capture_screenshots.py) - no mockups; the graphs are
 > real React Flow, and each data screen is backed by the Go API.
 
-### See it in action — a SEBI amendment, end to end
+### See it in action - a SEBI amendment, end to end
 
 CHANAKYA detects a real SEBI circular (the MITC amendment, 17 Feb 2025), computes its operational
-impact, routes it through a human sign-off, and produces an audit-ready pack — one continuous flow.
+impact, routes it through a human sign-off, and produces an audit-ready pack - one continuous flow.
 
 | | |
 |---|---|
-| ![Regulatory Feed — new circular detected](docs/screenshots/sim-inbox.png) | ![Blast radius — operational impact](docs/screenshots/sim-blast.png) |
-| **1 · Detect** — the new MITC circular arrives in the Regulatory Feed | **2 · Blast radius** — one clause change, mapped across the firm |
+| ![Regulatory Feed - new circular detected](docs/screenshots/sim-inbox.png) | ![Blast radius - operational impact](docs/screenshots/sim-blast.png) |
+| **1 · Detect** - the new MITC circular arrives in the Regulatory Feed | **2 · Blast radius** - one clause change, mapped across the firm |
 | ![Human review & approval](docs/screenshots/sim-approval.png) | ![Audit-ready pack](docs/screenshots/sim-audit.png) |
-| **3 · Human gate** — the officer reviews and approves; nothing runs before this | **4 · Audit pack** — Reg 19(3) compliant, full evidence bundle |
+| **3 · Human gate** - the officer reviews and approves; nothing runs before this | **4 · Audit pack** - Reg 19(3) compliant, full evidence bundle |
 
 ---
 
@@ -65,7 +65,7 @@ impact, routes it through a human sign-off, and produces an audit-ready pack —
 
 Compliance in the Indian securities market is a text problem with operational stakes. A SEBI
 circular is prose; a firm needs to know, at every moment: *which obligations are in force, on whom,
-backed by what evidence, and enforced how* — and be able to prove it to a supervisor **as of any
+backed by what evidence, and enforced how* - and be able to prove it to a supervisor **as of any
 past date**.
 
 **CHANAKYA is a system of record for exactly that.** It ingests the SEBI *Investment Advisers Master
@@ -74,7 +74,7 @@ decision), and maintains a bi-temporal graph that answers auditor-grade question
 
 - *What obligations are in force, on whom, as of any given date?*
 - *When this clause is amended, exactly which controls, evidence, and workflows are affected?*
-- *Who signed off on treating this sentence as this obligation — and does that signature still verify?*
+- *Who signed off on treating this sentence as this obligation - and does that signature still verify?*
 - *What was the compliant state as-of a past date?*
 
 Because those answers must survive restarts and be independently auditable, CHANAKYA persists
@@ -90,22 +90,22 @@ durable design record in [`description/ARCHITECTURE.md`](description/ARCHITECTUR
 
 Most "AI compliance" demos let a model read a rule and *tell you whether you comply*. That is
 exactly the thing a regulator cannot trust: a black box, unauditable, ungrounded, and impossible to
-sign. CHANAKYA inverts it — **the model's only job is to propose structured data; humans and
+sign. CHANAKYA inverts it - **the model's only job is to propose structured data; humans and
 deterministic code own every consequential step.**
 
 | | Typical LLM compliance tool | **CHANAKYA** |
 |---|---|---|
 | What the LLM outputs | free-text judgement / a "yes/no" | **data only**, validated against a strict JSON schema |
 | Who decides compliance | the model | a **deterministic OPA/Rego** policy, reproducible bit-for-bit |
-| Human control | after-the-fact review | **Ed25519 sign-off gate** — nothing enforces until a human signs |
-| Grounding | often hallucinated | **causal citation required** — source clause id + exact sentence, or rejected |
+| Human control | after-the-fact review | **Ed25519 sign-off gate** - nothing enforces until a human signs |
+| Grounding | often hallucinated | **causal citation required** - source clause id + exact sentence, or rejected |
 | Enforcement | binary, immediate | **staged** audit → soft → hard, promoted only by a human |
-| Time travel | none | **bi-temporal** — reconstruct any obligation/posture as of any date |
-| Change impact | manual guesswork | **blast radius** — cosine-diff surfaces semantically affected obligations |
+| Time travel | none | **bi-temporal** - reconstruct any obligation/posture as of any date |
+| Change impact | manual guesswork | **blast radius** - cosine-diff surfaces semantically affected obligations |
 | Evidence | writes into systems | **read-only connectors**; gaps become *drafted* (never filed) tickets |
 
 The thesis in one line: **a cited obligation graph, gated by a human signature and enforced by
-deterministic policy — auditable end to end, and safe by construction.**
+deterministic policy - auditable end to end, and safe by construction.**
 
 ---
 
@@ -116,14 +116,14 @@ These are non-negotiable invariants, enforced across the codebase:
 1. **The LLM produces DATA ONLY.** Every extraction is validated against a strict JSON schema
    ([`backend/internal/compiler/schema.json`](backend/internal/compiler/schema.json)) before it can
    enter the graph. The model never emits code and never makes an enforcement decision.
-2. **Every obligation carries a causal citation** — the source clause id and the *exact* source
-   sentence — or it is rejected. The UI never shows a claim you cannot trace back to text.
+2. **Every obligation carries a causal citation** - the source clause id and the *exact* source
+   sentence - or it is rejected. The UI never shows a claim you cannot trace back to text.
 3. **Enforcement is deterministic and human-gated.** Compliance is decided only by the embedded
    OPA/Rego engine ([`backend/internal/policy/`](backend/internal/policy)), and only *after* a human
    Ed25519-signs the obligation ([`backend/internal/signoff/`](backend/internal/signoff)). The
-   signature covers a canonical hash of the obligation excluding its status — so tampering breaks it.
+   signature covers a canonical hash of the obligation excluding its status - so tampering breaks it.
 4. **Enforcement is staged: `audit → soft → hard`.** New policies start in **audit** (observe only)
-   and can *never* block operations automatically — a human promotes each stage.
+   and can *never* block operations automatically - a human promotes each stage.
 5. **Evidence connectors are READ-ONLY.** CHANAKYA maps obligations to firm evidence and *drafts*
    remediation tickets for gaps; it never writes into a customer system.
 
@@ -135,19 +135,19 @@ The web console is 8 routed screens under [`frontend/apps/web/app/`](frontend/ap
 value is monospace with its provenance; the interface leads with plain English for a compliance
 officer, and keeps the machine detail one click away for an auditor.
 
-### 1 — Overview `/`
+### 1 - Overview `/`
 
 A KPI strip (obligations in force, pending sign-off, needs-review, gaps), a **"Needs your attention"**
 action row, and the obligation view as either a **scannable clause-section grid (List)** or an
-**auto-laid-out graph (Graph)** — toggled and remembered for the session.
+**auto-laid-out graph (Graph)** - toggled and remembered for the session.
 
-![Overview — list and graph](docs/screenshots/overview-graph.png)
+![Overview - list and graph](docs/screenshots/overview-graph.png)
 
 - **Implementation:** [`app/page.tsx`](frontend/apps/web/app/page.tsx),
   [`overview-hierarchy.tsx`](frontend/apps/web/components/overview-hierarchy.tsx),
   [`overview-graph.tsx`](frontend/apps/web/components/overview-graph.tsx) (dagre `layered` layout).
 
-### 2 — Register `/register`
+### 2 - Register `/register`
 
 Every obligation, typed (Required / Prohibited / Permitted) and **cited**. Click a row → the detail
 panel highlights the *exact source sentence*. Change the **as-of date** to before the circular
@@ -158,10 +158,10 @@ issued → the register empties. That is bi-temporality, visible.
 - **Implementation:** [`app/register/page.tsx`](frontend/apps/web/app/register/page.tsx),
   [`obligation-detail.tsx`](frontend/apps/web/components/obligation-detail.tsx).
 
-### 3 — Blast Radius `/amendments`
+### 3 - Blast Radius `/amendments`
 
 Preview what amending a clause would touch **before** accepting it. Edit a clause, compute, and watch
-the impact propagate clause → obligation → control → evidence — including **semantic** hits surfaced
+the impact propagate clause → obligation → control → evidence - including **semantic** hits surfaced
 by an in-Go cosine-diff (editing the fee clause lights up the registration control via the
 fee-threshold obligation).
 
@@ -172,10 +172,10 @@ fee-threshold obligation).
   backend [`internal/store/blast.go`](backend/internal/store/blast.go),
   [`internal/vec/vec.go`](backend/internal/vec/vec.go).
 
-### 4 — Evidence & Gaps `/evidence`
+### 4 - Evidence & Gaps `/evidence`
 
 Which obligations are backed by evidence from the firm's **read-only** systems, and where the gaps
-are. Each gap becomes a **drafted** remediation ticket (owner, deadline, citation) — drafted, never
+are. Each gap becomes a **drafted** remediation ticket (owner, deadline, citation) - drafted, never
 filed.
 
 ![Evidence and gaps](docs/screenshots/evidence.png)
@@ -184,10 +184,10 @@ filed.
   backend [`internal/store/evidence.go`](backend/internal/store/evidence.go),
   [`internal/store/tickets.go`](backend/internal/store/tickets.go).
 
-### 5 — Review Queue `/review`
+### 5 - Review Queue `/review`
 
 The compliance officer's inbox, prioritised (least-confident, nearest deadline first). Reviewing an
-obligation opens the multi-step **sign-off modal** — review against the source sentence, decide,
+obligation opens the multi-step **sign-off modal** - review against the source sentence, decide,
 justify, and produce an **Ed25519 signature** over the canonical obligation hash.
 
 ![Review queue and sign-off](docs/screenshots/review.png)
@@ -197,11 +197,11 @@ justify, and produce an **Ed25519 signature** over the canonical obligation hash
   backend [`internal/signoff/signoff.go`](backend/internal/signoff/signoff.go),
   [`internal/httpapi/signoff.go`](backend/internal/httpapi/signoff.go).
 
-### 6 — Policy `/policy`
+### 6 - Policy `/policy`
 
 A signed obligation compiles to a **Rego** policy. The screen leads with a **plain-English rule card**
 (*Applies when… / Then it must… / in the circular's words…*), a one-click **PASS / FAIL / N-A**
-verdict against firm data, and an enforcement explainer — with the Rego and firm-state JSON tucked
+verdict against firm data, and an enforcement explainer - with the Rego and firm-state JSON tucked
 into a collapsible **"technical detail (for auditors)"**.
 
 ![Policy plain-English rule card](docs/screenshots/policy.png)
@@ -210,7 +210,7 @@ into a collapsible **"technical detail (for auditors)"**.
   backend [`internal/policy/compile.go`](backend/internal/policy/compile.go),
   [`internal/policy/eval.go`](backend/internal/policy/eval.go).
 
-### 7 — Audit `/audit`
+### 7 - Audit `/audit`
 
 The full lineage as a **layered DAG**: `Clause → Obligation → Control → Evidence → Sign-off → Policy`,
 with persistent column headers and **click-to-focus** isolation of any obligation's complete chain,
@@ -222,7 +222,7 @@ reconstructed as of the selected date.
   [`lineage-graph.tsx`](frontend/apps/web/components/lineage-graph.tsx);
   backend [`internal/store/lineage.go`](backend/internal/store/lineage.go).
 
-### 8 — Feed `/feed`
+### 8 - Feed `/feed`
 
 A machine-readable, schema-validated **SupTech feed** of obligations, each with its causal provenance
 (source sentence + sign-off), that a regulator's own systems can consume directly.
@@ -253,7 +253,7 @@ flowchart LR
 ```
 
 The story: **regulatory text → operational action**, with a human gate and a cryptographic,
-bi-temporal audit trail. The backend **self-seeds** the SEBI IA Master Circular on first run — no
+bi-temporal audit trail. The backend **self-seeds** the SEBI IA Master Circular on first run - no
 manual seed step.
 
 ---
@@ -267,7 +267,7 @@ flowchart TB
         FIRM["Firm evidence<br/>(read-only connectors)"]
     end
 
-    subgraph BACK["backend/ — Go 1.26 (chi + embedded OPA)"]
+    subgraph BACK["backend/ - Go 1.26 (chi + embedded OPA)"]
         LLM["LLM extractor<br/>schema-validated DATA only"]
         STORE["Bi-temporal store<br/>SQLite (WAL, FK) · recursive CTEs"]
         VEC["In-Go embeddings<br/>hashed TF · cosine"]
@@ -282,17 +282,17 @@ flowchart TB
         REST["chi router · httprate · CORS<br/>/api/* JSON"]
     end
 
-    subgraph FRONT["frontend/ — Next.js 16 + React 19 (:3000)"]
+    subgraph FRONT["frontend/ - Next.js 16 + React 19 (:3000)"]
         WEB["8 routed screens · TanStack Query/Table<br/>@xyflow + dagre graphs · editorial UI"]
     end
 
     SRC --> BACK --> API --> FRONT
 ```
 
-- **`backend/`** — a Go service and system-of-record. Pure-Go SQLite (`modernc.org/sqlite`, no CGO,
+- **`backend/`** - a Go service and system-of-record. Pure-Go SQLite (`modernc.org/sqlite`, no CGO,
   no Docker), embedded OPA for deterministic evaluation, `crypto/ed25519` for sign-off, `go:embed`
   migrations. The DB self-seeds on first run.
-- **`frontend/`** — a Turborepo monorepo (`apps/web` + `packages/ui`) running Next.js 16 (Turbopack)
+- **`frontend/`** - a Turborepo monorepo (`apps/web` + `packages/ui`) running Next.js 16 (Turbopack)
   and React 19, talking to the Go API over HTTP. No database access from the browser.
 
 ---
@@ -305,7 +305,7 @@ CHANAKYA/
 ├── go.work                      # Go workspace → ./backend
 ├── dev.ps1                      # start backend :8080 + web :3000 (Windows)
 │
-├── backend/                     # Go 1.26 — system of record (no Docker, no Postgres)
+├── backend/                     # Go 1.26 - system of record (no Docker, no Postgres)
 │   ├── cmd/
 │   │   ├── api/                 #   HTTP server entrypoint (:8080, self-seeds)
 │   │   ├── compile/             #   offline policy-compile CLI
@@ -326,7 +326,7 @@ CHANAKYA/
 │       ├── httpapi/             #   chi handlers for every /api/* route
 │       ├── bootstrap/ · config/ · domain/
 │
-├── frontend/                    # Turborepo (npm workspaces) — the web console
+├── frontend/                    # Turborepo (npm workspaces) - the web console
 │   ├── package.json · turbo.json · tsconfig.json
 │   ├── apps/web/                #   Next.js 16 app
 │   │   ├── app/                 #     8 routes (page.tsx, register, amendments,
@@ -403,13 +403,13 @@ would catch.
 ### Ed25519 human sign-off
 [`internal/signoff/signoff.go`](backend/internal/signoff/signoff.go) hashes a **canonical**
 serialization of the obligation *excluding its mutable status*, signs it, and verifies later. If the
-obligation text is altered after signing, verification fails — the audit trail is tamper-evident.
+obligation text is altered after signing, verification fails - the audit trail is tamper-evident.
 
 ### Deterministic staged enforcement
 [`internal/policy/compile.go`](backend/internal/policy/compile.go) turns a signed obligation into
 Rego (distinguishing *trigger* thresholds that gate applicability from *requirement* thresholds that
 are themselves the duty). [`eval.go`](backend/internal/policy/eval.go) runs it on embedded OPA with a
-`topdown` trace, returning `applicable / compliant / denies / blocked` — never enforcing past the
+`topdown` trace, returning `applicable / compliant / denies / blocked` - never enforcing past the
 current stage.
 
 ---
@@ -419,13 +419,13 @@ current stage.
 | | |
 |---|---|
 | ![overview](docs/screenshots/overview.png) | ![register](docs/screenshots/register.png) |
-| **Overview** — posture, attention, list/graph | **Register** — typed, cited obligations |
+| **Overview** - posture, attention, list/graph | **Register** - typed, cited obligations |
 | ![blast](docs/screenshots/blast-radius.png) | ![evidence](docs/screenshots/evidence.png) |
-| **Blast Radius** — impact propagation | **Evidence & Gaps** — drafted tickets |
+| **Blast Radius** - impact propagation | **Evidence & Gaps** - drafted tickets |
 | ![review](docs/screenshots/review.png) | ![policy](docs/screenshots/policy.png) |
-| **Review** — Ed25519 sign-off | **Policy** — plain-English rule + verdict |
+| **Review** - Ed25519 sign-off | **Policy** - plain-English rule + verdict |
 | ![audit](docs/screenshots/audit.png) | ![feed](docs/screenshots/feed.png) |
-| **Audit** — layered lineage DAG | **Feed** — SupTech provenance |
+| **Audit** - layered lineage DAG | **Feed** - SupTech provenance |
 
 ---
 
@@ -434,10 +434,10 @@ current stage.
 | Layer | Technology |
 |---|---|
 | **Backend** | Go 1.26 · chi v5 (router) · httprate (rate limit) · CORS |
-| **Storage** | `modernc.org/sqlite` — pure-Go SQLite (WAL, FK), **no Docker, no Postgres** |
+| **Storage** | `modernc.org/sqlite` - pure-Go SQLite (WAL, FK), **no Docker, no Postgres** |
 | **Policy engine** | Embedded **OPA / Rego** (`open-policy-agent/opa`) with `topdown` trace |
 | **Validation** | `santhosh-tekuri/jsonschema/v6` (strict JSON-Schema) |
-| **Crypto** | `crypto/ed25519` — human sign-off over a canonical obligation hash |
+| **Crypto** | `crypto/ed25519` - human sign-off over a canonical obligation hash |
 | **Embeddings** | In-Go hashed term-frequency vectors + cosine (no external vector DB) |
 | **Frontend** | Next.js 16 (Turbopack) · React 19 · TypeScript 5 |
 | **Monorepo** | Turborepo · npm workspaces (`apps/web` + `packages/ui`) |
@@ -450,7 +450,7 @@ current stage.
 
 ## Installation
 
-Prerequisites: **Go 1.26+** and **Node 20+**. No Docker, no external database — the backend creates
+Prerequisites: **Go 1.26+** and **Node 20+**. No Docker, no external database - the backend creates
 and self-seeds `./chanakya.db` on first run.
 
 ```bash
@@ -458,7 +458,7 @@ git clone https://github.com/mridulbansal4/Chanakya.git
 cd Chanakya
 ```
 
-**Windows (PowerShell) — one command**
+**Windows (PowerShell) - one command**
 
 ```powershell
 .\dev.ps1        # starts the Go backend (:8080) and the Next.js web app (:3000)
@@ -467,10 +467,10 @@ cd Chanakya
 **Manual (any OS)**
 
 ```bash
-# 1) backend — from the repo root (uses go.work)
+# 1) backend - from the repo root (uses go.work)
 go run ./backend/cmd/api           # http://localhost:8080  (self-seeds chanakya.db)
 
-# 2) frontend — in a second terminal
+# 2) frontend - in a second terminal
 cd frontend
 npm install
 npm run dev                        # http://localhost:3000
@@ -520,9 +520,9 @@ All endpoints are JSON over HTTP on `:8080`; the typed client is
 
 ## Design system
 
-The UI is **"Editorial"** — a restrained black + warm-cream system: warm cream app background,
+The UI is **"Editorial"** - a restrained black + warm-cream system: warm cream app background,
 near-white data surfaces, near-black nav/hero panels, and a single rare lavender accent. Colour is
-either neutral or a **status** (ok / warn / risk) — never decoration.
+either neutral or a **status** (ok / warn / risk) - never decoration.
 
 | Token group | Values |
 |---|---|
@@ -540,23 +540,23 @@ support, and loading skeletons.
 
 ## Roadmap
 
-- **Live regulation ingest** — parse SEBI circulars directly (PDF/HTML) instead of the seeded
+- **Live regulation ingest** - parse SEBI circulars directly (PDF/HTML) instead of the seeded
   fixture; incremental re-extraction on amendment.
-- **Multi-circular & multi-firm** — beyond the Investment Advisers circular; per-firm evidence
+- **Multi-circular & multi-firm** - beyond the Investment Advisers circular; per-firm evidence
   connectors (still read-only).
-- **Richer policy library** — more threshold kinds, temporal obligations, and cross-obligation
+- **Richer policy library** - more threshold kinds, temporal obligations, and cross-obligation
   constraints in Rego.
-- **Signed feed distribution** — cryptographically signed SupTech feed endpoints for regulator
+- **Signed feed distribution** - cryptographically signed SupTech feed endpoints for regulator
   systems to poll.
 
 ---
 
 ## Acknowledgements
 
-- **SEBI** — the Investment Advisers Master Circular and the TechSprint 2026 "Agentic Compliance"
+- **SEBI** - the Investment Advisers Master Circular and the TechSprint 2026 "Agentic Compliance"
   problem statement.
-- **Open Policy Agent** — the embedded Rego engine that makes enforcement deterministic and auditable.
-- **modernc.org** — a pure-Go SQLite that keeps the system Docker-free and single-binary.
+- **Open Policy Agent** - the embedded Rego engine that makes enforcement deterministic and auditable.
+- **modernc.org** - a pure-Go SQLite that keeps the system Docker-free and single-binary.
 
 ---
 
@@ -566,5 +566,5 @@ Released under the [MIT License](LICENSE).
 
 <div align="center">
 <br/>
-<sub><b>CHANAKYA</b> — Regulatory Operating System · text → obligation → sign-off → enforcement → audit</sub>
+<sub><b>CHANAKYA</b> - Regulatory Operating System · text → obligation → sign-off → enforcement → audit</sub>
 </div>

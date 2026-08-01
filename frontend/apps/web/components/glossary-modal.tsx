@@ -20,7 +20,7 @@ const TERMS: Array<{ term: string; def: string }> = [
   },
   {
     term: "Blast Radius",
-    def: "A preview of everything a proposed regulation change would affect — the obligations, controls, and evidence downstream — so you can see the impact before accepting it.",
+    def: "A preview of everything a proposed regulation change would affect - the obligations, controls, and evidence downstream - so you can see the impact before accepting it.",
   },
   {
     term: "Evidence gap",
@@ -36,11 +36,11 @@ const TERMS: Array<{ term: string; def: string }> = [
   },
   {
     term: "Staged enforcement (audit → soft → hard)",
-    def: "How strictly a policy acts. 'Audit' only records the result, 'soft' warns, 'hard' blocks. Policies start at audit — nothing is blocked before you promote it.",
+    def: "How strictly a policy acts. 'Audit' only records the result, 'soft' warns, 'hard' blocks. Policies start at audit - nothing is blocked before you promote it.",
   },
   {
     term: "As-of date (bi-temporal)",
-    def: "Every screen can reconstruct the compliance state as it was on any past date, not just today — essential for an audit. Set it with the date control (top right).",
+    def: "Every screen can reconstruct the compliance state as it was on any past date, not just today - essential for an audit. Set it with the date control (top right).",
   },
   {
     term: "Regulator Feed",
@@ -56,14 +56,14 @@ export function GlossaryModal({ onClose }: { onClose: () => void }) {
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Glossary — in plain English"
+        aria-label="Glossary - in plain English"
         tabIndex={-1}
         className="flex max-h-[85vh] w-[580px] max-w-full flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-elev-3 outline-none"
       >
         <header className="flex items-center justify-between border-b border-line px-6 py-4 bg-surface">
           <div className="flex items-center gap-2.5">
             <BookOpen className="size-5 text-brand" />
-            <h2 className="font-display text-lg font-bold">Glossary — Plain English Guide</h2>
+            <h2 className="font-display text-lg font-bold">Glossary - Plain English Guide</h2>
           </div>
           <button
             type="button"

@@ -69,7 +69,7 @@ export function Inbox_({ onProcess }: { onProcess: () => void }) {
       <ScreenTitle
         eyebrow="Regulatory Feed"
         title="Recent circulars"
-        description="CHANAKYA continuously monitors SEBI. Prior circulars are already processed — one new circular needs attention."
+        description="CHANAKYA continuously monitors SEBI. Prior circulars are already processed - one new circular needs attention."
       />
       <div className="overflow-hidden rounded-xl border border-line bg-surface">
         {CIRCULARS.map((c, i) => {
@@ -118,7 +118,7 @@ export function Inbox_({ onProcess }: { onProcess: () => void }) {
         })}
       </div>
       <p className="mt-4 flex items-center gap-2 text-sm text-text-dim">
-        <Inbox className="size-4" /> No upload needed — the circular is fetched automatically.
+        <Inbox className="size-4" /> No upload needed - the circular is fetched automatically.
       </p>
     </div>
   )
@@ -211,7 +211,7 @@ export function Obligations({ onNext }: { onNext: () => void }) {
       <ScreenTitle
         eyebrow="Obligations"
         title="Structured obligations extracted"
-        description="The circular's legal text, converted into typed, cited obligations — pending human review."
+        description="The circular's legal text, converted into typed, cited obligations - pending human review."
       />
       <div className="mb-4 grid grid-cols-3 gap-3">
         <Stat label="Modified" value={`${modified}`} />
@@ -324,7 +324,7 @@ export function BlastRadius({ onNext }: { onNext: () => void }) {
       <ScreenTitle
         eyebrow="Blast Radius"
         title="Operational impact of the amendment"
-        description="One clause change propagates across the firm — obligations, agreements, clients, evidence, and the audit trail."
+        description="One clause change propagates across the firm - obligations, agreements, clients, evidence, and the audit trail."
       />
       <div className="grid gap-6 md:grid-cols-[auto_1fr]">
         {/* Vertical propagation */}
@@ -397,7 +397,7 @@ export function Workflows({ onNext }: { onNext: () => void }) {
       <ScreenTitle
         eyebrow="Workflows"
         title="Operational tasks generated"
-        description="CHANAKYA turns the obligation into concrete, owned, deadlined tasks — automatically."
+        description="CHANAKYA turns the obligation into concrete, owned, deadlined tasks - automatically."
       />
       <div className="space-y-2.5">
         {WORKFLOWS.slice(0, shown).map((w, i) => (
@@ -472,10 +472,10 @@ export function HumanReview({ onApprove }: { onApprove: () => void }) {
       )}
 
       <div className="mt-5 flex flex-wrap items-center justify-end gap-2">
-        <GhostButton onClick={() => setNote("Change request noted — routed back to the compliance team (demo).")}>
+        <GhostButton onClick={() => setNote("Change request noted - routed back to the compliance team (demo).")}>
           Request changes
         </GhostButton>
-        <GhostButton onClick={() => setNote("Rejected — the amendment would not be enforced. Approve to continue the demo.")}>
+        <GhostButton onClick={() => setNote("Rejected - the amendment would not be enforced. Approve to continue the demo.")}>
           Reject
         </GhostButton>
         <PrimaryButton tone="ok" onClick={onApprove}>
@@ -513,7 +513,7 @@ export function Execution({ onNext }: { onNext: () => void }) {
     <div className="mx-auto max-w-2xl">
       <ScreenTitle
         eyebrow="Execution"
-        title="Approved — executing the workflow"
+        title="Approved - executing the workflow"
         description="Each operational task runs and reports back in order."
       />
       <div className="space-y-2">
@@ -585,8 +585,8 @@ export function AuditPack({ onRestart }: { onRestart: () => void }) {
     <div className="mx-auto max-w-3xl">
       <ScreenTitle
         eyebrow="Audit Pack"
-        title="Audit-ready — compliance restored"
-        description="Complete, cited lineage from the SEBI circular to the final evidence bundle — assembled with no manual tracing."
+        title="Audit-ready - compliance restored"
+        description="Complete, cited lineage from the SEBI circular to the final evidence bundle - assembled with no manual tracing."
       />
 
       <Reveal className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-ok/40 bg-ok/5 px-4 py-3">
@@ -614,7 +614,7 @@ export function AuditPack({ onRestart }: { onRestart: () => void }) {
         ))}
       </div>
 
-      {/* Evidence bundle — the assembled document set */}
+      {/* Evidence bundle - the assembled document set */}
       <div className="mt-5">
         <div className="eyebrow mb-2">Evidence bundle · {DOCUMENTS.length} documents</div>
         <div className="grid gap-2 sm:grid-cols-2">

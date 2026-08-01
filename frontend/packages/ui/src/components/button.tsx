@@ -51,7 +51,7 @@ const buttonVariants = cva(
         default: "h-9 gap-2 px-3.5 text-[0.875rem]",
         xs: "h-7 gap-1.5 rounded px-2 text-[0.75rem] [&_svg:not([class*='size-'])]:size-3",
         sm: "h-8 gap-1.5 px-3 text-[0.8125rem] [&_svg:not([class*='size-'])]:size-3.5",
-        /** 44px — the minimum comfortable touch target. */
+        /** 44px - the minimum comfortable touch target. */
         lg: "h-11 gap-2.5 px-5 text-[0.9375rem]",
         icon: "size-9",
         "icon-xs": "size-7 rounded [&_svg:not([class*='size-'])]:size-3.5",
@@ -94,7 +94,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         data-slot="button"
         disabled={disabled || isLoading}
-        /* Announce the pending state rather than only showing a spinner —
+        /* Announce the pending state rather than only showing a spinner -
            a screen reader user otherwise gets no feedback that the click
            was received. */
         aria-busy={isLoading || undefined}

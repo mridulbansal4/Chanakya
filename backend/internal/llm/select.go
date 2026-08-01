@@ -17,7 +17,7 @@ import (
 // matches the shape the compiler enforces; the offline extractor ignores it.
 // Whichever extractor is returned, its output is DATA that the compiler
 // re-validates against the same strict schema and the mandatory verbatim-citation
-// rule — the choice of extractor never weakens the safety model.
+// rule - the choice of extractor never weakens the safety model.
 func SelectExtractor(schema json.RawMessage) (Extractor, error) {
 	if key := strings.TrimSpace(os.Getenv("GEMINI_API_KEY")); key != "" {
 		return NewGeminiExtractor(GeminiConfig{

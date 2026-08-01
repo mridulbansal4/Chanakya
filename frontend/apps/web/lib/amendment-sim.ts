@@ -1,6 +1,6 @@
 // Scripted data for the Regulatory Amendment Simulation module.
 //
-// The entire story originates from ONE real regulatory event — SEBI circular
+// The entire story originates from ONE real regulatory event - SEBI circular
 // SEBI/HO/MIRSD/MIRSD-PoD/P/CIR/2025/19 (17 Feb 2025), "Most Important Terms and
 // Conditions (MITC) for Investment Advisers". Nothing here calls the backend; the
 // simulation is a self-contained, deterministic front-end demo that layers on top
@@ -19,7 +19,7 @@ export interface Circular {
   status: "Processed" | "New"
 }
 
-/** The regulatory inbox — the firm has already processed prior circulars. */
+/** The regulatory inbox - the firm has already processed prior circulars. */
 export const CIRCULARS: Circular[] = [
   { id: "ia-master", title: "IA Master Circular", date: "May 2024", status: "Processed" },
   { id: "cyber", title: "Cybersecurity & Cyber Resilience Framework", date: "Aug 2024", status: "Processed" },
@@ -33,7 +33,7 @@ export const CIRCULARS: Circular[] = [
   },
 ]
 
-/** Screen 2 — the processing pipeline stages, played in order. */
+/** Screen 2 - the processing pipeline stages, played in order. */
 export const PIPELINE_STAGES = [
   "Fetching circular",
   "Extracting clauses",
@@ -43,7 +43,7 @@ export const PIPELINE_STAGES = [
   "Computing operational impact",
 ] as const
 
-/** Screen 3 — clause-level before/after diff, faithful to the MITC circular. */
+/** Screen 3 - clause-level before/after diff, faithful to the MITC circular. */
 export interface ClauseDiff {
   id: string
   title: string
@@ -57,7 +57,7 @@ export const CLAUSE_DIFFS: ClauseDiff[] = [
     id: "mitc-intro",
     title: "MITC introduced",
     kind: "added",
-    before: "— (no equivalent requirement)",
+    before: "- (no equivalent requirement)",
     after:
       "The Investment Adviser shall provide every client the standardized Most Important Terms and Conditions (MITC) specified by SEBI.",
   },
@@ -65,7 +65,7 @@ export const CLAUSE_DIFFS: ClauseDiff[] = [
     id: "existing-clients",
     title: "Existing clients must be informed",
     kind: "added",
-    before: "— (no equivalent requirement)",
+    before: "- (no equivalent requirement)",
     after: `Existing clients shall be informed of the standardized MITC on or before ${MITC_DEADLINE}.`,
   },
   {
@@ -89,12 +89,12 @@ export const CLAUSE_DIFFS: ClauseDiff[] = [
     id: "deadline",
     title: "Compliance deadline introduced",
     kind: "added",
-    before: "— (no equivalent requirement)",
+    before: "- (no equivalent requirement)",
     after: `MITC compliance is mandatory; existing clients are to be covered on or before ${MITC_DEADLINE}.`,
   },
 ]
 
-/** Screen 4 — extracted obligations (3 modified + 1 new). */
+/** Screen 4 - extracted obligations (3 modified + 1 new). */
 export interface SimObligation {
   ref: string
   summary: string
@@ -147,7 +147,7 @@ export const SIM_OBLIGATIONS: SimObligation[] = [
   },
 ]
 
-/** Screen 6 — the blast-radius propagation flow + impact counters. */
+/** Screen 6 - the blast-radius propagation flow + impact counters. */
 export const BLAST_FLOW = [
   "MITC Amendment",
   "Regulation",
@@ -173,7 +173,7 @@ export const BLAST_COUNTERS: Counter[] = [
   { label: "Controls affected", value: 2 },
 ]
 
-/** Screen 7 — auto-generated operational workflow tasks. */
+/** Screen 7 - auto-generated operational workflow tasks. */
 export interface WorkflowTask {
   id: string
   title: string
@@ -190,12 +190,12 @@ export const WORKFLOWS: WorkflowTask[] = [
   { id: "w5", title: "Generate audit report", owner: "Compliance Team", priority: "Normal", deadline: "On completion" },
 ]
 
-/** Screen 8 — the human-review governance card. */
+/** Screen 8 - the human-review governance card. */
 export const REVIEW = {
   sourceClause:
     "Existing clients shall be informed of the standardized MITC on or before 30 June 2025, and the client agreement shall incorporate the MITC with the client's acknowledgement retained as record.",
   aiInterpretation:
-    "The firm must update its client agreement to v2 (incorporating the MITC), send the MITC to all existing clients, obtain and retain their acknowledgements, and update the internal policy — completed for existing clients on or before 30 June 2025.",
+    "The firm must update its client agreement to v2 (incorporating the MITC), send the MITC to all existing clients, obtain and retain their acknowledgements, and update the internal policy - completed for existing clients on or before 30 June 2025.",
   suggestedAction:
     "Generate 5 operational tasks: update agreement → v2, notify 2 existing clients, collect acknowledgements, update policy v2, and produce the audit report.",
   affectedSystems: ["Agreement Template", "Client Register", "Notification Workflow", "Internal Policy", "Evidence Register"],
@@ -203,7 +203,7 @@ export const REVIEW = {
   citation: MITC_REF,
 }
 
-/** Screen 9 — execution steps, played one after another. */
+/** Screen 9 - execution steps, played one after another. */
 export const EXECUTION_STEPS = [
   "Agreement template updated to v2",
   "Client notifications generated",
@@ -212,7 +212,7 @@ export const EXECUTION_STEPS = [
   "Internal policy updated to v2",
 ] as const
 
-/** Screen 10 — evidence collected and linked. */
+/** Screen 10 - evidence collected and linked. */
 export interface EvidenceItem {
   label: string
   value: string
@@ -247,7 +247,7 @@ export const DOCUMENTS: { name: string; kind: "regulation" | "agreement" | "poli
   { name: "Human_Approval_Record.pdf", kind: "evidence" },
 ]
 
-/** Screen 11 — the audit-pack lineage chain. */
+/** Screen 11 - the audit-pack lineage chain. */
 export const AUDIT_LINEAGE = [
   "SEBI Circular",
   "Clause",
@@ -261,7 +261,7 @@ export const AUDIT_LINEAGE = [
 /** Builds the downloadable audit-pack JSON (client-side; no backend). */
 export function buildAuditPack(approver: string) {
   return {
-    audit_pack: "CHANAKYA — MITC Amendment Compliance",
+    audit_pack: "CHANAKYA - MITC Amendment Compliance",
     generated_for: "Investment Adviser (baseline: IA Master Circular)",
     regulatory_event: {
       circular: MITC_REF,
@@ -276,6 +276,6 @@ export function buildAuditPack(approver: string) {
     human_approval: { approver, decision: "Approved", confidence: REVIEW.confidence, citation: REVIEW.citation },
     evidence: EVIDENCE_ITEMS.map((e) => ({ item: e.label, value: e.value })),
     audit_status: "Ready",
-    regulation_ref: "Reg 19(3) — Compliant",
+    regulation_ref: "Reg 19(3) - Compliant",
   }
 }

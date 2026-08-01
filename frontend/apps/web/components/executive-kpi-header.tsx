@@ -11,7 +11,7 @@ import type { Posture } from "@/lib/api"
  * Five numbers, each paired with a small visual that says something the
  * number alone does not: how much of the whole is covered, how the figure is
  * distributed, which way it is trending. The visual is never the only
- * carrier of meaning — every one of them restates what the value and the
+ * carrier of meaning - every one of them restates what the value and the
  * caption already say, so losing it to a rendering failure or a screen
  * reader costs nothing.
  *
@@ -27,7 +27,7 @@ export interface ExecutiveKpiHeaderProps {
 
 export function ExecutiveKpiHeader({ posture, isLoading }: ExecutiveKpiHeaderProps) {
   /**
-   * Rendered empty on the server and filled after mount — a clock formatted
+   * Rendered empty on the server and filled after mount - a clock formatted
    * during SSR is wrong by the time it reaches the client and trips
    * hydration.
    */
@@ -381,7 +381,7 @@ const MicroHeartbeatWave = React.memo(function MicroHeartbeatWave() {
 })
 
 /* ══════════════════════════════════════════════════════════════════════════
-   SKELETON — matches the strip's geometry so nothing shifts on load.
+   SKELETON - matches the strip's geometry so nothing shifts on load.
    ══════════════════════════════════════════════════════════════════════════ */
 
 export function ExecutiveKpiSkeleton() {

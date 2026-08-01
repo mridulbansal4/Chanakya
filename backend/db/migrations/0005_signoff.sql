@@ -2,7 +2,7 @@
 -- Phase 6: human sign-off records. Approving an obligation produces an Ed25519
 -- signature over a canonical hash of the obligation's CONTENT (not its review
 -- status), stored here with the mandatory typed justification. Enforcement
--- (Phase 7) is gated on the existence of a valid 'approve' sign-off — the LLM
+-- (Phase 7) is gated on the existence of a valid 'approve' sign-off - the LLM
 -- never approves, only a human does.
 
 CREATE TABLE IF NOT EXISTS signoff (
