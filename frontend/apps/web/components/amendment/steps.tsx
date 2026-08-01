@@ -91,7 +91,7 @@ export function Inbox_({ onProcess }: { onProcess: () => void }) {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     {isNew && (
-                      <span className="rounded bg-warn px-2 py-0.5 text-xs font-bold tracking-wide text-white uppercase">
+                      <span className="rounded bg-warn px-2 py-0.5 text-xs font-bold tracking-wide text-[var(--warn-foreground)] uppercase">
                         New
                       </span>
                     )}

@@ -17,19 +17,19 @@ export function AsOfControl() {
       className="shiny-cta !py-1 !px-3 !text-xs font-medium !rounded-full shadow-sm"
     >
       <span>
-        <CalendarClock className="size-3.5 text-blue-400 shrink-0" aria-hidden />
+        <CalendarClock className="size-3.5 text-accent shrink-0" aria-hidden />
         <input
           type="date"
           value={asOf}
           max={today}
           onChange={(e) => setAsOf(e.target.value || today)}
-          className="tnum bg-transparent text-white outline-none [color-scheme:dark] cursor-pointer"
+          className="tnum bg-transparent text-fg outline-none cursor-pointer"
         />
         {!isToday && (
           <button
             type="button"
             onClick={() => setAsOf(today)}
-            className="tnum text-blue-400 hover:underline font-semibold ml-1"
+            className="tnum text-accent hover:underline font-semibold ml-1"
           >
             today
           </button>

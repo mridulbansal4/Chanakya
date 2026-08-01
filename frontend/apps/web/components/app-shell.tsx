@@ -17,7 +17,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { PageTransition } from "@/components/page-transition"
 import { useAsOf } from "@/components/as-of-provider"
 import { getReviewQueue } from "@/lib/api"
-import { RandomLetterSwap } from "@/components/ui/random-letter-swap"
+import { WaveText } from "@/components/ui/wave-text"
 import { SPRING_LAYOUT } from "@/lib/motion"
 import { cn } from "@workspace/ui/lib/utils"
 
@@ -131,11 +131,11 @@ export function AppShell({ children }: { children: ReactNode }) {
                 title={item.hint}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative inline-flex h-8.5 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-[13px] font-medium tracking-tight",
+                  "relative inline-flex h-8.5 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-[13px] font-medium tracking-tight border",
                   "transition-all duration-200 ease-out",
                   active
-                    ? "text-fg font-semibold"
-                    : "text-fg-muted hover:text-fg hover:bg-elevated",
+                    ? "text-fg font-semibold border-line-strong dark:border-white/25 shadow-xs"
+                    : "text-fg-muted border-transparent hover:text-fg hover:bg-elevated hover:border-line-subtle",
                 )}
               >
                 {active && (
@@ -143,15 +143,13 @@ export function AppShell({ children }: { children: ReactNode }) {
                     // Shared layoutId lets the indicator travel between tabs
                     layoutId={reduce ? undefined : "nav-active"}
                     aria-hidden
-                    className="shiny-cta absolute inset-0 rounded-full !p-0 shadow-elev-1"
+                    className="absolute inset-0 rounded-full bg-raised dark:bg-[#1A1D28] border border-line-strong dark:border-white/25 shadow-sm"
                     transition={SPRING_LAYOUT}
                   />
                 )}
-                <RandomLetterSwap
+                <WaveText
                   className="relative z-10 text-[13px]"
-                  label={item.label}
-                  staggerDuration={0.04}
-                  transition={{ duration: 0.8, type: "spring" }}
+                  text={item.label}
                 />
                 {badge != null && (
                   <span

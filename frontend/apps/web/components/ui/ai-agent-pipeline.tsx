@@ -135,20 +135,20 @@ export default function EnterpriseAIPipeline() {
   }
 
   return (
-    <div className="bg-[#090909] border border-white/[0.08] rounded-[14px] overflow-hidden font-sans w-[620px] max-w-full mx-auto shadow-2xl">
+    <div className="bg-overlay border border-line-subtle rounded-[14px] overflow-hidden font-sans w-[620px] max-w-full mx-auto shadow-elev-3">
       {/* Header */}
-      <div className="px-[18px] py-[11px] border-b border-white/[0.06] flex items-center justify-between">
+      <div className="px-[18px] py-[11px] border-b border-line-subtle flex items-center justify-between">
         <div className="flex items-center gap-[7px]">
           <motion.span
-            className="w-[6px] h-[6px] rounded-full bg-green-500 inline-block"
+            className="w-[6px] h-[6px] rounded-full bg-ok inline-block"
             animate={{ opacity: [1, 0.2, 1] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           />
-          <span className="text-[10px] text-white/30 tracking-[0.1em] font-mono">
+          <span className="text-[10px] text-fg-subtle tracking-[0.1em] font-mono">
             AGENT PIPELINE · LIVE
           </span>
         </div>
-        <span className="text-[10px] text-white/[0.18] font-mono">
+        <span className="text-[10px] text-fg-faint font-mono">
           3 agents · 0 errors
         </span>
       </div>
@@ -458,29 +458,29 @@ export default function EnterpriseAIPipeline() {
       </div>
 
       {/* Stats Footer */}
-      <div className="border-t border-white/[0.06] px-[18px] py-[10px] flex gap-[22px] items-center">
+      <div className="border-t border-line-subtle px-[18px] py-[10px] flex gap-[22px] items-center">
         <div>
-          <div className="text-[9px] text-white/20 tracking-[0.09em] mb-[3px]">WORKFLOWS</div>
+          <div className="text-[9px] text-fg-faint tracking-[0.09em] mb-[3px]">WORKFLOWS</div>
           <motion.div
             key={workflows}
             initial={{ scale: 1.05 }}
             animate={{ scale: 1 }}
-            className="text-[16px] text-white/[0.72] font-mono"
+            className="text-[16px] text-fg font-semibold font-mono"
           >
             {workflows.toLocaleString()}
           </motion.div>
         </div>
         <div>
-          <div className="text-[9px] text-white/20 tracking-[0.09em] mb-[3px]">TOKENS</div>
-          <div className="text-[16px] text-white/[0.72] font-mono">4.2M</div>
+          <div className="text-[9px] text-fg-faint tracking-[0.09em] mb-[3px]">TOKENS</div>
+          <div className="text-[16px] text-fg font-semibold font-mono">4.2M</div>
         </div>
         <div>
-          <div className="text-[9px] text-white/20 tracking-[0.09em] mb-[3px]">AVG LATENCY</div>
-          <div className="text-[16px] text-white/[0.72] font-mono">342ms</div>
+          <div className="text-[9px] text-fg-faint tracking-[0.09em] mb-[3px]">AVG LATENCY</div>
+          <div className="text-[16px] text-fg font-semibold font-mono">342ms</div>
         </div>
         <div className="ml-auto text-right">
-          <div className="text-[9px] text-white/[0.18] tracking-[0.09em] mb-[3px]">STACK</div>
-          <div className="text-[10px] text-[#0052FF]/55 font-mono">Claude · Pinecone</div>
+          <div className="text-[9px] text-fg-faint tracking-[0.09em] mb-[3px]">STACK</div>
+          <div className="text-[10px] text-accent font-mono">Claude · Pinecone</div>
         </div>
       </div>
     </div>

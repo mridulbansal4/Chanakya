@@ -244,9 +244,9 @@ export function CommandPalette() {
         aria-label="Search and navigate. Keyboard shortcut: Control or Command K"
       >
         <span>
-          <Search className="size-3.5 text-blue-400" aria-hidden />
-          <span>Search</span>
-          <kbd className="rounded border border-white/20 bg-white/10 px-1 py-px font-mono text-[10px] text-white/80">
+          <Search className="size-3.5 text-accent" aria-hidden />
+          <span className="text-fg">Search</span>
+          <kbd className="rounded border border-line-subtle bg-elevated px-1.5 py-0.5 font-mono text-[10px] text-fg-subtle">
             ⌘K
           </kbd>
         </span>

@@ -32,21 +32,21 @@ export function HelpMenu({
         onClick={() => setOpen((o) => !o)}
         title="Help & guide"
         aria-label="Help"
-        className="shiny-cta size-8 shrink-0 place-items-center rounded-full !p-0 text-white/80 hover:text-white"
+        className="shiny-cta size-8 shrink-0 place-items-center rounded-full !p-0 text-fg-muted hover:text-fg"
       >
         <span>
-          <HelpCircle className="size-4 text-blue-400" />
+          <HelpCircle className="size-4 text-accent" />
         </span>
       </button>
       {open && (
-        <div className="hairline absolute right-0 z-40 mt-1 w-44 rounded-md bg-surface p-1 text-sm">
+        <div className="hairline absolute right-0 z-40 mt-1 w-44 rounded-md bg-overlay p-1 text-sm shadow-elev-2">
           <button
             type="button"
             onClick={() => {
               setOpen(false)
               onTour()
             }}
-            className="w-full rounded px-2.5 py-1.5 text-left text-foreground hover:bg-surface-2"
+            className="w-full rounded px-2.5 py-1.5 text-left text-fg hover:bg-elevated"
           >
             Take the tour
           </button>
@@ -56,7 +56,7 @@ export function HelpMenu({
               setOpen(false)
               onGlossary()
             }}
-            className="w-full rounded px-2.5 py-1.5 text-left text-foreground hover:bg-surface-2"
+            className="w-full rounded px-2.5 py-1.5 text-left text-fg hover:bg-elevated"
           >
             Glossary of terms
           </button>

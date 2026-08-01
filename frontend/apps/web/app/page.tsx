@@ -241,10 +241,12 @@ function NeedsAttention({ posture }: { posture?: Posture }) {
 
       <Link
         href="/review"
-        className="ml-auto inline-flex h-9 shrink-0 items-center gap-2 rounded-md bg-accent-solid px-4 text-label-lg text-accent-on shadow-elev-1 transition-colors duration-[120ms] hover:bg-accent-hover"
+        className="shiny-cta ml-auto !py-2 !px-4 text-label-lg shadow-elev-2 font-semibold"
       >
-        Start daily review
-        <ArrowRight className="size-4" aria-hidden />
+        <span>
+          Start daily review
+          <ArrowRight className="size-4" aria-hidden />
+        </span>
       </Link>
     </section>
   )
