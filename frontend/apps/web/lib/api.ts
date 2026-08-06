@@ -1119,7 +1119,7 @@ export function getWorkflowTasks(
   signal?: AbortSignal,
 ): Promise<GeneratedWorkflow> {
   return apiFetch<GeneratedWorkflow>(
-    `/api/workflows/${encodeURIComponent(id)}/tasks${qs({ as_of: asOf })}`,
+    `/api/workflows/${id}/tasks${qs({ as_of: asOf })}`,
     { signal },
   )
 }
@@ -1129,7 +1129,7 @@ export function approveWorkflow(
   approver: string,
   note: string,
 ): Promise<{ workflow: GeneratedWorkflow; dispatched: boolean; dispatch_note: string }> {
-  return apiFetch(`/api/workflows/${encodeURIComponent(id)}/approve`, {
+  return apiFetch(`/api/workflows/${id}/approve`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ approver, note }),
