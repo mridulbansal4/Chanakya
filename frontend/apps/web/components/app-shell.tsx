@@ -9,6 +9,7 @@ import { motion, useReducedMotion } from "framer-motion"
 
 import { AsOfControl } from "@/components/as-of-control"
 import { HelpMenu } from "@/components/help-menu"
+import { ProfileMenu } from "@/components/profile-menu"
 import { ScreenBanner } from "@/components/screen-banner"
 import { WelcomeModal } from "@/components/welcome-modal"
 import { GlossaryModal } from "@/components/glossary-modal"
@@ -32,8 +33,6 @@ const NAV = [
   { href: "/ingest", label: "Ingest", hint: "Upload a SEBI circular and watch the pipeline run - approval required." },
   { href: "/regulatory-feed", label: "Regulatory Feed", hint: "Every circular in the corpus, how it arrived, and what an amendment changed." },
   { href: "/workflows", label: "Workflows", hint: "Draft task DAGs generated from approved obligations, with named owners." },
-  { href: "/connectors", label: "Connectors", hint: "Every evidence connector - all read-only, enforced by the type system." },
-  { href: "/enterprise", label: "Enterprise", hint: "Your firm as data - people, clients, documents, systems - and where the gaps are." },
   { href: "/register", label: "Register", hint: "Every obligation extracted from the regulation, with its source." },
   { href: "/amendments", label: "Blast Radius", hint: "See everything a regulation change affects." },
   { href: "/evidence", label: "Evidence & Gaps", hint: "Which obligations are backed by evidence, and where the gaps are." },
@@ -180,14 +179,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             onTour={() => setWelcomeOpen(true)}
             onGlossary={() => setGlossaryOpen(true)}
           />
-          <button
-            type="button"
-            title={`${OFFICER.name} · ${OFFICER.role} · ${OFFICER.firm}`}
-            aria-label={`Signed in as ${OFFICER.name}, ${OFFICER.role} at ${OFFICER.firm}`}
-            className="hidden shiny-cta size-8 shrink-0 place-items-center rounded-full !p-0 font-medium text-xs text-fg md:grid"
-          >
-            <span>{OFFICER.name.split(" ").map((w) => w[0]).join("")}</span>
-          </button>
+          <ProfileMenu />
         </div>
       </header>
 

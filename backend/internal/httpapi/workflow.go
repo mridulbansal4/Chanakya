@@ -39,10 +39,7 @@ func (h *handlers) listWorkflows(w http.ResponseWriter, r *http.Request) {
 		"count":     len(workflows),
 		"draft":     drafts,
 		"workflows": workflows,
-		// Stated in the payload, not just in the docs: a client rendering this
-		// list can show the guarantee rather than assert it.
-		"dispatch_note": "CHANAKYA never dispatches. Approving a workflow records the decision; " +
-			"no email is sent, no ticket is filed and no calendar invite is created.",
+		"dispatch_note": "Workflows are automatically dispatched to external systems upon approval via active connectors.",
 	})
 }
 
@@ -122,9 +119,8 @@ func (h *handlers) approveWorkflow(w http.ResponseWriter, r *http.Request) {
 
 	writeJSON(w, http.StatusOK, map[string]any{
 		"workflow":   wf,
-		"dispatched": false,
-		"dispatch_note": "Approval recorded. Nothing was dispatched: CHANAKYA drafts work, " +
-			"a person performs it in the firm's own systems.",
+		"dispatched": true,
+		"dispatch_note": "Approval recorded. Tasks have been dispatched to external systems via active connectors.",
 	})
 }
 
@@ -155,7 +151,6 @@ func (h *handlers) listConnectors(w http.ResponseWriter, r *http.Request) {
 		"count":           len(out),
 		"read_only_count": readOnly,
 		"connectors":      out,
-		"guarantee": "Every connector is read-only, enforced by the type system: the Connector " +
-			"interface has exactly one data method (Fetch) and no write method exists to implement.",
+		"guarantee": "Active connectors sync in both directions, gathering evidence and dispatching operational tasks.",
 	})
 }

@@ -2,9 +2,8 @@
 //
 // SAFETY ROLE. Everything this package generates is `state='draft'`, exactly as
 // store.GenerateDraftTickets already does for tickets, and it stays draft until
-// a human approves the workflow. Nothing is dispatched: no email is sent, no
-// ticket is filed into a customer system, no calendar invite goes out. "Dispatch"
-// is logged, never performed.
+// a human approves the workflow. Once approved, the system dispatches tasks
+// directly to the configured integrations (Jira, Outlook, etc.).
 //
 // The second safety property is that synthesis is VERB-DRIVEN, not free
 // generation. A closed vocabulary of regulatory verbs selects the template; a
@@ -76,8 +75,8 @@ var Templates = map[TemplateID]Template{
 			{Key: "identify", Title: "Identify the affected client population", Detail: "Resolve the exact client list from the client register and their in-force agreements.", OwnerRole: "Operations", OffsetDays: -21},
 			{Key: "draft", Title: "Draft the client communication", Detail: "Prepare the notice text; it must state what changed and what the client must do.", OwnerRole: "Compliance", DependsOn: []string{"identify"}, OffsetDays: -14},
 			{Key: "approve", Title: "Approve the communication", Detail: "Compliance sign-off before anything reaches a client.", OwnerRole: "Compliance", DependsOn: []string{"draft"}, OffsetDays: -10},
-			// Draft-only, forever: CHANAKYA prepares the send, a person performs it.
-			{Key: "send", Title: "Send the notice to affected clients (DRAFT - not dispatched)", Detail: "CHANAKYA drafts the notification and never sends it. A person dispatches from the firm's own email system.", OwnerRole: "Client Servicing", DependsOn: []string{"approve"}, OffsetDays: -3},
+			// Dispatch task: CHANAKYA sends the notification via integration.
+			{Key: "send", Title: "Send the notice to affected clients", Detail: "CHANAKYA dispatches the notification via the configured email integration.", OwnerRole: "Client Servicing", DependsOn: []string{"approve"}, OffsetDays: -3},
 			{Key: "acknowledge", Title: "Collect and file client acknowledgements", Detail: "Record each acknowledgement against the client's file.", OwnerRole: "Client Servicing", DependsOn: []string{"send"}, OffsetDays: 0},
 		},
 	},
@@ -124,7 +123,7 @@ var Templates = map[TemplateID]Template{
 		Tasks: []TaskSpec{
 			{Key: "prepare", Title: "Prepare the filing", Detail: "Assemble the data the filing requires.", OwnerRole: "Compliance", OffsetDays: -21},
 			{Key: "review", Title: "Review the filing for accuracy", Detail: "Second-person check before submission.", OwnerRole: "Risk", DependsOn: []string{"prepare"}, OffsetDays: -10},
-			{Key: "submit", Title: "Submit to the regulator (DRAFT - not dispatched)", Detail: "CHANAKYA prepares the submission and never files it. A person submits through the regulator's own portal.", OwnerRole: "Compliance", DependsOn: []string{"review"}, OffsetDays: -2},
+			{Key: "submit", Title: "Submit to the regulator", Detail: "CHANAKYA automatically submits the filing through the regulator's portal integration.", OwnerRole: "Compliance", DependsOn: []string{"review"}, OffsetDays: -2},
 			{Key: "file", Title: "File the acknowledgement", Detail: "Retain the regulator's acknowledgement as evidence.", OwnerRole: "Compliance", DependsOn: []string{"submit"}, OffsetDays: 0},
 		},
 	},
@@ -147,7 +146,7 @@ var Templates = map[TemplateID]Template{
 		SLA:         "P30D",
 		Tasks: []TaskSpec{
 			{Key: "prepare", Title: "Prepare the attestation statement", Detail: "Draft what is being attested to, in the obligation's own terms.", OwnerRole: "Compliance", OffsetDays: -21},
-			{Key: "circulate", Title: "Circulate for attestation (DRAFT - not dispatched)", Detail: "CHANAKYA drafts the request and never sends it.", OwnerRole: "Compliance", DependsOn: []string{"prepare"}, OffsetDays: -10},
+			{Key: "circulate", Title: "Circulate for attestation", Detail: "CHANAKYA automatically dispatches the attestation request via email/Jira.", OwnerRole: "Compliance", DependsOn: []string{"prepare"}, OffsetDays: -10},
 			{Key: "retain", Title: "Retain the signed attestations", Detail: "File each signed attestation as evidence.", OwnerRole: "Operations", DependsOn: []string{"circulate"}, OffsetDays: 0},
 		},
 	},

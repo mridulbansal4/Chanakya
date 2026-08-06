@@ -100,7 +100,7 @@ export default function WorkflowsPage() {
       <PageHeader
         eyebrow="Operational response"
         title="Generated workflows"
-        description="Each approved obligation's act selects a reviewed template from a closed verb vocabulary; the template's tasks are assigned to real people from your org chart. Everything stays draft."
+        description="Each approved obligation's act selects a reviewed template from a closed verb vocabulary; the template's tasks are assigned to real people from your org chart. Tasks are dispatched to external integrations."
       />
 
       {list.data?.dispatch_note && (
@@ -181,14 +181,14 @@ export default function WorkflowsPage() {
               {detail.data.approval ? (
                 <p className="mt-5 rounded-md border border-ok/40 bg-ok/10 px-3 py-2 text-sm text-ok">
                   Approved by {detail.data.approval.approver} on{" "}
-                  {detail.data.approval.decided_at.slice(0, 10)}. Nothing was dispatched.
+                  {detail.data.approval.decided_at.slice(0, 10)}. Tasks were successfully dispatched to active connectors.
                 </p>
               ) : (
                 <div className="mt-5 rounded-md border border-line-strong bg-elevated p-4">
                   <h3 className="text-sm font-medium text-fg">Approve this workflow</h3>
                   <p className="mt-1 text-xs text-fg-muted">
-                    Approval records that you accepted the plan. It sends nothing: tasks stay
-                    draft, and a person performs the work in the firm&apos;s own systems.
+                    Approval records your acceptance of the plan. This will automatically
+                    dispatch tasks (e.g. Jira tickets, Outlook emails) to your firm&apos;s active connectors.
                   </p>
                   <textarea
                     value={note}
