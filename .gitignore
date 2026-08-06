@@ -64,3 +64,7 @@ Documents/IA_Master_Circular_2025.pdf
 
 # Local DB backups (created during Gemini regeneration)
 backups/
+
+
+.cursor/
+.agents/
