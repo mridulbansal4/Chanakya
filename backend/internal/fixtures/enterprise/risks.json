@@ -1,0 +1,114 @@
+[
+  {
+    "id": "rsk_registration_breach",
+    "title": "Operating above the registration threshold without a valid certificate",
+    "likelihood": "low",
+    "impact": "high",
+    "owner_dept": "dep_compliance",
+    "control_id": "ctl_registration"
+  },
+  {
+    "id": "rsk_fee_misdisclosure",
+    "title": "Fees charged without prior written disclosure",
+    "likelihood": "medium",
+    "impact": "high",
+    "owner_dept": "dep_compliance",
+    "control_id": "ctl_fee_disclosure"
+  },
+  {
+    "id": "rsk_segregation_breach",
+    "title": "Advisory and distribution services provided to the same client",
+    "likelihood": "medium",
+    "impact": "high",
+    "owner_dept": "dep_compliance",
+    "control_id": "ctl_segregation"
+  },
+  {
+    "id": "rsk_record_loss",
+    "title": "Advisory records unavailable within the retention period",
+    "likelihood": "low",
+    "impact": "high",
+    "owner_dept": "dep_operations",
+    "control_id": "ctl_retention"
+  },
+  {
+    "id": "rsk_untrained_staff",
+    "title": "Client-facing staff without current certification",
+    "likelihood": "medium",
+    "impact": "medium",
+    "owner_dept": "dep_hr",
+    "control_id": "ctl_training"
+  },
+  {
+    "id": "rsk_stale_client_terms",
+    "title": "Client agreements not updated to the current SEBI template",
+    "likelihood": "high",
+    "impact": "high",
+    "owner_dept": "dep_legal",
+    "control_id": ""
+  },
+  {
+    "id": "rsk_complaint_backlog",
+    "title": "Complaints not recorded or redressed within the mandated period",
+    "likelihood": "medium",
+    "impact": "high",
+    "owner_dept": "dep_client_servicing",
+    "control_id": ""
+  },
+  {
+    "id": "rsk_cyber_incident",
+    "title": "Client data breach through an unpatched system",
+    "likelihood": "low",
+    "impact": "high",
+    "owner_dept": "dep_technology",
+    "control_id": ""
+  },
+  {
+    "id": "rsk_policy_staleness",
+    "title": "Mandatory policies not reviewed within the annual cycle",
+    "likelihood": "high",
+    "impact": "medium",
+    "owner_dept": "dep_compliance",
+    "control_id": ""
+  },
+  {
+    "id": "rsk_conflict_undisclosed",
+    "title": "Conflicts of interest not disclosed to clients",
+    "likelihood": "medium",
+    "impact": "high",
+    "owner_dept": "dep_compliance",
+    "control_id": ""
+  },
+  {
+    "id": "rsk_misselling",
+    "title": "Advice unsuitable for the client's recorded risk profile",
+    "likelihood": "medium",
+    "impact": "high",
+    "owner_dept": "dep_advisory",
+    "control_id": ""
+  },
+  {
+    "id": "rsk_outsourcing",
+    "title": "Critical function outsourced without due diligence",
+    "likelihood": "low",
+    "impact": "medium",
+    "owner_dept": "dep_operations",
+    "control_id": ""
+  },
+  {
+    "id": "rsk_filing_delay",
+    "title": "Periodic regulatory filing submitted after the due date",
+    "likelihood": "medium",
+    "impact": "medium",
+    "owner_dept": "dep_compliance",
+    "control_id": ""
+  },
+  {
+    "id": "rsk_kyc_incomplete",
+    "title": "Client onboarded with incomplete KYC documentation",
+    "likelihood": "low",
+    "impact": "high",
+    "owner_dept": "dep_operations",
+    "control_id": ""
+  }
+]

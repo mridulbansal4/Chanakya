@@ -1,0 +1,242 @@
+[
+  {
+    "id": "cal_001",
+    "title": "Compliance committee",
+    "starts_at": "2025-04-02T10:00:00Z",
+    "attendees": [
+      "emp_001",
+      "emp_003"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_002",
+    "title": "Board meeting",
+    "starts_at": "2025-04-09T10:00:00Z",
+    "attendees": [
+      "emp_002",
+      "emp_004"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_003",
+    "title": "Quarterly training session",
+    "starts_at": "2025-04-16T10:00:00Z",
+    "attendees": [
+      "emp_003",
+      "emp_005"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_004",
+    "title": "Risk review",
+    "starts_at": "2025-04-23T10:00:00Z",
+    "attendees": [
+      "emp_004",
+      "emp_006"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_005",
+    "title": "Internal audit walkthrough",
+    "starts_at": "2025-04-30T10:00:00Z",
+    "attendees": [
+      "emp_005",
+      "emp_007"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_006",
+    "title": "Client agreement review",
+    "starts_at": "2025-05-07T10:00:00Z",
+    "attendees": [
+      "emp_006",
+      "emp_008"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_007",
+    "title": "Compliance committee",
+    "starts_at": "2025-05-14T10:00:00Z",
+    "attendees": [
+      "emp_007",
+      "emp_009"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_008",
+    "title": "Board meeting",
+    "starts_at": "2025-05-21T10:00:00Z",
+    "attendees": [
+      "emp_008",
+      "emp_010"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_009",
+    "title": "Quarterly training session",
+    "starts_at": "2025-05-28T10:00:00Z",
+    "attendees": [
+      "emp_009",
+      "emp_011"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_010",
+    "title": "Risk review",
+    "starts_at": "2025-06-04T10:00:00Z",
+    "attendees": [
+      "emp_010",
+      "emp_012"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_011",
+    "title": "Internal audit walkthrough",
+    "starts_at": "2025-06-11T10:00:00Z",
+    "attendees": [
+      "emp_011",
+      "emp_013"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_012",
+    "title": "Client agreement review",
+    "starts_at": "2025-06-18T10:00:00Z",
+    "attendees": [
+      "emp_012",
+      "emp_014"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_013",
+    "title": "Compliance committee",
+    "starts_at": "2025-06-25T10:00:00Z",
+    "attendees": [
+      "emp_013",
+      "emp_015"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_014",
+    "title": "Board meeting",
+    "starts_at": "2025-07-02T10:00:00Z",
+    "attendees": [
+      "emp_014",
+      "emp_016"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_015",
+    "title": "Quarterly training session",
+    "starts_at": "2025-07-09T10:00:00Z",
+    "attendees": [
+      "emp_015",
+      "emp_017"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_016",
+    "title": "Risk review",
+    "starts_at": "2025-07-16T10:00:00Z",
+    "attendees": [
+      "emp_016",
+      "emp_018"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_017",
+    "title": "Internal audit walkthrough",
+    "starts_at": "2025-07-23T10:00:00Z",
+    "attendees": [
+      "emp_017",
+      "emp_019"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_018",
+    "title": "Client agreement review",
+    "starts_at": "2025-07-30T10:00:00Z",
+    "attendees": [
+      "emp_018",
+      "emp_020"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_019",
+    "title": "Compliance committee",
+    "starts_at": "2025-08-06T10:00:00Z",
+    "attendees": [
+      "emp_019",
+      "emp_021"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_020",
+    "title": "Board meeting",
+    "starts_at": "2025-08-13T10:00:00Z",
+    "attendees": [
+      "emp_020",
+      "emp_022"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_021",
+    "title": "Quarterly training session",
+    "starts_at": "2025-08-20T10:00:00Z",
+    "attendees": [
+      "emp_021",
+      "emp_023"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_022",
+    "title": "Risk review",
+    "starts_at": "2025-08-27T10:00:00Z",
+    "attendees": [
+      "emp_022",
+      "emp_024"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_023",
+    "title": "Internal audit walkthrough",
+    "starts_at": "2025-09-03T10:00:00Z",
+    "attendees": [
+      "emp_023",
+      "emp_001"
+    ],
+    "kind": "internal"
+  },
+  {
+    "id": "cal_024",
+    "title": "Client agreement review",
+    "starts_at": "2025-09-10T10:00:00Z",
+    "attendees": [
+      "emp_024",
+      "emp_002"
+    ],
+    "kind": "internal"
+  }
+]

@@ -1,0 +1,28 @@
+SECURITIES AND EXCHANGE BOARD OF INDIA
+Master Circular for Investment Advisers
+SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49 dated May 15, 2024
+
+3.1 Threshold for registration
+A person providing investment advice to 300 or more clients, or charging fees exceeding
+INR 3,00,00,000 (Rupees three crore) in a financial year, must apply for registration as a
+non-individual investment adviser.
+
+3.2 Application timeline
+An investment adviser who crosses the threshold specified in clause 3.1 shall submit a
+complete application for registration within 30 days of crossing such threshold.
+
+4.1 Disclosure of fees
+An investment adviser must disclose to the client, in writing and before charging any fee,
+the complete fee schedule including the basis of computation and any conflicts of interest.
+
+4.2 Client-level segregation
+An investment adviser must not provide both advisory and distribution services to the same
+client, and shall maintain client-level segregation of advisory and distribution at all times.
+
+5.1 Record retention
+An investment adviser must retain all records of investment advice, client agreements, and
+risk profiling for a period of 5 years from the date of the relevant interaction.
+
+5.2 Client notification duty
+An investment adviser must notify each affected client in writing within 7 days of any
+material change to the fee structure, conflicts of interest, or the adviser's registration status.

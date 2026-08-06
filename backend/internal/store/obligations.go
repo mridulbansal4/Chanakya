@@ -25,13 +25,18 @@ func (s *Store) UpsertObligation(ctx context.Context, o domain.Obligation) error
 	if status == "" {
 		status = domain.StatusPending
 	}
+	// Upsert targets the CURRENT version only (the partial unique index), which
+	// keeps re-compiling an unchanged obligation idempotent. Changing an
+	// obligation's content is a different operation: SupersedeAndInsert, which
+	// preserves the prior version instead of overwriting it.
 	const q = `
-		INSERT INTO obligation (id, clause_id, bearer, deontic_type, condition,
+		INSERT INTO obligation (row_uid, id, clause_id, bearer, deontic_type, condition,
 		                        threshold_json, deadline, penalty, source_clause_ref,
 		                        source_sentence, confidence, status,
 		                        valid_from, valid_to, tx_from, tx_to)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-		ON CONFLICT(id) DO UPDATE SET
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		ON CONFLICT(id) WHERE tx_to IS NULL DO UPDATE SET
+			row_uid=excluded.row_uid,
 			clause_id=excluded.clause_id, bearer=excluded.bearer,
 			deontic_type=excluded.deontic_type, condition=excluded.condition,
 			threshold_json=excluded.threshold_json, deadline=excluded.deadline,
@@ -40,6 +45,7 @@ func (s *Store) UpsertObligation(ctx context.Context, o domain.Obligation) error
 			status=excluded.status, valid_from=excluded.valid_from,
 			valid_to=excluded.valid_to, tx_from=excluded.tx_from, tx_to=excluded.tx_to`
 	if _, err := s.db.ExecContext(ctx, q,
+		rowUID(o.ID, o.TxFrom),
 		o.ID, o.ClauseID, o.Bearer, string(o.DeonticType), nullStr(o.Condition),
 		threshold, nullStr(o.Deadline), nullStr(o.Penalty), o.SourceClauseRef,
 		o.SourceSentence, o.Confidence, string(status),

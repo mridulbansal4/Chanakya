@@ -1,0 +1,256 @@
+[
+  {
+    "id": "emp_001",
+    "name": "Priya Menon",
+    "role": "Principal Officer \u0026 Compliance Officer",
+    "department_id": "dep_compliance",
+    "email": "priya.menon@alphawealth.in",
+    "certifications": [
+      "NISM-XA",
+      "NISM-XB"
+    ],
+    "manager_id": ""
+  },
+  {
+    "id": "emp_002",
+    "name": "Rohan Iyer",
+    "role": "Deputy Compliance Officer",
+    "department_id": "dep_compliance",
+    "email": "rohan.iyer@alphawealth.in",
+    "certifications": [
+      "NISM-XA"
+    ],
+    "manager_id": "emp_001"
+  },
+  {
+    "id": "emp_003",
+    "name": "Sneha Kulkarni",
+    "role": "Compliance Analyst",
+    "department_id": "dep_compliance",
+    "email": "sneha.kulkarni@alphawealth.in",
+    "certifications": [
+      "NISM-XA"
+    ],
+    "manager_id": "emp_001"
+  },
+  {
+    "id": "emp_004",
+    "name": "Arjun Desai",
+    "role": "Head of Advisory",
+    "department_id": "dep_advisory",
+    "email": "arjun.desai@alphawealth.in",
+    "certifications": [
+      "NISM-XA",
+      "NISM-XB",
+      "CFA"
+    ],
+    "manager_id": "emp_001"
+  },
+  {
+    "id": "emp_005",
+    "name": "Kavya Nair",
+    "role": "Senior Investment Adviser",
+    "department_id": "dep_advisory",
+    "email": "kavya.nair@alphawealth.in",
+    "certifications": [
+      "NISM-XA",
+      "NISM-XB"
+    ],
+    "manager_id": "emp_004"
+  },
+  {
+    "id": "emp_006",
+    "name": "Vikram Rao",
+    "role": "Investment Adviser",
+    "department_id": "dep_advisory",
+    "email": "vikram.rao@alphawealth.in",
+    "certifications": [
+      "NISM-XA",
+      "NISM-XB"
+    ],
+    "manager_id": "emp_004"
+  },
+  {
+    "id": "emp_007",
+    "name": "Ananya Ghosh",
+    "role": "Investment Adviser",
+    "department_id": "dep_advisory",
+    "email": "ananya.ghosh@alphawealth.in",
+    "certifications": [
+      "NISM-XA",
+      "NISM-XB"
+    ],
+    "manager_id": "emp_004"
+  },
+  {
+    "id": "emp_008",
+    "name": "Karthik Menon",
+    "role": "Investment Adviser",
+    "department_id": "dep_advisory",
+    "email": "karthik.menon@alphawealth.in",
+    "certifications": [
+      "NISM-XA"
+    ],
+    "manager_id": "emp_004"
+  },
+  {
+    "id": "emp_009",
+    "name": "Ishita Bansal",
+    "role": "Research Associate",
+    "department_id": "dep_advisory",
+    "email": "ishita.bansal@alphawealth.in",
+    "certifications": [
+      "NISM-XA"
+    ],
+    "manager_id": "emp_004"
+  },
+  {
+    "id": "emp_010",
+    "name": "Manish Gupta",
+    "role": "Head of Operations",
+    "department_id": "dep_operations",
+    "email": "manish.gupta@alphawealth.in",
+    "certifications": [
+      "NISM-XA"
+    ],
+    "manager_id": "emp_001"
+  },
+  {
+    "id": "emp_011",
+    "name": "Deepa Shetty",
+    "role": "Operations Manager",
+    "department_id": "dep_operations",
+    "email": "deepa.shetty@alphawealth.in",
+    "certifications": [],
+    "manager_id": "emp_010"
+  },
+  {
+    "id": "emp_012",
+    "name": "Rahul Verma",
+    "role": "Onboarding Specialist",
+    "department_id": "dep_operations",
+    "email": "rahul.verma@alphawealth.in",
+    "certifications": [],
+    "manager_id": "emp_010"
+  },
+  {
+    "id": "emp_013",
+    "name": "Nisha Pillai",
+    "role": "Head of Client Servicing",
+    "department_id": "dep_client_servicing",
+    "email": "nisha.pillai@alphawealth.in",
+    "certifications": [
+      "NISM-XA"
+    ],
+    "manager_id": "emp_001"
+  },
+  {
+    "id": "emp_014",
+    "name": "Aditya Joshi",
+    "role": "Client Servicing Manager",
+    "department_id": "dep_client_servicing",
+    "email": "aditya.joshi@alphawealth.in",
+    "certifications": [],
+    "manager_id": "emp_013"
+  },
+  {
+    "id": "emp_015",
+    "name": "Meera Krishnan",
+    "role": "Grievance Officer",
+    "department_id": "dep_client_servicing",
+    "email": "meera.krishnan@alphawealth.in",
+    "certifications": [
+      "NISM-XA"
+    ],
+    "manager_id": "emp_013"
+  },
+  {
+    "id": "emp_016",
+    "name": "Sameer Khan",
+    "role": "Head of Technology",
+    "department_id": "dep_technology",
+    "email": "sameer.khan@alphawealth.in",
+    "certifications": [],
+    "manager_id": "emp_001"
+  },
+  {
+    "id": "emp_017",
+    "name": "Tara Reddy",
+    "role": "Information Security Lead",
+    "department_id": "dep_technology",
+    "email": "tara.reddy@alphawealth.in",
+    "certifications": [
+      "CISA"
+    ],
+    "manager_id": "emp_016"
+  },
+  {
+    "id": "emp_018",
+    "name": "Nikhil Bose",
+    "role": "Data Engineer",
+    "department_id": "dep_technology",
+    "email": "nikhil.bose@alphawealth.in",
+    "certifications": [],
+    "manager_id": "emp_016"
+  },
+  {
+    "id": "emp_019",
+    "name": "Farida Merchant",
+    "role": "Head of Legal",
+    "department_id": "dep_legal",
+    "email": "farida.merchant@alphawealth.in",
+    "certifications": [
+      "LLB"
+    ],
+    "manager_id": "emp_001"
+  },
+  {
+    "id": "emp_020",
+    "name": "Gaurav Sinha",
+    "role": "Legal Counsel",
+    "department_id": "dep_legal",
+    "email": "gaurav.sinha@alphawealth.in",
+    "certifications": [
+      "LLB"
+    ],
+    "manager_id": "emp_019"
+  },
+  {
+    "id": "emp_021",
+    "name": "Ritu Malhotra",
+    "role": "Head of Risk",
+    "department_id": "dep_risk",
+    "email": "ritu.malhotra@alphawealth.in",
+    "certifications": [
+      "FRM"
+    ],
+    "manager_id": "emp_001"
+  },
+  {
+    "id": "emp_022",
+    "name": "Sanjay Patil",
+    "role": "Risk Analyst",
+    "department_id": "dep_risk",
+    "email": "sanjay.patil@alphawealth.in",
+    "certifications": [],
+    "manager_id": "emp_021"
+  },
+  {
+    "id": "emp_023",
+    "name": "Leena Fernandes",
+    "role": "Head of HR",
+    "department_id": "dep_hr",
+    "email": "leena.fernandes@alphawealth.in",
+    "certifications": [],
+    "manager_id": "emp_001"
+  },
+  {
+    "id": "emp_024",
+    "name": "Omkar Deshpande",
+    "role": "Training Coordinator",
+    "department_id": "dep_hr",
+    "email": "omkar.deshpande@alphawealth.in",
+    "certifications": [],
+    "manager_id": "emp_023"
+  }
+]

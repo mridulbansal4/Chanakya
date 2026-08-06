@@ -1,0 +1,50 @@
+[
+  {
+    "id": "dep_compliance",
+    "name": "Compliance",
+    "head_employee_id": "emp_001",
+    "function": "Regulatory compliance and reporting"
+  },
+  {
+    "id": "dep_advisory",
+    "name": "Advisory",
+    "head_employee_id": "emp_004",
+    "function": "Investment advice and client portfolios"
+  },
+  {
+    "id": "dep_operations",
+    "name": "Operations",
+    "head_employee_id": "emp_010",
+    "function": "Onboarding, settlements and record-keeping"
+  },
+  {
+    "id": "dep_client_servicing",
+    "name": "Client Servicing",
+    "head_employee_id": "emp_013",
+    "function": "Client communication and grievance redressal"
+  },
+  {
+    "id": "dep_technology",
+    "name": "Technology",
+    "head_employee_id": "emp_016",
+    "function": "Systems, security and data"
+  },
+  {
+    "id": "dep_legal",
+    "name": "Legal",
+    "head_employee_id": "emp_019",
+    "function": "Contracts, agreements and regulatory filings"
+  },
+  {
+    "id": "dep_risk",
+    "name": "Risk",
+    "head_employee_id": "emp_021",
+    "function": "Risk register and control assurance"
+  },
+  {
+    "id": "dep_hr",
+    "name": "HR",
+    "head_employee_id": "emp_023",
+    "function": "People, training and code of ethics"
+  }
+]

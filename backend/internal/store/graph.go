@@ -28,16 +28,21 @@ func ns(n sql.NullString) string {
 
 // UpsertCircular inserts or updates a circular by id (idempotent seeding).
 func (s *Store) UpsertCircular(ctx context.Context, c domain.Circular) error {
+	// Conflict target is the partial "current version" index: re-seeding an
+	// unchanged circular updates the current row in place (idempotent), while
+	// superseded versions are left untouched. See store/versioning.go.
 	const q = `
-		INSERT INTO circular (id, title, regulator, issued_on, source_url,
+		INSERT INTO circular (row_uid, id, title, regulator, issued_on, source_url,
 		                      valid_from, valid_to, tx_from, tx_to)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-		ON CONFLICT(id) DO UPDATE SET
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		ON CONFLICT(id) WHERE tx_to IS NULL DO UPDATE SET
+			row_uid=excluded.row_uid,
 			title=excluded.title, regulator=excluded.regulator,
 			issued_on=excluded.issued_on, source_url=excluded.source_url,
 			valid_from=excluded.valid_from, valid_to=excluded.valid_to,
 			tx_from=excluded.tx_from, tx_to=excluded.tx_to`
 	if _, err := s.db.ExecContext(ctx, q,
+		rowUID(c.ID, c.TxFrom),
 		c.ID, c.Title, c.Regulator, c.IssuedOn, nullStr(c.SourceURL),
 		c.ValidFrom, nullStr(c.ValidTo), c.TxFrom, nullStr(c.TxTo),
 	); err != nil {
@@ -74,15 +79,17 @@ func (s *Store) UpsertEntity(ctx context.Context, e domain.Entity) error {
 // guarantees this by processing clauses in document (parents-first) order.
 func (s *Store) UpsertClause(ctx context.Context, c domain.Clause) error {
 	const q = `
-		INSERT INTO clause (id, circular_id, clause_ref, parent_id, heading, text,
+		INSERT INTO clause (row_uid, id, circular_id, clause_ref, parent_id, heading, text,
 		                    ordinal, valid_from, valid_to, tx_from, tx_to)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-		ON CONFLICT(id) DO UPDATE SET
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		ON CONFLICT(id) WHERE tx_to IS NULL DO UPDATE SET
+			row_uid=excluded.row_uid,
 			circular_id=excluded.circular_id, clause_ref=excluded.clause_ref,
 			parent_id=excluded.parent_id, heading=excluded.heading, text=excluded.text,
 			ordinal=excluded.ordinal, valid_from=excluded.valid_from,
 			valid_to=excluded.valid_to, tx_from=excluded.tx_from, tx_to=excluded.tx_to`
 	if _, err := s.db.ExecContext(ctx, q,
+		rowUID(c.ID, c.TxFrom),
 		c.ID, c.CircularID, c.ClauseRef, nullStr(c.ParentID), nullStr(c.Heading),
 		c.Text, c.Ordinal, c.ValidFrom, nullStr(c.ValidTo), c.TxFrom, nullStr(c.TxTo),
 	); err != nil {

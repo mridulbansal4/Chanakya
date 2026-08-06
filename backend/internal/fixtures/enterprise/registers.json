@@ -1,0 +1,58 @@
+[
+  {
+    "id": "reg_client",
+    "kind": "client",
+    "row_count": 140,
+    "source_system": "sys_crm",
+    "updated_days_ago": 1,
+    "owner_dept": "dep_operations"
+  },
+  {
+    "id": "reg_complaint",
+    "kind": "complaint",
+    "row_count": 17,
+    "source_system": "sys_crm",
+    "updated_days_ago": 90,
+    "owner_dept": "dep_client_servicing"
+  },
+  {
+    "id": "reg_training",
+    "kind": "training",
+    "row_count": 96,
+    "source_system": "sys_hrms",
+    "updated_days_ago": 7,
+    "owner_dept": "dep_hr"
+  },
+  {
+    "id": "reg_exception",
+    "kind": "exception",
+    "row_count": 8,
+    "source_system": "sys_grc",
+    "updated_days_ago": 12,
+    "owner_dept": "dep_risk"
+  },
+  {
+    "id": "reg_conflict",
+    "kind": "conflict_of_interest",
+    "row_count": 24,
+    "source_system": "sys_grc",
+    "updated_days_ago": 20,
+    "owner_dept": "dep_compliance"
+  },
+  {
+    "id": "reg_advice",
+    "kind": "advice",
+    "row_count": 4820,
+    "source_system": "sys_crm",
+    "updated_days_ago": 1,
+    "owner_dept": "dep_advisory"
+  },
+  {
+    "id": "reg_fee",
+    "kind": "fee",
+    "row_count": 140,
+    "source_system": "sys_billing",
+    "updated_days_ago": 3,
+    "owner_dept": "dep_operations"
+  }
+]

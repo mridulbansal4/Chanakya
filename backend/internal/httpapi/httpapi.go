@@ -8,10 +8,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"chanakya/internal/domain"
+	"chanakya/internal/enterprise"
 	"chanakya/internal/store"
 
 	"github.com/go-chi/chi/v5"
@@ -47,6 +50,36 @@ type Store interface {
 	FirmState(ctx context.Context, asOf time.Time) (map[string]any, error)
 	Lineage(ctx context.Context, circularID string, asOf time.Time) (store.Lineage, error)
 	RegulatorFeed(ctx context.Context, circularID string, asOf time.Time) (store.RegulatorFeed, error)
+
+	// Ingestion (Phase 2). Nothing here writes to the regulatory graph except
+	// ApproveIngestRun, which is the human gate.
+	PutDocumentBlob(ctx context.Context, b store.DocumentBlob) error
+	CreateIngestRun(ctx context.Context, sha, filename, jobID string) (store.IngestRun, bool, error)
+	GetIngestRun(ctx context.Context, id string) (store.IngestRun, error)
+	ListIngestRuns(ctx context.Context, limit int) ([]store.IngestRun, error)
+	ApproveIngestRun(ctx context.Context, id, approvedBy string) (store.IngestRun, error)
+	DiscardIngestRun(ctx context.Context, id string) error
+	EnqueueJob(ctx context.Context, id, kind, payloadJSON string) error
+
+	// Enterprise graph (Phase 3). Strictly read-only: the projection layer
+	// infers, it never writes to a firm system.
+	EnterpriseSummaryAsOf(ctx context.Context, asOf time.Time) (store.EnterpriseSummary, error)
+	OrgChart(ctx context.Context, asOf time.Time) ([]store.EmployeeView, error)
+	ListClients(ctx context.Context, q store.ClientQuery) ([]store.ClientView, error)
+	ListDocuments(ctx context.Context, asOf time.Time, staleOnly bool) ([]store.DocumentView, error)
+
+	// Workflows (Phase 4). Generated tasks are draft-only; approval records a
+	// decision and dispatches nothing.
+	ListWorkflows(ctx context.Context, asOf time.Time) ([]store.WorkflowView, error)
+	GetWorkflow(ctx context.Context, id string, asOf time.Time) (store.WorkflowView, error)
+	ApproveWorkflow(ctx context.Context, id, approver, note string, now time.Time) (store.WorkflowView, error)
+	RegulatoryFeedItems(ctx context.Context, asOf time.Time) ([]store.RegulatoryFeedItem, error)
+}
+
+// Projector computes an obligation's projection onto the firm.
+// *enterprise.Projector satisfies it.
+type Projector interface {
+	ImpactOf(ctx context.Context, obligationID string, asOf time.Time) (enterprise.Impact, error)
 }
 
 // Signer is the Ed25519 signing capability the sign-off handler needs.
@@ -65,8 +98,13 @@ type Options struct {
 	Store         Store
 	Signer        Signer
 	FeedValidator FeedValidator
-	CORSOrigins   []string
-	Version       string
+	// Pool is the background worker pool. Nil disables the ingestion endpoints
+	// (they answer 503) rather than panicking - useful in tests that only need
+	// the read-only surface.
+	Pool        Pool
+	Projector   Projector
+	CORSOrigins []string
+	Version     string
 }
 
 // NewRouter builds the fully-configured chi router.
@@ -78,12 +116,14 @@ func NewRouter(opts Options) http.Handler {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.CleanPath)
-	r.Use(middleware.Timeout(30 * time.Second))
+	// The 30s request timeout is right for every handler EXCEPT the SSE progress
+	// stream, which is long-lived by design: an ingestion run is 40-150s. Applying
+	// it there would cancel the request context mid-run and cut the stream off
+	// while the pipeline was still working.
+	r.Use(timeoutExceptStreams(30 * time.Second))
 
 	r.Use(cors.Handler(cors.Options{
-		AllowOriginFunc: func(r *http.Request, origin string) bool {
-			return true
-		},
+		AllowOriginFunc:  originChecker(opts.CORSOrigins),
 		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
 		AllowedHeaders:   []string{"*"},
 		ExposedHeaders:   []string{"X-Request-Id"},
@@ -91,7 +131,14 @@ func NewRouter(opts Options) http.Handler {
 		MaxAge:           300,
 	}))
 
-	h := &handlers{store: opts.Store, signer: opts.Signer, feedValidator: opts.FeedValidator, version: opts.Version}
+	h := &handlers{
+		store:         opts.Store,
+		signer:        opts.Signer,
+		feedValidator: opts.FeedValidator,
+		pool:          opts.Pool,
+		projector:     opts.Projector,
+		version:       opts.Version,
+	}
 
 	r.Get("/health", h.health)
 	r.Get("/version", h.versionInfo)
@@ -122,9 +169,76 @@ func NewRouter(opts Options) http.Handler {
 		api.Get("/lineage", h.lineage)
 		api.Get("/feed", h.regulatorFeed)
 		api.Get("/feed/schema", h.feedSchema)
+
+		// Ingestion. The upload returns 202 immediately; the pipeline runs on a
+		// worker and nothing enters the graph until /approve.
+		api.Post("/ingest", h.postIngest)
+		api.Get("/ingest", h.listIngest)
+		api.Get("/ingest/{id}", h.getIngest)
+		api.Get("/ingest/{id}/events", h.ingestEvents)
+		api.Get("/ingest/{id}/preview", h.ingestPreview)
+		api.Post("/ingest/{id}/approve", h.approveIngest)
+		api.Delete("/ingest/{id}", h.discardIngest)
+
+		// Enterprise graph + projection.
+		api.Get("/enterprise/summary", h.enterpriseSummary)
+		api.Get("/enterprise/impact", h.enterpriseImpact)
+		api.Get("/clients", h.listEnterpriseClients)
+		api.Get("/documents", h.listEnterpriseDocuments)
+
+		// Workflow synthesis + the read-only connector registry.
+		api.Get("/workflows", h.listWorkflows)
+		api.Get("/workflows/{id}/tasks", h.getWorkflowTasks)
+		api.Post("/workflows/{id}/approve", h.approveWorkflow)
+		api.Get("/connectors", h.listConnectors)
+		api.Get("/regulatory-feed", h.regulatoryFeedItems)
 	})
 
 	return r
+}
+
+// timeoutExceptStreams applies a request timeout to everything except the SSE
+// progress stream, which must stay open for the life of an ingestion run.
+func timeoutExceptStreams(d time.Duration) func(http.Handler) http.Handler {
+	timed := middleware.Timeout(d)
+	return func(next http.Handler) http.Handler {
+		timedNext := timed(next)
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if strings.HasSuffix(r.URL.Path, "/events") {
+				next.ServeHTTP(w, r)
+				return
+			}
+			timedNext.ServeHTTP(w, r)
+		})
+	}
+}
+
+// originChecker builds the CORS origin predicate from the configured allowlist.
+//
+// Safety: an empty allowlist means "local dev", where the developer has not
+// stated which origin may talk to the API. We keep today's permissive behaviour
+// so `go run ./backend/cmd/api` still works with no configuration, but we log
+// the fact ONCE at startup rather than per request - a silently open CORS
+// policy is exactly the kind of thing that survives into production unnoticed.
+//
+// Matching is exact on the full origin (scheme + host + port), the form browsers
+// actually send. No trailing-slash stripping and no case folding: any such
+// normalisation would widen the allowlist beyond what was configured.
+func originChecker(allowed []string) func(*http.Request, string) bool {
+	set := make(map[string]struct{}, len(allowed))
+	for _, o := range allowed {
+		if o = strings.TrimSpace(o); o != "" {
+			set[o] = struct{}{}
+		}
+	}
+	if len(set) == 0 {
+		log.Printf("chanakya: WARNING CORS allowlist is empty - every origin is accepted. Set CHANAKYA_CORS_ORIGINS before deploying.")
+		return func(*http.Request, string) bool { return true }
+	}
+	return func(_ *http.Request, origin string) bool {
+		_, ok := set[origin]
+		return ok
+	}
 }
 
 // handlers holds dependencies shared by the HTTP handlers.
@@ -132,6 +246,8 @@ type handlers struct {
 	store         Store
 	signer        Signer
 	feedValidator FeedValidator
+	pool          Pool
+	projector     Projector
 	version       string
 }
 

@@ -1,0 +1,58 @@
+[
+  {
+    "id": "sys_crm",
+    "kind": "crm",
+    "vendor": "Zoho CRM",
+    "connector_id": "conn_internal_rest",
+    "criticality": "high",
+    "owner_dept": "dep_operations"
+  },
+  {
+    "id": "sys_hrms",
+    "kind": "hrms",
+    "vendor": "Darwinbox",
+    "connector_id": "conn_internal_rest",
+    "criticality": "medium",
+    "owner_dept": "dep_hr"
+  },
+  {
+    "id": "sys_dms",
+    "kind": "dms",
+    "vendor": "Google Drive",
+    "connector_id": "conn_drive",
+    "criticality": "high",
+    "owner_dept": "dep_technology"
+  },
+  {
+    "id": "sys_email",
+    "kind": "email",
+    "vendor": "Google Workspace",
+    "connector_id": "conn_gmail",
+    "criticality": "high",
+    "owner_dept": "dep_technology"
+  },
+  {
+    "id": "sys_billing",
+    "kind": "billing",
+    "vendor": "Zoho Books",
+    "connector_id": "conn_internal_rest",
+    "criticality": "medium",
+    "owner_dept": "dep_operations"
+  },
+  {
+    "id": "sys_archive",
+    "kind": "archive",
+    "vendor": "AWS S3 Glacier",
+    "connector_id": "conn_internal_rest",
+    "criticality": "high",
+    "owner_dept": "dep_technology"
+  },
+  {
+    "id": "sys_grc",
+    "kind": "grc",
+    "vendor": "In-house GRC",
+    "connector_id": "conn_internal_rest",
+    "criticality": "high",
+    "owner_dept": "dep_risk"
+  }
+]

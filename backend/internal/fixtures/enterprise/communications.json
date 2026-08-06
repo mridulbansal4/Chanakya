@@ -1,0 +1,1112 @@
+[
+  {
+    "id": "com_mail_001",
+    "kind": "email",
+    "subject": "MITC circular - impact assessment",
+    "participants": [
+      "emp_001",
+      "emp_004"
+    ],
+    "thread_id": "thr_001",
+    "sent_on": "2025-01-02",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_002",
+    "kind": "email",
+    "subject": "Quarterly compliance review",
+    "participants": [
+      "emp_002",
+      "emp_005"
+    ],
+    "thread_id": "thr_001",
+    "sent_on": "2025-01-05",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_003",
+    "kind": "email",
+    "subject": "Client agreement re-papering",
+    "participants": [
+      "emp_003",
+      "emp_006"
+    ],
+    "thread_id": "thr_002",
+    "sent_on": "2025-01-08",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_004",
+    "kind": "email",
+    "subject": "Fee disclosure query",
+    "participants": [
+      "emp_004",
+      "emp_007"
+    ],
+    "thread_id": "thr_002",
+    "sent_on": "2025-01-11",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_005",
+    "kind": "email",
+    "subject": "Complaint escalation",
+    "participants": [
+      "emp_005",
+      "emp_008"
+    ],
+    "thread_id": "thr_003",
+    "sent_on": "2025-01-14",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_006",
+    "kind": "email",
+    "subject": "Cybersecurity policy review",
+    "participants": [
+      "emp_006",
+      "emp_009"
+    ],
+    "thread_id": "thr_003",
+    "sent_on": "2025-01-17",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_007",
+    "kind": "email",
+    "subject": "Training completion reminder",
+    "participants": [
+      "emp_007",
+      "emp_010"
+    ],
+    "thread_id": "thr_004",
+    "sent_on": "2025-01-20",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_008",
+    "kind": "email",
+    "subject": "Board pack - compliance section",
+    "participants": [
+      "emp_008",
+      "emp_011"
+    ],
+    "thread_id": "thr_004",
+    "sent_on": "2025-01-23",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_009",
+    "kind": "email",
+    "subject": "Regulatory filing checklist",
+    "participants": [
+      "emp_009",
+      "emp_012"
+    ],
+    "thread_id": "thr_005",
+    "sent_on": "2025-01-26",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_010",
+    "kind": "email",
+    "subject": "Segregation attestation",
+    "participants": [
+      "emp_010",
+      "emp_013"
+    ],
+    "thread_id": "thr_005",
+    "sent_on": "2025-01-29",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_011",
+    "kind": "email",
+    "subject": "MITC circular - impact assessment",
+    "participants": [
+      "emp_011",
+      "emp_014"
+    ],
+    "thread_id": "thr_006",
+    "sent_on": "2025-02-01",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_012",
+    "kind": "email",
+    "subject": "Quarterly compliance review",
+    "participants": [
+      "emp_012",
+      "emp_015"
+    ],
+    "thread_id": "thr_006",
+    "sent_on": "2025-02-04",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_013",
+    "kind": "email",
+    "subject": "Client agreement re-papering",
+    "participants": [
+      "emp_013",
+      "emp_016"
+    ],
+    "thread_id": "thr_007",
+    "sent_on": "2025-02-07",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_014",
+    "kind": "email",
+    "subject": "Fee disclosure query",
+    "participants": [
+      "emp_014",
+      "emp_017"
+    ],
+    "thread_id": "thr_007",
+    "sent_on": "2025-02-10",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_015",
+    "kind": "email",
+    "subject": "Complaint escalation",
+    "participants": [
+      "emp_015",
+      "emp_018"
+    ],
+    "thread_id": "thr_008",
+    "sent_on": "2025-02-13",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_016",
+    "kind": "email",
+    "subject": "Cybersecurity policy review",
+    "participants": [
+      "emp_016",
+      "emp_019"
+    ],
+    "thread_id": "thr_008",
+    "sent_on": "2025-02-16",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_017",
+    "kind": "email",
+    "subject": "Training completion reminder",
+    "participants": [
+      "emp_017",
+      "emp_020"
+    ],
+    "thread_id": "thr_009",
+    "sent_on": "2025-02-19",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_018",
+    "kind": "email",
+    "subject": "Board pack - compliance section",
+    "participants": [
+      "emp_018",
+      "emp_021"
+    ],
+    "thread_id": "thr_009",
+    "sent_on": "2025-02-22",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_019",
+    "kind": "email",
+    "subject": "Regulatory filing checklist",
+    "participants": [
+      "emp_019",
+      "emp_022"
+    ],
+    "thread_id": "thr_010",
+    "sent_on": "2025-02-25",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_020",
+    "kind": "email",
+    "subject": "Segregation attestation",
+    "participants": [
+      "emp_020",
+      "emp_023"
+    ],
+    "thread_id": "thr_010",
+    "sent_on": "2025-02-28",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_021",
+    "kind": "email",
+    "subject": "MITC circular - impact assessment",
+    "participants": [
+      "emp_021",
+      "emp_024"
+    ],
+    "thread_id": "thr_011",
+    "sent_on": "2025-03-03",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_022",
+    "kind": "email",
+    "subject": "Quarterly compliance review",
+    "participants": [
+      "emp_022",
+      "emp_001"
+    ],
+    "thread_id": "thr_011",
+    "sent_on": "2025-03-06",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_023",
+    "kind": "email",
+    "subject": "Client agreement re-papering",
+    "participants": [
+      "emp_023",
+      "emp_002"
+    ],
+    "thread_id": "thr_012",
+    "sent_on": "2025-03-09",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_024",
+    "kind": "email",
+    "subject": "Fee disclosure query",
+    "participants": [
+      "emp_024",
+      "emp_003"
+    ],
+    "thread_id": "thr_012",
+    "sent_on": "2025-03-12",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_025",
+    "kind": "email",
+    "subject": "Complaint escalation",
+    "participants": [
+      "emp_001",
+      "emp_004"
+    ],
+    "thread_id": "thr_013",
+    "sent_on": "2025-03-15",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_026",
+    "kind": "email",
+    "subject": "Cybersecurity policy review",
+    "participants": [
+      "emp_002",
+      "emp_005"
+    ],
+    "thread_id": "thr_013",
+    "sent_on": "2025-03-18",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_027",
+    "kind": "email",
+    "subject": "Training completion reminder",
+    "participants": [
+      "emp_003",
+      "emp_006"
+    ],
+    "thread_id": "thr_014",
+    "sent_on": "2025-03-21",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_028",
+    "kind": "email",
+    "subject": "Board pack - compliance section",
+    "participants": [
+      "emp_004",
+      "emp_007"
+    ],
+    "thread_id": "thr_014",
+    "sent_on": "2025-03-24",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_029",
+    "kind": "email",
+    "subject": "Regulatory filing checklist",
+    "participants": [
+      "emp_005",
+      "emp_008"
+    ],
+    "thread_id": "thr_015",
+    "sent_on": "2025-03-27",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_030",
+    "kind": "email",
+    "subject": "Segregation attestation",
+    "participants": [
+      "emp_006",
+      "emp_009"
+    ],
+    "thread_id": "thr_015",
+    "sent_on": "2025-03-30",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_031",
+    "kind": "email",
+    "subject": "MITC circular - impact assessment",
+    "participants": [
+      "emp_007",
+      "emp_010"
+    ],
+    "thread_id": "thr_016",
+    "sent_on": "2025-04-02",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_032",
+    "kind": "email",
+    "subject": "Quarterly compliance review",
+    "participants": [
+      "emp_008",
+      "emp_011"
+    ],
+    "thread_id": "thr_016",
+    "sent_on": "2025-04-05",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_033",
+    "kind": "email",
+    "subject": "Client agreement re-papering",
+    "participants": [
+      "emp_009",
+      "emp_012"
+    ],
+    "thread_id": "thr_017",
+    "sent_on": "2025-04-08",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_034",
+    "kind": "email",
+    "subject": "Fee disclosure query",
+    "participants": [
+      "emp_010",
+      "emp_013"
+    ],
+    "thread_id": "thr_017",
+    "sent_on": "2025-04-11",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_035",
+    "kind": "email",
+    "subject": "Complaint escalation",
+    "participants": [
+      "emp_011",
+      "emp_014"
+    ],
+    "thread_id": "thr_018",
+    "sent_on": "2025-04-14",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_036",
+    "kind": "email",
+    "subject": "Cybersecurity policy review",
+    "participants": [
+      "emp_012",
+      "emp_015"
+    ],
+    "thread_id": "thr_018",
+    "sent_on": "2025-04-17",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_037",
+    "kind": "email",
+    "subject": "Training completion reminder",
+    "participants": [
+      "emp_013",
+      "emp_016"
+    ],
+    "thread_id": "thr_019",
+    "sent_on": "2025-04-20",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_038",
+    "kind": "email",
+    "subject": "Board pack - compliance section",
+    "participants": [
+      "emp_014",
+      "emp_017"
+    ],
+    "thread_id": "thr_019",
+    "sent_on": "2025-04-23",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_039",
+    "kind": "email",
+    "subject": "Regulatory filing checklist",
+    "participants": [
+      "emp_015",
+      "emp_018"
+    ],
+    "thread_id": "thr_020",
+    "sent_on": "2025-04-26",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_040",
+    "kind": "email",
+    "subject": "Segregation attestation",
+    "participants": [
+      "emp_016",
+      "emp_019"
+    ],
+    "thread_id": "thr_020",
+    "sent_on": "2025-04-29",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_041",
+    "kind": "email",
+    "subject": "MITC circular - impact assessment",
+    "participants": [
+      "emp_017",
+      "emp_020"
+    ],
+    "thread_id": "thr_021",
+    "sent_on": "2025-05-02",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_042",
+    "kind": "email",
+    "subject": "Quarterly compliance review",
+    "participants": [
+      "emp_018",
+      "emp_021"
+    ],
+    "thread_id": "thr_021",
+    "sent_on": "2025-05-05",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_043",
+    "kind": "email",
+    "subject": "Client agreement re-papering",
+    "participants": [
+      "emp_019",
+      "emp_022"
+    ],
+    "thread_id": "thr_022",
+    "sent_on": "2025-05-08",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_044",
+    "kind": "email",
+    "subject": "Fee disclosure query",
+    "participants": [
+      "emp_020",
+      "emp_023"
+    ],
+    "thread_id": "thr_022",
+    "sent_on": "2025-05-11",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_045",
+    "kind": "email",
+    "subject": "Complaint escalation",
+    "participants": [
+      "emp_021",
+      "emp_024"
+    ],
+    "thread_id": "thr_023",
+    "sent_on": "2025-05-14",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_046",
+    "kind": "email",
+    "subject": "Cybersecurity policy review",
+    "participants": [
+      "emp_022",
+      "emp_001"
+    ],
+    "thread_id": "thr_023",
+    "sent_on": "2025-05-17",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_047",
+    "kind": "email",
+    "subject": "Training completion reminder",
+    "participants": [
+      "emp_023",
+      "emp_002"
+    ],
+    "thread_id": "thr_024",
+    "sent_on": "2025-05-20",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_048",
+    "kind": "email",
+    "subject": "Board pack - compliance section",
+    "participants": [
+      "emp_024",
+      "emp_003"
+    ],
+    "thread_id": "thr_024",
+    "sent_on": "2025-05-23",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_049",
+    "kind": "email",
+    "subject": "Regulatory filing checklist",
+    "participants": [
+      "emp_001",
+      "emp_004"
+    ],
+    "thread_id": "thr_025",
+    "sent_on": "2025-05-26",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_050",
+    "kind": "email",
+    "subject": "Segregation attestation",
+    "participants": [
+      "emp_002",
+      "emp_005"
+    ],
+    "thread_id": "thr_025",
+    "sent_on": "2025-05-29",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_051",
+    "kind": "email",
+    "subject": "MITC circular - impact assessment",
+    "participants": [
+      "emp_003",
+      "emp_006"
+    ],
+    "thread_id": "thr_026",
+    "sent_on": "2025-06-01",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_052",
+    "kind": "email",
+    "subject": "Quarterly compliance review",
+    "participants": [
+      "emp_004",
+      "emp_007"
+    ],
+    "thread_id": "thr_026",
+    "sent_on": "2025-06-04",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_053",
+    "kind": "email",
+    "subject": "Client agreement re-papering",
+    "participants": [
+      "emp_005",
+      "emp_008"
+    ],
+    "thread_id": "thr_027",
+    "sent_on": "2025-06-07",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_054",
+    "kind": "email",
+    "subject": "Fee disclosure query",
+    "participants": [
+      "emp_006",
+      "emp_009"
+    ],
+    "thread_id": "thr_027",
+    "sent_on": "2025-06-10",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_055",
+    "kind": "email",
+    "subject": "Complaint escalation",
+    "participants": [
+      "emp_007",
+      "emp_010"
+    ],
+    "thread_id": "thr_028",
+    "sent_on": "2025-06-13",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_056",
+    "kind": "email",
+    "subject": "Cybersecurity policy review",
+    "participants": [
+      "emp_008",
+      "emp_011"
+    ],
+    "thread_id": "thr_028",
+    "sent_on": "2025-06-16",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_057",
+    "kind": "email",
+    "subject": "Training completion reminder",
+    "participants": [
+      "emp_009",
+      "emp_012"
+    ],
+    "thread_id": "thr_029",
+    "sent_on": "2025-06-19",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_058",
+    "kind": "email",
+    "subject": "Board pack - compliance section",
+    "participants": [
+      "emp_010",
+      "emp_013"
+    ],
+    "thread_id": "thr_029",
+    "sent_on": "2025-06-22",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_059",
+    "kind": "email",
+    "subject": "Regulatory filing checklist",
+    "participants": [
+      "emp_011",
+      "emp_014"
+    ],
+    "thread_id": "thr_030",
+    "sent_on": "2025-06-25",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_mail_060",
+    "kind": "email",
+    "subject": "Segregation attestation",
+    "participants": [
+      "emp_012",
+      "emp_015"
+    ],
+    "thread_id": "thr_030",
+    "sent_on": "2025-06-28",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_001",
+    "kind": "meeting",
+    "subject": "Complaint escalation",
+    "participants": [
+      "emp_001",
+      "emp_006",
+      "emp_010"
+    ],
+    "thread_id": "mtg_001",
+    "sent_on": "2025-02-01",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_002",
+    "kind": "meeting",
+    "subject": "Cybersecurity policy review",
+    "participants": [
+      "emp_002",
+      "emp_007",
+      "emp_011"
+    ],
+    "thread_id": "mtg_002",
+    "sent_on": "2025-02-05",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_003",
+    "kind": "meeting",
+    "subject": "Training completion reminder",
+    "participants": [
+      "emp_003",
+      "emp_008",
+      "emp_012"
+    ],
+    "thread_id": "mtg_003",
+    "sent_on": "2025-02-09",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_004",
+    "kind": "meeting",
+    "subject": "Board pack - compliance section",
+    "participants": [
+      "emp_004",
+      "emp_009",
+      "emp_013"
+    ],
+    "thread_id": "mtg_004",
+    "sent_on": "2025-02-13",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_005",
+    "kind": "meeting",
+    "subject": "Regulatory filing checklist",
+    "participants": [
+      "emp_005",
+      "emp_010",
+      "emp_014"
+    ],
+    "thread_id": "mtg_005",
+    "sent_on": "2025-02-17",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_006",
+    "kind": "meeting",
+    "subject": "Segregation attestation",
+    "participants": [
+      "emp_006",
+      "emp_011",
+      "emp_015"
+    ],
+    "thread_id": "mtg_006",
+    "sent_on": "2025-02-21",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_007",
+    "kind": "meeting",
+    "subject": "MITC circular - impact assessment",
+    "participants": [
+      "emp_007",
+      "emp_012",
+      "emp_016"
+    ],
+    "thread_id": "mtg_007",
+    "sent_on": "2025-02-25",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_008",
+    "kind": "meeting",
+    "subject": "Quarterly compliance review",
+    "participants": [
+      "emp_008",
+      "emp_013",
+      "emp_017"
+    ],
+    "thread_id": "mtg_008",
+    "sent_on": "2025-03-01",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_009",
+    "kind": "meeting",
+    "subject": "Client agreement re-papering",
+    "participants": [
+      "emp_009",
+      "emp_014",
+      "emp_018"
+    ],
+    "thread_id": "mtg_009",
+    "sent_on": "2025-03-05",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_010",
+    "kind": "meeting",
+    "subject": "Fee disclosure query",
+    "participants": [
+      "emp_010",
+      "emp_015",
+      "emp_019"
+    ],
+    "thread_id": "mtg_010",
+    "sent_on": "2025-03-09",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_011",
+    "kind": "meeting",
+    "subject": "Complaint escalation",
+    "participants": [
+      "emp_011",
+      "emp_016",
+      "emp_020"
+    ],
+    "thread_id": "mtg_011",
+    "sent_on": "2025-03-13",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_012",
+    "kind": "meeting",
+    "subject": "Cybersecurity policy review",
+    "participants": [
+      "emp_012",
+      "emp_017",
+      "emp_021"
+    ],
+    "thread_id": "mtg_012",
+    "sent_on": "2025-03-17",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_013",
+    "kind": "meeting",
+    "subject": "Training completion reminder",
+    "participants": [
+      "emp_013",
+      "emp_018",
+      "emp_022"
+    ],
+    "thread_id": "mtg_013",
+    "sent_on": "2025-03-21",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_014",
+    "kind": "meeting",
+    "subject": "Board pack - compliance section",
+    "participants": [
+      "emp_014",
+      "emp_019",
+      "emp_023"
+    ],
+    "thread_id": "mtg_014",
+    "sent_on": "2025-03-25",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_015",
+    "kind": "meeting",
+    "subject": "Regulatory filing checklist",
+    "participants": [
+      "emp_015",
+      "emp_020",
+      "emp_024"
+    ],
+    "thread_id": "mtg_015",
+    "sent_on": "2025-03-29",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_016",
+    "kind": "meeting",
+    "subject": "Segregation attestation",
+    "participants": [
+      "emp_016",
+      "emp_021",
+      "emp_001"
+    ],
+    "thread_id": "mtg_016",
+    "sent_on": "2025-04-02",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_017",
+    "kind": "meeting",
+    "subject": "MITC circular - impact assessment",
+    "participants": [
+      "emp_017",
+      "emp_022",
+      "emp_002"
+    ],
+    "thread_id": "mtg_017",
+    "sent_on": "2025-04-06",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_018",
+    "kind": "meeting",
+    "subject": "Quarterly compliance review",
+    "participants": [
+      "emp_018",
+      "emp_023",
+      "emp_003"
+    ],
+    "thread_id": "mtg_018",
+    "sent_on": "2025-04-10",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_019",
+    "kind": "meeting",
+    "subject": "Client agreement re-papering",
+    "participants": [
+      "emp_019",
+      "emp_024",
+      "emp_004"
+    ],
+    "thread_id": "mtg_019",
+    "sent_on": "2025-04-14",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_020",
+    "kind": "meeting",
+    "subject": "Fee disclosure query",
+    "participants": [
+      "emp_020",
+      "emp_001",
+      "emp_005"
+    ],
+    "thread_id": "mtg_020",
+    "sent_on": "2025-04-18",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_021",
+    "kind": "meeting",
+    "subject": "Complaint escalation",
+    "participants": [
+      "emp_021",
+      "emp_002",
+      "emp_006"
+    ],
+    "thread_id": "mtg_021",
+    "sent_on": "2025-04-22",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_022",
+    "kind": "meeting",
+    "subject": "Cybersecurity policy review",
+    "participants": [
+      "emp_022",
+      "emp_003",
+      "emp_007"
+    ],
+    "thread_id": "mtg_022",
+    "sent_on": "2025-04-26",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_023",
+    "kind": "meeting",
+    "subject": "Training completion reminder",
+    "participants": [
+      "emp_023",
+      "emp_004",
+      "emp_008"
+    ],
+    "thread_id": "mtg_023",
+    "sent_on": "2025-04-30",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_024",
+    "kind": "meeting",
+    "subject": "Board pack - compliance section",
+    "participants": [
+      "emp_024",
+      "emp_005",
+      "emp_009"
+    ],
+    "thread_id": "mtg_024",
+    "sent_on": "2025-05-04",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_025",
+    "kind": "meeting",
+    "subject": "Regulatory filing checklist",
+    "participants": [
+      "emp_001",
+      "emp_006",
+      "emp_010"
+    ],
+    "thread_id": "mtg_025",
+    "sent_on": "2025-05-08",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_026",
+    "kind": "meeting",
+    "subject": "Segregation attestation",
+    "participants": [
+      "emp_002",
+      "emp_007",
+      "emp_011"
+    ],
+    "thread_id": "mtg_026",
+    "sent_on": "2025-05-12",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_027",
+    "kind": "meeting",
+    "subject": "MITC circular - impact assessment",
+    "participants": [
+      "emp_003",
+      "emp_008",
+      "emp_012"
+    ],
+    "thread_id": "mtg_027",
+    "sent_on": "2025-05-16",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_028",
+    "kind": "meeting",
+    "subject": "Quarterly compliance review",
+    "participants": [
+      "emp_004",
+      "emp_009",
+      "emp_013"
+    ],
+    "thread_id": "mtg_028",
+    "sent_on": "2025-05-20",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_029",
+    "kind": "meeting",
+    "subject": "Client agreement re-papering",
+    "participants": [
+      "emp_005",
+      "emp_010",
+      "emp_014"
+    ],
+    "thread_id": "mtg_029",
+    "sent_on": "2025-05-24",
+    "system_id": "sys_email"
+  },
+  {
+    "id": "com_meet_030",
+    "kind": "meeting",
+    "subject": "Fee disclosure query",
+    "participants": [
+      "emp_006",
+      "emp_011",
+      "emp_015"
+    ],
+    "thread_id": "mtg_030",
+    "sent_on": "2025-05-28",
+    "system_id": "sys_email"
+  }
+]

@@ -29,7 +29,11 @@ const OFFICER = {
 
 const NAV = [
   { href: "/", label: "Overview", hint: "Your compliance dashboard at a glance." },
-  { href: "/regulatory-feed", label: "Regulatory Feed", hint: "New SEBI circulars, detected and processed end to end." },
+  { href: "/ingest", label: "Ingest", hint: "Upload a SEBI circular and watch the pipeline run - approval required." },
+  { href: "/regulatory-feed", label: "Regulatory Feed", hint: "Every circular in the corpus, how it arrived, and what an amendment changed." },
+  { href: "/workflows", label: "Workflows", hint: "Draft task DAGs generated from approved obligations, with named owners." },
+  { href: "/connectors", label: "Connectors", hint: "Every evidence connector - all read-only, enforced by the type system." },
+  { href: "/enterprise", label: "Enterprise", hint: "Your firm as data - people, clients, documents, systems - and where the gaps are." },
   { href: "/register", label: "Register", hint: "Every obligation extracted from the regulation, with its source." },
   { href: "/amendments", label: "Blast Radius", hint: "See everything a regulation change affects." },
   { href: "/evidence", label: "Evidence & Gaps", hint: "Which obligations are backed by evidence, and where the gaps are." },
@@ -41,7 +45,11 @@ const NAV = [
 
 const BANNER: Record<string, ReactNode> = {
   "/": "Your compliance posture at a glance. Start with what needs your attention, then explore the live obligation graph below.",
-  "/regulatory-feed": "CHANAKYA monitors SEBI for new circulars. Process the new MITC amendment to see the full lifecycle - diff, obligations, blast radius, workflows, approval, evidence, and an audit pack.",
+  "/ingest": "Upload a SEBI circular. CHANAKYA parses it, extracts obligations with verbatim citations, and stops - nothing enters the graph until you approve it.",
+  "/regulatory-feed": "Every circular CHANAKYA holds, how each one arrived, what it supersedes, and the clause-level diff an amendment actually applied. All of it queried live - nothing here is scripted.",
+  "/workflows": "Approved obligations become draft task DAGs with real named owners. Nothing is ever dispatched: CHANAKYA drafts the work, a person performs it.",
+  "/connectors": "Every connector CHANAKYA can read evidence through. All read-only - not by policy, but because the interface has no write method to implement.",
+  "/enterprise": "Your firm as queryable data, reconstructed as of any date. Every gap shown was found by traversing this graph - none of it is written in as a known problem.",
   "/register": "Every obligation CHANAKYA extracted from the regulation, with the exact source text behind each one. Click a row to see its citation.",
   "/amendments": "Preview what a regulation change would affect before you accept it. Pick a clause, edit its text, and compute the impact.",
   "/evidence": "Which obligations are backed by evidence from your firm's systems, and where the gaps are. Each gap becomes a draft remediation ticket.",

@@ -1,0 +1,200 @@
+[
+  {
+    "id": "doc_pol_compliance_manual",
+    "kind": "manual",
+    "title": "Compliance Manual",
+    "version": 4,
+    "owner_dept": "dep_compliance",
+    "status": "current",
+    "reviewed_months_ago": 2
+  },
+  {
+    "id": "doc_pol_code_of_conduct",
+    "kind": "policy",
+    "title": "Code of Conduct",
+    "version": 3,
+    "owner_dept": "dep_hr",
+    "status": "current",
+    "reviewed_months_ago": 5
+  },
+  {
+    "id": "doc_pol_fee_disclosure",
+    "kind": "policy",
+    "title": "Fee Disclosure Policy",
+    "version": 3,
+    "owner_dept": "dep_compliance",
+    "status": "current",
+    "reviewed_months_ago": 3
+  },
+  {
+    "id": "doc_pol_segregation",
+    "kind": "policy",
+    "title": "Advisory-Distribution Segregation Policy",
+    "version": 2,
+    "owner_dept": "dep_compliance",
+    "status": "current",
+    "reviewed_months_ago": 6
+  },
+  {
+    "id": "doc_pol_record_retention",
+    "kind": "policy",
+    "title": "Record Retention Policy",
+    "version": 2,
+    "owner_dept": "dep_operations",
+    "status": "current",
+    "reviewed_months_ago": 7
+  },
+  {
+    "id": "doc_pol_cybersecurity",
+    "kind": "policy",
+    "title": "Cybersecurity and Cyber Resilience Policy",
+    "version": 1,
+    "owner_dept": "dep_technology",
+    "status": "current",
+    "reviewed_months_ago": 14
+  },
+  {
+    "id": "doc_pol_grievance",
+    "kind": "policy",
+    "title": "Grievance Redressal Policy",
+    "version": 3,
+    "owner_dept": "dep_client_servicing",
+    "status": "current",
+    "reviewed_months_ago": 4
+  },
+  {
+    "id": "doc_pol_kyc_aml",
+    "kind": "policy",
+    "title": "KYC and AML Policy",
+    "version": 3,
+    "owner_dept": "dep_operations",
+    "status": "current",
+    "reviewed_months_ago": 3
+  },
+  {
+    "id": "doc_pol_conflict_interest",
+    "kind": "policy",
+    "title": "Conflict of Interest Policy",
+    "version": 2,
+    "owner_dept": "dep_compliance",
+    "status": "current",
+    "reviewed_months_ago": 8
+  },
+  {
+    "id": "doc_pol_outsourcing",
+    "kind": "policy",
+    "title": "Outsourcing Policy",
+    "version": 1,
+    "owner_dept": "dep_operations",
+    "status": "current",
+    "reviewed_months_ago": 9
+  },
+  {
+    "id": "doc_pol_risk_management",
+    "kind": "policy",
+    "title": "Risk Management Policy",
+    "version": 2,
+    "owner_dept": "dep_risk",
+    "status": "current",
+    "reviewed_months_ago": 5
+  },
+  {
+    "id": "doc_pol_business_continuity",
+    "kind": "policy",
+    "title": "Business Continuity Plan",
+    "version": 2,
+    "owner_dept": "dep_technology",
+    "status": "current",
+    "reviewed_months_ago": 10
+  },
+  {
+    "id": "doc_pol_advertising",
+    "kind": "policy",
+    "title": "Advertisement and Marketing Policy",
+    "version": 1,
+    "owner_dept": "dep_compliance",
+    "status": "current",
+    "reviewed_months_ago": 6
+  },
+  {
+    "id": "doc_pol_whistleblower",
+    "kind": "policy",
+    "title": "Whistleblower Policy",
+    "version": 1,
+    "owner_dept": "dep_hr",
+    "status": "current",
+    "reviewed_months_ago": 11
+  },
+  {
+    "id": "doc_sop_client_onboarding",
+    "kind": "sop",
+    "title": "SOP: Client Onboarding",
+    "version": 4,
+    "owner_dept": "dep_operations",
+    "status": "current",
+    "reviewed_months_ago": 2
+  },
+  {
+    "id": "doc_sop_risk_profiling",
+    "kind": "sop",
+    "title": "SOP: Client Risk Profiling",
+    "version": 3,
+    "owner_dept": "dep_advisory",
+    "status": "current",
+    "reviewed_months_ago": 3
+  },
+  {
+    "id": "doc_sop_complaint_handling",
+    "kind": "sop",
+    "title": "SOP: Complaint Handling",
+    "version": 2,
+    "owner_dept": "dep_client_servicing",
+    "status": "current",
+    "reviewed_months_ago": 4
+  },
+  {
+    "id": "doc_sop_periodic_review",
+    "kind": "sop",
+    "title": "SOP: Periodic Portfolio Review",
+    "version": 2,
+    "owner_dept": "dep_advisory",
+    "status": "current",
+    "reviewed_months_ago": 5
+  },
+  {
+    "id": "doc_sop_incident_response",
+    "kind": "sop",
+    "title": "SOP: Security Incident Response",
+    "version": 1,
+    "owner_dept": "dep_technology",
+    "status": "current",
+    "reviewed_months_ago": 10
+  },
+  {
+    "id": "doc_sop_regulatory_filing",
+    "kind": "sop",
+    "title": "SOP: Regulatory Filing",
+    "version": 3,
+    "owner_dept": "dep_compliance",
+    "status": "current",
+    "reviewed_months_ago": 2
+  },
+  {
+    "id": "doc_sop_training",
+    "kind": "sop",
+    "title": "SOP: Employee Training and Certification",
+    "version": 2,
+    "owner_dept": "dep_hr",
+    "status": "current",
+    "reviewed_months_ago": 6
+  },
+  {
+    "id": "doc_sop_agreement_execution",
+    "kind": "sop",
+    "title": "SOP: Client Agreement Execution",
+    "version": 3,
+    "owner_dept": "dep_legal",
+    "status": "current",
+    "reviewed_months_ago": 1
+  }
+]

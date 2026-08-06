@@ -2,10 +2,13 @@ package store
 
 import (
 	"context"
+	"io/fs"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
+	"chanakya/db"
 	"chanakya/internal/domain"
 )
 
@@ -75,9 +78,31 @@ func TestMigrationsAndPragmas(t *testing.T) {
 		"SELECT value FROM app_meta WHERE key='schema_phase'").Scan(&phase); err != nil {
 		t.Fatalf("read schema_phase: %v", err)
 	}
-	if phase != "7" {
-		// Phase 8 added no migration (lineage + feed are read-only queries).
-		t.Errorf("schema_phase = %q, want \"7\"", phase)
+	if phase == "" {
+		t.Error("schema_phase was not recorded")
+	}
+
+	// Assert that EVERY embedded migration was applied, rather than pinning the
+	// schema_phase marker to a literal. The marker is advisory; "the runner
+	// applied every file it embeds" is the property that actually matters, and
+	// it does not need editing each time a migration is added.
+	entries, err := fs.ReadDir(db.Migrations, "migrations")
+	if err != nil {
+		t.Fatalf("read embedded migrations: %v", err)
+	}
+	want := 0
+	for _, e := range entries {
+		if !e.IsDir() && strings.HasSuffix(e.Name(), ".sql") {
+			want++
+		}
+	}
+	var got int
+	if err := st.DB().QueryRowContext(ctx,
+		"SELECT COUNT(*) FROM schema_migrations").Scan(&got); err != nil {
+		t.Fatalf("count applied migrations: %v", err)
+	}
+	if got != want {
+		t.Errorf("applied migrations = %d, want %d (every embedded .sql)", got, want)
 	}
 }
 

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chanakya:circular-meta",
+  "title": "CHANAKYA circular metadata completion",
+  "description": "The ONLY shape an LLM may return for Stage 3 gap-filling. additionalProperties is false everywhere: an extractor cannot smuggle an extra field past the validator, and it can never return anything executable.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "circular_no": {
+      "type": "string",
+      "maxLength": 120,
+      "description": "The circular number exactly as printed."
+    },
+    "title": { "type": "string", "maxLength": 300 },
+    "issued_on": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
+      "description": "RFC3339 UTC."
+    },
+    "effective_from": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "regulator": { "type": "string", "maxLength": 60 },
+    "department": { "type": "string", "maxLength": 60 },
+    "supersedes": {
+      "type": "array",
+      "maxItems": 20,
+      "items": { "type": "string", "maxLength": 120 }
+    },
+    "amends": {
+      "type": "array",
+      "maxItems": 20,
+      "items": { "type": "string", "maxLength": 120 }
+    },
+    "references": {
+      "type": "array",
+      "maxItems": 40,
+      "items": { "type": "string", "maxLength": 120 }
+    },
+    "applies_to": {
+      "type": "array",
+      "maxItems": 20,
+      "items": { "type": "string", "maxLength": 80 }
+    }
+  }
+}

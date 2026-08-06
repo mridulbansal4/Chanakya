@@ -16,8 +16,11 @@ import (
 
 	"chanakya/internal/bootstrap"
 	"chanakya/internal/config"
+	"chanakya/internal/connect"
+	"chanakya/internal/enterprise"
 	"chanakya/internal/feed"
 	"chanakya/internal/httpapi"
+	"chanakya/internal/jobs"
 	"chanakya/internal/signoff"
 	"chanakya/internal/store"
 )
@@ -61,6 +64,11 @@ func run() error {
 		log.Printf("chanakya: bootstrapped demo data (IA fixture seeded + compiled)")
 	}
 
+	// The mock connectors read the seeded enterprise graph. Wiring the store in
+	// here is what makes "zero network calls in the default path" a fact about
+	// the code rather than a configuration claim.
+	connect.SetEnterpriseData(store.NewConnectorData(st))
+
 	priv, err := signoff.LoadOrCreateKey(cfg.SigningKeyPath)
 	if err != nil {
 		return fmt.Errorf("load signing key: %w", err)
@@ -73,10 +81,24 @@ func run() error {
 		return fmt.Errorf("compile feed schema: %w", err)
 	}
 
+	// The background pool runs ingestion off the request path. It is started
+	// before the server accepts traffic so an upload never races an unstarted
+	// worker, and stopped after shutdown so in-flight runs drain.
+	pool := jobs.New(st, nil)
+	ingestHandler, err := bootstrap.NewIngestHandler(st, pool)
+	if err != nil {
+		return fmt.Errorf("build ingest handler: %w", err)
+	}
+	pool.Register(bootstrap.JobKindIngest, ingestHandler)
+	pool.Start(ctx)
+	defer pool.Stop()
+
 	handler := httpapi.NewRouter(httpapi.Options{
 		Store:         st,
 		Signer:        signer,
 		FeedValidator: feedValidator,
+		Pool:          pool,
+		Projector:     enterprise.NewProjector(st),
 		CORSOrigins:   cfg.CORSOrigins,
 		Version:       version,
 	})

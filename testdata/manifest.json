@@ -1,0 +1,289 @@
+{
+  "corpus": "CHANAKYA testing corpus",
+  "firm": "Alpha Wealth Advisors Pvt. Ltd.",
+  "description": "~20 documents chosen to exercise the mapping assertions, not to be exhaustive. Every obligation-bearing clause must have at least one governing document, and every control at least one evidence document.",
+  "documents": [
+    {
+      "doc": "firm/policies/Fee_Disclosure_Policy_v3.txt",
+      "kind": "policy",
+      "owner_dept": "Compliance",
+      "version": 3,
+      "governed_by": [
+        "SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49#4.1"
+      ],
+      "provides_evidence_for": [
+        "ctl_fee_disclosure"
+      ],
+      "stale_if_clause_amended": true
+    },
+    {
+      "doc": "firm/policies/Segregation_Policy_v2.txt",
+      "kind": "policy",
+      "owner_dept": "Compliance",
+      "version": 2,
+      "governed_by": [
+        "SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49#4.2"
+      ],
+      "provides_evidence_for": [
+        "ctl_segregation"
+      ],
+      "stale_if_clause_amended": true
+    },
+    {
+      "doc": "firm/policies/Record_Retention_Policy_v2.txt",
+      "kind": "policy",
+      "owner_dept": "Operations",
+      "version": 2,
+      "governed_by": [
+        "SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49#5.1"
+      ],
+      "provides_evidence_for": [
+        "ctl_retention"
+      ],
+      "stale_if_clause_amended": true
+    },
+    {
+      "doc": "firm/policies/Cybersecurity_Policy_v1.txt",
+      "kind": "policy",
+      "owner_dept": "Technology",
+      "version": 1,
+      "governed_by": [
+        "SEBI/HO/TEST/CYBER/2024#1"
+      ],
+      "provides_evidence_for": [],
+      "stale_if_clause_amended": true
+    },
+    {
+      "doc": "firm/policies/Client_Notification_Policy_v1.txt",
+      "kind": "policy",
+      "owner_dept": "Client Servicing",
+      "version": 1,
+      "governed_by": [
+        "SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49#5.2"
+      ],
+      "provides_evidence_for": [],
+      "stale_if_clause_amended": true
+    },
+    {
+      "doc": "firm/sops/SOP_Client_Onboarding_v4.txt",
+      "kind": "sop",
+      "owner_dept": "Operations",
+      "version": 4,
+      "governed_by": [
+        "SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49#3.1"
+      ],
+      "provides_evidence_for": [
+        "ctl_registration"
+      ],
+      "stale_if_clause_amended": true
+    },
+    {
+      "doc": "firm/sops/SOP_Agreement_Execution_v3.txt",
+      "kind": "sop",
+      "owner_dept": "Legal",
+      "version": 3,
+      "governed_by": [
+        "SEBI/HO/MIRSD/MIRSD-PoD/P/CIR/2025/19#2"
+      ],
+      "provides_evidence_for": [
+        "ctl_fee_disclosure"
+      ],
+      "stale_if_clause_amended": true
+    },
+    {
+      "doc": "firm/sops/SOP_Training_v2.txt",
+      "kind": "sop",
+      "owner_dept": "HR",
+      "version": 2,
+      "governed_by": [
+        "SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49#3.2"
+      ],
+      "provides_evidence_for": [
+        "ctl_training"
+      ],
+      "stale_if_clause_amended": false
+    },
+    {
+      "doc": "registers/client_register.csv",
+      "kind": "register",
+      "owner_dept": "Operations",
+      "version": 1,
+      "governed_by": [
+        "SEBI/HO/MIRSD/MIRSD-PoD/P/CIR/2025/19#3"
+      ],
+      "provides_evidence_for": [
+        "ctl_registration"
+      ],
+      "stale_if_clause_amended": false
+    },
+    {
+      "doc": "registers/complaint_register.csv",
+      "kind": "register",
+      "owner_dept": "Client Servicing",
+      "version": 1,
+      "governed_by": [
+        "SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49#5.2"
+      ],
+      "provides_evidence_for": [],
+      "stale_if_clause_amended": false
+    },
+    {
+      "doc": "registers/training_register.csv",
+      "kind": "register",
+      "owner_dept": "HR",
+      "version": 1,
+      "governed_by": [
+        "SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49#3.2"
+      ],
+      "provides_evidence_for": [
+        "ctl_training"
+      ],
+      "stale_if_clause_amended": false
+    },
+    {
+      "doc": "clients/IA_Agreement_v1.txt",
+      "kind": "agreement",
+      "owner_dept": "Legal",
+      "version": 1,
+      "governed_by": [
+        "SEBI/HO/MIRSD/MIRSD-PoD/P/CIR/2025/19#2"
+      ],
+      "provides_evidence_for": [],
+      "stale_if_clause_amended": true
+    },
+    {
+      "doc": "clients/IA_Agreement_v2.txt",
+      "kind": "agreement",
+      "owner_dept": "Legal",
+      "version": 2,
+      "governed_by": [
+        "SEBI/HO/MIRSD/MIRSD-PoD/P/CIR/2025/19#1"
+      ],
+      "provides_evidence_for": [
+        "ctl_fee_disclosure"
+      ],
+      "stale_if_clause_amended": true
+    },
+    {
+      "doc": "clients/Risk_Profiling_Form.txt",
+      "kind": "client_record",
+      "owner_dept": "Advisory",
+      "version": 1,
+      "governed_by": [
+        "SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49#5.1"
+      ],
+      "provides_evidence_for": [
+        "ctl_retention"
+      ],
+      "stale_if_clause_amended": false
+    },
+    {
+      "doc": "audit/Internal_Audit_Report_2025.txt",
+      "kind": "audit",
+      "owner_dept": "Risk",
+      "version": 1,
+      "governed_by": [
+        "SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49#5.1"
+      ],
+      "provides_evidence_for": [
+        "ctl_retention"
+      ],
+      "stale_if_clause_amended": false
+    },
+    {
+      "doc": "audit/Board_Minutes_Compliance_Review.txt",
+      "kind": "audit",
+      "owner_dept": "Compliance",
+      "version": 1,
+      "governed_by": [
+        "SEBI/HO/TEST/CYBER/2024#1"
+      ],
+      "provides_evidence_for": [
+        "ctl_segregation"
+      ],
+      "stale_if_clause_amended": false
+    },
+    {
+      "doc": "hr/Code_of_Ethics.txt",
+      "kind": "hr",
+      "owner_dept": "HR",
+      "version": 1,
+      "governed_by": [
+        "SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49#4.2"
+      ],
+      "provides_evidence_for": [
+        "ctl_segregation"
+      ],
+      "stale_if_clause_amended": false
+    },
+    {
+      "doc": "firm/corporate/Board_Resolution_Compliance_Officer.txt",
+      "kind": "corporate",
+      "owner_dept": "Legal",
+      "version": 1,
+      "governed_by": [
+        "SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49#3.1"
+      ],
+      "provides_evidence_for": [
+        "ctl_registration"
+      ],
+      "stale_if_clause_amended": false
+    },
+    {
+      "doc": "firm/corporate/SEBI_Registration_INA000000001.txt",
+      "kind": "corporate",
+      "owner_dept": "Compliance",
+      "version": 1,
+      "governed_by": [
+        "SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49#3.1"
+      ],
+      "provides_evidence_for": [
+        "ctl_registration"
+      ],
+      "stale_if_clause_amended": false
+    },
+    {
+      "doc": "exports/jira.json",
+      "kind": "export",
+      "owner_dept": "Compliance",
+      "version": 1,
+      "governed_by": [
+        "SEBI/HO/MIRSD/MIRSD-PoD/P/CIR/2025/19#3"
+      ],
+      "provides_evidence_for": [
+        "ctl_training"
+      ],
+      "stale_if_clause_amended": false
+    }
+  ],
+  "deliberate_gaps": [
+    {
+      "kind": "agreement_template",
+      "description": "clients whose in-force agreement is on the superseded template",
+      "expected": 118
+    },
+    {
+      "kind": "training",
+      "description": "employees with no completion date in the current training period",
+      "expected": 3
+    },
+    {
+      "kind": "segregation",
+      "description": "advisers serving both advisory and distribution clients",
+      "expected": 1,
+      "subject": "emp_006"
+    },
+    {
+      "kind": "register_freshness",
+      "description": "registers not updated within 60 days",
+      "expected": 1,
+      "subject": "reg_complaint"
+    },
+    {
+      "kind": "document_review",
+      "description": "policies past their annual review",
+      "expected": 1,
+      "subject": "doc_pol_cybersecurity"
+    }
+  ]
+}

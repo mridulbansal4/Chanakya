@@ -1,0 +1,2 @@
+complaint_id,client_id,received_on,status
+cmp_001,cli_014,2025-03-02,resolved

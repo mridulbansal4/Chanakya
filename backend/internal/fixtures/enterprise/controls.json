@@ -1,0 +1,125 @@
+{
+  "controls": [
+    {
+      "id": "ctl_registration",
+      "name": "IA Registration Monitor",
+      "description": "Tracks client count and annual fees against the registration threshold.",
+      "kind": "monitoring",
+      "covers_clauses": [
+        "3.1",
+        "3.2"
+      ],
+      "evidence": [
+        "ev_crm_clients",
+        "ev_fee_ledger"
+      ],
+      "owner_dept": "dep_compliance",
+      "system": "sys_crm",
+      "risk": "rsk_registration_breach"
+    },
+    {
+      "id": "ctl_fee_disclosure",
+      "name": "Fee Disclosure Workflow",
+      "description": "Ensures written fee disclosure before any fee is charged.",
+      "kind": "workflow",
+      "covers_clauses": [
+        "4.1"
+      ],
+      "evidence": [
+        "ev_fee_agreements"
+      ],
+      "owner_dept": "dep_compliance",
+      "system": "sys_billing",
+      "risk": "rsk_fee_misdisclosure"
+    },
+    {
+      "id": "ctl_segregation",
+      "name": "Advisory/Distribution Segregation",
+      "description": "Enforces client-level segregation of advisory and distribution.",
+      "kind": "policy",
+      "covers_clauses": [
+        "4.2"
+      ],
+      "evidence": [
+        "ev_segregation_log"
+      ],
+      "owner_dept": "dep_compliance",
+      "system": "sys_grc",
+      "risk": "rsk_segregation_breach"
+    },
+    {
+      "id": "ctl_retention",
+      "name": "Records Retention System",
+      "description": "Retains advisory records for the mandated period.",
+      "kind": "system",
+      "covers_clauses": [
+        "5.1"
+      ],
+      "evidence": [
+        "ev_records_index"
+      ],
+      "owner_dept": "dep_operations",
+      "system": "sys_archive",
+      "risk": "rsk_record_loss"
+    },
+    {
+      "id": "ctl_training",
+      "name": "Certification \u0026 Training Monitor",
+      "description": "Tracks mandatory quarterly certification training per employee.",
+      "kind": "monitoring",
+      "covers_clauses": [
+        "1.1"
+      ],
+      "evidence": [
+        "ev_training_records"
+      ],
+      "owner_dept": "dep_hr",
+      "system": "sys_hrms",
+      "risk": "rsk_untrained_staff"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_crm_clients",
+      "name": "CRM client-count report",
+      "source_system": "firm_crm",
+      "kind": "report"
+    },
+    {
+      "id": "ev_fee_ledger",
+      "name": "Fee ledger export",
+      "source_system": "firm_billing",
+      "kind": "export"
+    },
+    {
+      "id": "ev_fee_agreements",
+      "name": "Signed fee agreements (PDF)",
+      "source_system": "firm_docstore",
+      "kind": "document"
+    },
+    {
+      "id": "ev_segregation_log",
+      "name": "Segregation attestation log",
+      "source_system": "firm_grc",
+      "kind": "log"
+    },
+    {
+      "id": "ev_records_index",
+      "name": "Records archive index",
+      "source_system": "firm_archive",
+      "kind": "index"
+    },
+    {
+      "id": "ev_training_records",
+      "name": "Training completion records",
+      "source_system": "firm_hrms",
+      "kind": "report"
+    },
+    {
+      "id": "ev_complaint_register",
+      "name": "Complaint register export",
+      "source_system": "firm_crm",
+      "kind": "export"
+    }
+  ]
+}

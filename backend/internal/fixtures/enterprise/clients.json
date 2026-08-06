@@ -1,0 +1,1262 @@
+[
+  {
+    "id": "cli_001",
+    "name": "Rahul Sharma",
+    "segment": "retail",
+    "onboarded_on": "2019-04-01",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_002",
+    "name": "Priya Sharma",
+    "segment": "hni",
+    "onboarded_on": "2019-04-17",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_003",
+    "name": "Amit Sharma",
+    "segment": "institutional",
+    "onboarded_on": "2019-05-03",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_004",
+    "name": "Sunita Patel",
+    "segment": "nri",
+    "onboarded_on": "2019-05-19",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_005",
+    "name": "Vikas Patel",
+    "segment": "retail",
+    "onboarded_on": "2019-06-04",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_006",
+    "name": "Neha Patel",
+    "segment": "hni",
+    "onboarded_on": "2019-06-21",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "distribution"
+  },
+  {
+    "id": "cli_007",
+    "name": "Sanjay Reddy",
+    "segment": "institutional",
+    "onboarded_on": "2019-07-07",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_008",
+    "name": "Pooja Reddy",
+    "segment": "nri",
+    "onboarded_on": "2019-07-23",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_009",
+    "name": "Rajesh Reddy",
+    "segment": "retail",
+    "onboarded_on": "2019-08-08",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_010",
+    "name": "Anita Nair",
+    "segment": "hni",
+    "onboarded_on": "2019-08-24",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_011",
+    "name": "Suresh Nair",
+    "segment": "institutional",
+    "onboarded_on": "2019-09-10",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_012",
+    "name": "Divya Nair",
+    "segment": "nri",
+    "onboarded_on": "2019-09-26",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_013",
+    "name": "Ashok Singh",
+    "segment": "retail",
+    "onboarded_on": "2019-10-12",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_014",
+    "name": "Kiran Singh",
+    "segment": "hni",
+    "onboarded_on": "2019-10-28",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_015",
+    "name": "Manoj Singh",
+    "segment": "institutional",
+    "onboarded_on": "2019-11-13",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_016",
+    "name": "Shweta Gupta",
+    "segment": "nri",
+    "onboarded_on": "2019-11-30",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_017",
+    "name": "Ravi Gupta",
+    "segment": "retail",
+    "onboarded_on": "2019-12-16",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_018",
+    "name": "Jyoti Gupta",
+    "segment": "hni",
+    "onboarded_on": "2020-01-01",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "distribution"
+  },
+  {
+    "id": "cli_019",
+    "name": "Nitin Mehta",
+    "segment": "institutional",
+    "onboarded_on": "2020-01-17",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_020",
+    "name": "Swati Mehta",
+    "segment": "nri",
+    "onboarded_on": "2020-02-02",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_021",
+    "name": "Rahul Mehta",
+    "segment": "retail",
+    "onboarded_on": "2020-02-19",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_022",
+    "name": "Priya Sharma",
+    "segment": "hni",
+    "onboarded_on": "2020-03-06",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_023",
+    "name": "Amit Sharma",
+    "segment": "institutional",
+    "onboarded_on": "2020-03-22",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_024",
+    "name": "Sunita Sharma",
+    "segment": "nri",
+    "onboarded_on": "2020-04-07",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_025",
+    "name": "Vikas Patel",
+    "segment": "retail",
+    "onboarded_on": "2020-04-24",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_026",
+    "name": "Neha Patel",
+    "segment": "hni",
+    "onboarded_on": "2020-05-10",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_027",
+    "name": "Sanjay Patel",
+    "segment": "institutional",
+    "onboarded_on": "2020-05-26",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_028",
+    "name": "Pooja Reddy",
+    "segment": "nri",
+    "onboarded_on": "2020-06-11",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_029",
+    "name": "Rajesh Reddy",
+    "segment": "retail",
+    "onboarded_on": "2020-06-27",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_030",
+    "name": "Anita Reddy",
+    "segment": "hni",
+    "onboarded_on": "2020-07-14",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "distribution"
+  },
+  {
+    "id": "cli_031",
+    "name": "Suresh Nair",
+    "segment": "institutional",
+    "onboarded_on": "2020-07-30",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_032",
+    "name": "Divya Nair",
+    "segment": "nri",
+    "onboarded_on": "2020-08-15",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_033",
+    "name": "Ashok Nair",
+    "segment": "retail",
+    "onboarded_on": "2020-08-31",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_034",
+    "name": "Kiran Singh",
+    "segment": "hni",
+    "onboarded_on": "2020-09-16",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_035",
+    "name": "Manoj Singh",
+    "segment": "institutional",
+    "onboarded_on": "2020-10-03",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_036",
+    "name": "Shweta Singh",
+    "segment": "nri",
+    "onboarded_on": "2020-10-19",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_037",
+    "name": "Ravi Gupta",
+    "segment": "retail",
+    "onboarded_on": "2020-11-04",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_038",
+    "name": "Jyoti Gupta",
+    "segment": "hni",
+    "onboarded_on": "2020-11-20",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_039",
+    "name": "Nitin Gupta",
+    "segment": "institutional",
+    "onboarded_on": "2020-12-06",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_040",
+    "name": "Swati Mehta",
+    "segment": "nri",
+    "onboarded_on": "2020-12-23",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_041",
+    "name": "Rahul Mehta",
+    "segment": "retail",
+    "onboarded_on": "2021-01-08",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_042",
+    "name": "Priya Mehta",
+    "segment": "hni",
+    "onboarded_on": "2021-01-24",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "distribution"
+  },
+  {
+    "id": "cli_043",
+    "name": "Amit Sharma",
+    "segment": "institutional",
+    "onboarded_on": "2021-02-09",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_044",
+    "name": "Sunita Sharma",
+    "segment": "nri",
+    "onboarded_on": "2021-02-25",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_045",
+    "name": "Vikas Sharma",
+    "segment": "retail",
+    "onboarded_on": "2021-03-14",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_046",
+    "name": "Neha Patel",
+    "segment": "hni",
+    "onboarded_on": "2021-03-30",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_047",
+    "name": "Sanjay Patel",
+    "segment": "institutional",
+    "onboarded_on": "2021-04-15",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_048",
+    "name": "Pooja Patel",
+    "segment": "nri",
+    "onboarded_on": "2021-05-01",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_049",
+    "name": "Rajesh Reddy",
+    "segment": "retail",
+    "onboarded_on": "2017-03-04",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_050",
+    "name": "Anita Reddy",
+    "segment": "hni",
+    "onboarded_on": "2017-03-20",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_051",
+    "name": "Suresh Reddy",
+    "segment": "institutional",
+    "onboarded_on": "2017-04-05",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_052",
+    "name": "Divya Nair",
+    "segment": "nri",
+    "onboarded_on": "2017-04-21",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_053",
+    "name": "Ashok Nair",
+    "segment": "retail",
+    "onboarded_on": "2017-05-07",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_054",
+    "name": "Kiran Nair",
+    "segment": "hni",
+    "onboarded_on": "2017-05-24",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "distribution"
+  },
+  {
+    "id": "cli_055",
+    "name": "Manoj Singh",
+    "segment": "institutional",
+    "onboarded_on": "2017-06-09",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_056",
+    "name": "Shweta Singh",
+    "segment": "nri",
+    "onboarded_on": "2017-06-25",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_057",
+    "name": "Ravi Singh",
+    "segment": "retail",
+    "onboarded_on": "2017-07-11",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_058",
+    "name": "Jyoti Gupta",
+    "segment": "hni",
+    "onboarded_on": "2017-07-27",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_059",
+    "name": "Nitin Gupta",
+    "segment": "institutional",
+    "onboarded_on": "2017-08-13",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_060",
+    "name": "Swati Gupta",
+    "segment": "nri",
+    "onboarded_on": "2017-08-29",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_061",
+    "name": "Rahul Mehta",
+    "segment": "retail",
+    "onboarded_on": "2017-09-14",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_062",
+    "name": "Priya Mehta",
+    "segment": "hni",
+    "onboarded_on": "2017-09-30",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_063",
+    "name": "Amit Mehta",
+    "segment": "institutional",
+    "onboarded_on": "2017-10-16",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_064",
+    "name": "Sunita Sharma",
+    "segment": "nri",
+    "onboarded_on": "2017-11-02",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_065",
+    "name": "Vikas Sharma",
+    "segment": "retail",
+    "onboarded_on": "2017-11-18",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_066",
+    "name": "Neha Sharma",
+    "segment": "hni",
+    "onboarded_on": "2017-12-04",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "distribution"
+  },
+  {
+    "id": "cli_067",
+    "name": "Sanjay Patel",
+    "segment": "institutional",
+    "onboarded_on": "2017-12-20",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_068",
+    "name": "Pooja Patel",
+    "segment": "nri",
+    "onboarded_on": "2018-01-05",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_069",
+    "name": "Rajesh Patel",
+    "segment": "retail",
+    "onboarded_on": "2018-01-22",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_070",
+    "name": "Anita Reddy",
+    "segment": "hni",
+    "onboarded_on": "2018-02-07",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_071",
+    "name": "Suresh Reddy",
+    "segment": "institutional",
+    "onboarded_on": "2018-02-23",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_072",
+    "name": "Divya Reddy",
+    "segment": "nri",
+    "onboarded_on": "2018-03-11",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_073",
+    "name": "Ashok Nair",
+    "segment": "retail",
+    "onboarded_on": "2018-03-28",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_074",
+    "name": "Kiran Nair",
+    "segment": "hni",
+    "onboarded_on": "2018-04-13",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_075",
+    "name": "Manoj Nair",
+    "segment": "institutional",
+    "onboarded_on": "2018-04-29",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_076",
+    "name": "Shweta Singh",
+    "segment": "nri",
+    "onboarded_on": "2018-05-15",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_077",
+    "name": "Ravi Singh",
+    "segment": "retail",
+    "onboarded_on": "2018-05-31",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_078",
+    "name": "Jyoti Singh",
+    "segment": "hni",
+    "onboarded_on": "2018-06-17",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "distribution"
+  },
+  {
+    "id": "cli_079",
+    "name": "Nitin Gupta",
+    "segment": "institutional",
+    "onboarded_on": "2018-07-03",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_080",
+    "name": "Swati Gupta",
+    "segment": "nri",
+    "onboarded_on": "2018-07-19",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_081",
+    "name": "Rahul Gupta",
+    "segment": "retail",
+    "onboarded_on": "2018-08-04",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_082",
+    "name": "Priya Mehta",
+    "segment": "hni",
+    "onboarded_on": "2018-08-20",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_083",
+    "name": "Amit Mehta",
+    "segment": "institutional",
+    "onboarded_on": "2018-09-06",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_084",
+    "name": "Sunita Mehta",
+    "segment": "nri",
+    "onboarded_on": "2018-09-22",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_085",
+    "name": "Vikas Sharma",
+    "segment": "retail",
+    "onboarded_on": "2018-10-08",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_086",
+    "name": "Neha Sharma",
+    "segment": "hni",
+    "onboarded_on": "2018-10-24",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_087",
+    "name": "Sanjay Sharma",
+    "segment": "institutional",
+    "onboarded_on": "2018-11-09",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_088",
+    "name": "Pooja Patel",
+    "segment": "nri",
+    "onboarded_on": "2018-11-26",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_089",
+    "name": "Rajesh Patel",
+    "segment": "retail",
+    "onboarded_on": "2018-12-12",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_090",
+    "name": "Anita Patel",
+    "segment": "hni",
+    "onboarded_on": "2018-12-28",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "distribution"
+  },
+  {
+    "id": "cli_091",
+    "name": "Suresh Reddy",
+    "segment": "institutional",
+    "onboarded_on": "2019-01-13",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_092",
+    "name": "Divya Reddy",
+    "segment": "nri",
+    "onboarded_on": "2019-01-29",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_093",
+    "name": "Ashok Reddy",
+    "segment": "retail",
+    "onboarded_on": "2019-02-15",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_094",
+    "name": "Kiran Nair",
+    "segment": "hni",
+    "onboarded_on": "2019-03-03",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_095",
+    "name": "Manoj Nair",
+    "segment": "institutional",
+    "onboarded_on": "2019-03-19",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_096",
+    "name": "Shweta Nair",
+    "segment": "nri",
+    "onboarded_on": "2019-04-04",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_097",
+    "name": "Ravi Singh",
+    "segment": "retail",
+    "onboarded_on": "2019-04-21",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_098",
+    "name": "Jyoti Singh",
+    "segment": "hni",
+    "onboarded_on": "2019-05-07",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_099",
+    "name": "Nitin Singh",
+    "segment": "institutional",
+    "onboarded_on": "2019-05-23",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_100",
+    "name": "Swati Gupta",
+    "segment": "nri",
+    "onboarded_on": "2019-06-08",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_101",
+    "name": "Rahul Gupta",
+    "segment": "retail",
+    "onboarded_on": "2019-06-24",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_102",
+    "name": "Priya Gupta",
+    "segment": "hni",
+    "onboarded_on": "2019-07-11",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "distribution"
+  },
+  {
+    "id": "cli_103",
+    "name": "Amit Mehta",
+    "segment": "institutional",
+    "onboarded_on": "2019-07-27",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_104",
+    "name": "Sunita Mehta",
+    "segment": "nri",
+    "onboarded_on": "2019-08-12",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_105",
+    "name": "Vikas Mehta",
+    "segment": "retail",
+    "onboarded_on": "2019-08-28",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_106",
+    "name": "Neha Sharma",
+    "segment": "hni",
+    "onboarded_on": "2019-09-13",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_107",
+    "name": "Sanjay Sharma",
+    "segment": "institutional",
+    "onboarded_on": "2019-09-30",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_108",
+    "name": "Pooja Sharma",
+    "segment": "nri",
+    "onboarded_on": "2019-10-16",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_109",
+    "name": "Rajesh Patel",
+    "segment": "retail",
+    "onboarded_on": "2019-11-01",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_110",
+    "name": "Anita Patel",
+    "segment": "hni",
+    "onboarded_on": "2019-11-17",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_111",
+    "name": "Suresh Patel",
+    "segment": "institutional",
+    "onboarded_on": "2019-12-03",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_112",
+    "name": "Divya Reddy",
+    "segment": "nri",
+    "onboarded_on": "2019-12-20",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_113",
+    "name": "Ashok Reddy",
+    "segment": "retail",
+    "onboarded_on": "2020-01-05",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_114",
+    "name": "Kiran Reddy",
+    "segment": "hni",
+    "onboarded_on": "2020-01-21",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "distribution"
+  },
+  {
+    "id": "cli_115",
+    "name": "Manoj Nair",
+    "segment": "institutional",
+    "onboarded_on": "2020-02-06",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_116",
+    "name": "Shweta Nair",
+    "segment": "nri",
+    "onboarded_on": "2020-02-22",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_117",
+    "name": "Ravi Nair",
+    "segment": "retail",
+    "onboarded_on": "2020-03-10",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_118",
+    "name": "Jyoti Singh",
+    "segment": "hni",
+    "onboarded_on": "2020-03-26",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_119",
+    "name": "Nitin Singh",
+    "segment": "institutional",
+    "onboarded_on": "2020-04-11",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_120",
+    "name": "Swati Singh",
+    "segment": "nri",
+    "onboarded_on": "2020-04-27",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_121",
+    "name": "Rahul Gupta",
+    "segment": "retail",
+    "onboarded_on": "2020-05-14",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_122",
+    "name": "Priya Gupta",
+    "segment": "hni",
+    "onboarded_on": "2020-05-30",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_123",
+    "name": "Amit Gupta",
+    "segment": "institutional",
+    "onboarded_on": "2020-06-15",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_124",
+    "name": "Sunita Mehta",
+    "segment": "nri",
+    "onboarded_on": "2020-07-01",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_125",
+    "name": "Vikas Mehta",
+    "segment": "retail",
+    "onboarded_on": "2020-07-17",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_126",
+    "name": "Neha Mehta",
+    "segment": "hni",
+    "onboarded_on": "2020-08-03",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "distribution"
+  },
+  {
+    "id": "cli_127",
+    "name": "Sanjay Sharma",
+    "segment": "institutional",
+    "onboarded_on": "2020-08-19",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_128",
+    "name": "Pooja Sharma",
+    "segment": "nri",
+    "onboarded_on": "2020-09-04",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_129",
+    "name": "Rajesh Sharma",
+    "segment": "retail",
+    "onboarded_on": "2020-09-20",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_130",
+    "name": "Anita Patel",
+    "segment": "hni",
+    "onboarded_on": "2020-10-06",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_131",
+    "name": "Suresh Patel",
+    "segment": "institutional",
+    "onboarded_on": "2020-10-23",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_132",
+    "name": "Divya Patel",
+    "segment": "nri",
+    "onboarded_on": "2020-11-08",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_133",
+    "name": "Ashok Reddy",
+    "segment": "retail",
+    "onboarded_on": "2020-11-24",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_006",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_134",
+    "name": "Kiran Reddy",
+    "segment": "hni",
+    "onboarded_on": "2020-12-10",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_135",
+    "name": "Manoj Reddy",
+    "segment": "institutional",
+    "onboarded_on": "2020-12-26",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_136",
+    "name": "Shweta Nair",
+    "segment": "nri",
+    "onboarded_on": "2021-01-12",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_004",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_137",
+    "name": "Ravi Nair",
+    "segment": "retail",
+    "onboarded_on": "2021-01-28",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_005",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_138",
+    "name": "Jyoti Nair",
+    "segment": "hni",
+    "onboarded_on": "2021-02-13",
+    "risk_profile": "aggressive",
+    "adviser_id": "emp_006",
+    "service_kind": "distribution"
+  },
+  {
+    "id": "cli_139",
+    "name": "Nitin Singh",
+    "segment": "institutional",
+    "onboarded_on": "2021-03-01",
+    "risk_profile": "conservative",
+    "adviser_id": "emp_007",
+    "service_kind": "advisory"
+  },
+  {
+    "id": "cli_140",
+    "name": "Swati Singh",
+    "segment": "nri",
+    "onboarded_on": "2021-03-18",
+    "risk_profile": "moderate",
+    "adviser_id": "emp_008",
+    "service_kind": "advisory"
+  }
+]

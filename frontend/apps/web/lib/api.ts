@@ -43,13 +43,6 @@ export async function apiFetch<T>(
   path: string,
   init?: RequestInit,
 ): Promise<T> {
-  // Artificial delay to ensure our sleek AI Loader is visible for 3-4 seconds 
-  // on graph generations and other heavy computations, as requested.
-  const shouldDelay = path.includes("/graph") || path.includes("/lineage") || path.includes("/simulate") || path.includes("/obligations");
-  if (shouldDelay) {
-    await new Promise(resolve => setTimeout(resolve, 3500))
-  }
-
   const url = `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`
   let res: Response
   try {
@@ -584,6 +577,635 @@ export function getLineage(asOf?: string, signal?: AbortSignal): Promise<Lineage
 
 export function getFeed(asOf?: string, signal?: AbortSignal): Promise<RegulatorFeed> {
   return apiFetch<RegulatorFeed>(`/api/feed${qs({ as_of: asOf })}`, { signal })
+}
+
+// ---- PDF ingestion pipeline (Phase 2) ------------------------------------
+//
+// Nothing an ingestion run produces reaches the regulatory graph until
+// approveIngest() is called. Everything below the upload is a PROPOSAL.
+
+export type IngestState =
+  | "queued"
+  | "running"
+  | "preview"
+  | "approved"
+  | "discarded"
+  | "failed"
+
+export type DocKind =
+  | "master_circular"
+  | "circular"
+  | "amendment"
+  | "notification"
+  | "faq"
+  | "guidance_note"
+  | "consultation_paper"
+
+export type UnitRole =
+  | "norm"
+  | "condition"
+  | "exception"
+  | "deadline"
+  | "penalty"
+  | "definition"
+  | "cross_ref"
+  | "scope"
+
+export interface IngestAccepted {
+  ingest_id: string
+  job_id?: string
+  state: IngestState
+  duplicate: boolean
+  sha256: string
+  filename: string
+  page_count?: number
+  stages?: string[]
+}
+
+export interface IngestProgress {
+  stage: string
+  done: number
+  total: number
+  detail: string
+  index: number
+  count: number
+}
+
+export interface IngestStatus {
+  ingest_id: string
+  state: IngestState
+  stage: string
+  filename: string
+  sha256: string
+  doc_kind: string
+  error: string
+  stages: string[]
+  counts: {
+    clauses: number
+    obligations: number
+    semantic_units: number
+    resolved_references: number
+    dangling_references: number
+    rejected: number
+  }
+  progress?: IngestProgress
+}
+
+export interface CircularMeta {
+  circular_no: string
+  title: string
+  issued_on: string
+  effective_from: string
+  regulator: string
+  department: string
+  supersedes: string[] | null
+  amends: string[] | null
+  references: string[] | null
+  applies_to: string[] | null
+  doc_kind: DocKind
+  from_regex: string[] | null
+}
+
+export interface ProposedClause {
+  ID: string
+  ClauseRef: string
+  ParentID: string
+  Heading: string
+  Text: string
+  Ordinal: number
+}
+
+export interface ProposedObligation {
+  obligation: {
+    ID: string
+    ClauseID: string
+    Bearer: string
+    DeonticType: DeonticType
+    Condition: string
+    Deadline: string
+    SourceClauseRef: string
+    SourceSentence: string
+    Confidence: number
+    Status: ObligationStatus
+  }
+  clause_ref: string
+  clause_text: string
+}
+
+export interface ProposedUnit {
+  id: string
+  clause_id: string
+  ordinal: number
+  role: UnitRole
+  text: string
+  start_offset: number
+  end_offset: number
+}
+
+export interface DanglingReference {
+  id: string
+  clause_id: string
+  raw_text: string
+  kind: string
+  reason: string
+}
+
+export interface ProposedRelation {
+  id: string
+  from_circular: string
+  to_ref: string
+  kind: "supersedes" | "amends" | "references"
+}
+
+export interface IngestProposal {
+  sha256: string
+  filename: string
+  meta: CircularMeta
+  circular: { ID: string; Title: string; Regulator: string; IssuedOn: string }
+  clauses: ProposedClause[] | null
+  units: ProposedUnit[] | null
+  clause_refs: { from_clause_id: string; to_clause_id: string; raw_text: string }[] | null
+  dangling_references: DanglingReference[] | null
+  circular_relations: ProposedRelation[] | null
+  obligations: ProposedObligation[] | null
+  rejected: { clause_ref: string; reason: string }[] | null
+  degraded: boolean
+  extractor: string
+  compiler: string
+  /** Present only when this document amends one already in the graph. */
+  amendment?: AmendmentDiff
+}
+
+export interface IngestPreview {
+  ingest_id: string
+  state: IngestState
+  committed: boolean
+  proposal: IngestProposal
+}
+
+export interface IngestRunSummary {
+  id: string
+  sha256: string
+  filename: string
+  state: IngestState
+  stage: string
+  doc_kind: string
+  circular_id: string
+  created_at: string
+}
+
+/**
+ * uploadPdf posts the PDF and returns as soon as the run is queued. The
+ * pipeline runs server-side; progress arrives over ingestEventsUrl().
+ */
+export async function uploadPdf(file: File): Promise<IngestAccepted> {
+  const form = new FormData()
+  form.append("file", file)
+  const url = `${API_BASE_URL}/api/ingest`
+  let res: Response
+  try {
+    res = await fetch(url, { method: "POST", body: form })
+  } catch (cause) {
+    throw new ApiError(`network error contacting ${url}: ${(cause as Error).message}`)
+  }
+  if (!res.ok) {
+    // Stage 0 rejections carry a specific, actionable message (encrypted,
+    // scanned, too large) - surface it rather than a generic failure.
+    let detail = `upload failed (${res.status})`
+    try {
+      const body = (await res.json()) as { error?: string }
+      if (body.error) detail = body.error
+    } catch {
+      // fall through to the generic message
+    }
+    throw new ApiError(detail, res.status)
+  }
+  return (await res.json()) as IngestAccepted
+}
+
+export function getIngestStatus(
+  id: string,
+  signal?: AbortSignal,
+): Promise<IngestStatus> {
+  return apiFetch<IngestStatus>(`/api/ingest/${encodeURIComponent(id)}`, { signal })
+}
+
+export function listIngestRuns(
+  signal?: AbortSignal,
+): Promise<{ count: number; runs: IngestRunSummary[] | null }> {
+  return apiFetch(`/api/ingest`, { signal })
+}
+
+export function getIngestPreview(
+  id: string,
+  signal?: AbortSignal,
+): Promise<IngestPreview> {
+  return apiFetch<IngestPreview>(
+    `/api/ingest/${encodeURIComponent(id)}/preview`,
+    { signal },
+  )
+}
+
+export interface IngestApproveResult {
+  ingest_id: string
+  state: IngestState
+  circular_id: string
+  approved_by: string
+  approved_at: string
+  committed: {
+    clauses: number
+    obligations: number
+    units: number
+    relations: number
+    dangling: number
+  }
+}
+
+/** approveIngest is the human gate: the only path into the regulatory graph. */
+export function approveIngest(
+  id: string,
+  signedBy: string,
+  justification: string,
+): Promise<IngestApproveResult> {
+  return apiFetch<IngestApproveResult>(
+    `/api/ingest/${encodeURIComponent(id)}/approve`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ signed_by: signedBy, justification }),
+    },
+  )
+}
+
+export function discardIngest(id: string): Promise<{ ingest_id: string; state: IngestState }> {
+  return apiFetch(`/api/ingest/${encodeURIComponent(id)}`, { method: "DELETE" })
+}
+
+/** ingestEventsUrl is the SSE endpoint for live stage-by-stage progress. */
+export function ingestEventsUrl(id: string): string {
+  return `${API_BASE_URL}/api/ingest/${encodeURIComponent(id)}/events`
+}
+
+// ---- Enterprise graph & projection (Phase 3) ------------------------------
+//
+// The firm as queryable, as-of-able data. Every gap below is the RESULT of a
+// graph traversal, not a constant - change the seeded data and the gaps change.
+
+export interface EnterpriseFirm {
+  id: string
+  name: string
+  kind: string
+  pan: string
+  meta_json: string
+}
+
+export interface EnterpriseDepartment {
+  id: string
+  name: string
+  function: string
+  head_employee_id: string
+  head_name: string
+  headcount: number
+}
+
+export interface EnterpriseGap {
+  kind: string
+  title: string
+  detail: string
+  count: number
+  subject?: string
+  names?: string[] | null
+}
+
+export interface EnterpriseSystem {
+  id: string
+  kind: string
+  vendor: string
+  connector_id: string
+  criticality: string
+  owner_dept: string
+}
+
+export interface EnterpriseRegister {
+  id: string
+  kind: string
+  row_count: number
+  source_system: string
+  last_updated: string
+  owner_dept: string
+  stale_days: number
+}
+
+export interface EnterpriseEmployee {
+  id: string
+  name: string
+  role: string
+  department_id: string
+  department_name: string
+  email: string
+  certifications: string[] | null
+  depth: number
+}
+
+export interface EnterpriseSummary {
+  as_of: string
+  firm: EnterpriseFirm
+  departments: EnterpriseDepartment[] | null
+  counts: Record<string, number>
+  gaps: EnterpriseGap[] | null
+  systems: EnterpriseSystem[] | null
+  registers: EnterpriseRegister[] | null
+  org: EnterpriseEmployee[] | null
+}
+
+export interface EnterpriseClient {
+  id: string
+  name: string
+  segment: string
+  onboarded_on: string
+  risk_profile: string
+  adviser_id: string
+  adviser_name: string
+  service_kind: string
+  template_version: string
+  agreement_id: string
+}
+
+export interface EnterpriseDocument {
+  id: string
+  kind: string
+  title: string
+  version: number
+  owner_dept: string
+  owner_dept_name: string
+  status: string
+  last_reviewed: string
+  months_since_review: number
+  stale: boolean
+}
+
+export interface ObligationBinding {
+  obligation_id: string
+  target_type: string
+  target_id: string
+  target_label: string
+  confidence: number
+  human_confirmed: boolean
+  rationale: string
+}
+
+export interface ImpactedControl {
+  id: string
+  name: string
+  kind: string
+  owner_dept: string
+  owner_dept_name: string
+}
+
+export interface ImpactedDepartment {
+  id: string
+  name: string
+  head_name: string
+  reason: string
+}
+
+export interface EnterpriseImpact {
+  as_of: string
+  obligation_id: string
+  clause_ref: string
+  summary: string
+  bindings: ObligationBinding[] | null
+  controls: ImpactedControl[] | null
+  documents: EnterpriseDocument[] | null
+  registers: EnterpriseRegister[] | null
+  systems: EnterpriseSystem[] | null
+  clients: EnterpriseClient[] | null
+  departments: ImpactedDepartment[] | null
+  owners: EnterpriseEmployee[] | null
+  counts: Record<string, number>
+  unbound: boolean
+}
+
+export function getEnterpriseSummary(
+  asOf?: string,
+  signal?: AbortSignal,
+): Promise<EnterpriseSummary> {
+  return apiFetch<EnterpriseSummary>(
+    `/api/enterprise/summary${qs({ as_of: asOf })}`,
+    { signal },
+  )
+}
+
+export function getEnterpriseImpact(
+  obligationId: string,
+  asOf?: string,
+  signal?: AbortSignal,
+): Promise<EnterpriseImpact> {
+  return apiFetch<EnterpriseImpact>(
+    `/api/enterprise/impact${qs({ obligation_id: obligationId, as_of: asOf })}`,
+    { signal },
+  )
+}
+
+export function listEnterpriseClients(
+  params: { asOf?: string; segment?: string; adviser?: string; template?: string; limit?: string },
+  signal?: AbortSignal,
+): Promise<{ as_of: string; count: number; clients: EnterpriseClient[] | null }> {
+  return apiFetch(
+    `/api/clients${qs({
+      as_of: params.asOf,
+      segment: params.segment,
+      adviser: params.adviser,
+      template: params.template,
+      limit: params.limit,
+    })}`,
+    { signal },
+  )
+}
+
+export function listEnterpriseDocuments(
+  params: { asOf?: string; stale?: boolean },
+  signal?: AbortSignal,
+): Promise<{ as_of: string; count: number; documents: EnterpriseDocument[] | null }> {
+  return apiFetch(
+    `/api/documents${qs({ as_of: params.asOf, stale: params.stale ? "true" : undefined })}`,
+    { signal },
+  )
+}
+
+// ---- Amendment matcher (Phase 3, Stage 9) --------------------------------
+
+export type ChangeKind = "unchanged" | "modified" | "added" | "deleted"
+
+export interface ClauseChange {
+  kind: ChangeKind
+  new_clause_id?: string
+  new_clause_ref?: string
+  new_text?: string
+  old_clause_id?: string
+  old_clause_ref?: string
+  old_text?: string
+  score: number
+  cosine: number
+  jaccard: number
+  ref_equal: boolean
+  text_identical: boolean
+  rationale: string
+}
+
+export interface AmendmentDiff {
+  changes: ClauseChange[] | null
+  counts: Record<string, number>
+  reused_obligations: number
+}
+
+// ---- Workflows, connectors, regulatory corpus (Phase 4) ------------------
+
+export interface WorkflowTask {
+  id: string
+  workflow_id: string
+  title: string
+  detail: string
+  owner_role: string
+  owner_employee_id: string
+  owner_name: string
+  owner_unresolved: boolean
+  state: string
+  deadline: string
+  ordinal: number
+  depends_on: string[] | null
+}
+
+export interface WorkflowApproval {
+  approver: string
+  decision: string
+  note: string
+  decided_at: string
+}
+
+export interface GeneratedWorkflow {
+  id: string
+  template: string
+  title: string
+  obligation_id: string
+  clause_ref: string
+  verb: string
+  state: string
+  sla: string
+  rationale: string
+  generated_at: string
+  task_count: number
+  unresolved_owners: number
+  tasks?: WorkflowTask[]
+  approval?: WorkflowApproval
+}
+
+export function listWorkflows(
+  asOf?: string,
+  signal?: AbortSignal,
+): Promise<{
+  as_of: string
+  count: number
+  draft: number
+  workflows: GeneratedWorkflow[] | null
+  dispatch_note: string
+}> {
+  return apiFetch(`/api/workflows${qs({ as_of: asOf })}`, { signal })
+}
+
+export function getWorkflowTasks(
+  id: string,
+  asOf?: string,
+  signal?: AbortSignal,
+): Promise<GeneratedWorkflow> {
+  return apiFetch<GeneratedWorkflow>(
+    `/api/workflows/${encodeURIComponent(id)}/tasks${qs({ as_of: asOf })}`,
+    { signal },
+  )
+}
+
+export function approveWorkflow(
+  id: string,
+  approver: string,
+  note: string,
+): Promise<{ workflow: GeneratedWorkflow; dispatched: boolean; dispatch_note: string }> {
+  return apiFetch(`/api/workflows/${encodeURIComponent(id)}/approve`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ approver, note }),
+  })
+}
+
+export interface ConnectorDescriptor {
+  id: string
+  kind: string
+  vendor: string
+  mode: "mock" | "simulated" | "live"
+  read_only: boolean
+  scopes: string[]
+  rate_limit: { requests: number; per: string }
+  description: string
+  health: { ok: string; detail: string; checked_at: string }
+}
+
+export function listConnectors(
+  signal?: AbortSignal,
+): Promise<{
+  count: number
+  read_only_count: number
+  connectors: ConnectorDescriptor[]
+  guarantee: string
+}> {
+  return apiFetch(`/api/connectors`, { signal })
+}
+
+export interface CircularRelation {
+  kind: "supersedes" | "amends" | "references"
+  to_ref: string
+  to_circular: string
+}
+
+export interface ClauseLineageChange {
+  relation: ChangeKind
+  score: number
+  new_clause_id: string
+  old_clause_id: string
+  clause_ref: string
+  new_text: string
+  old_text: string
+}
+
+export interface RegulatoryFeedItem {
+  circular_id: string
+  title: string
+  regulator: string
+  issued_on: string
+  doc_kind: string
+  source: string
+  ingest_run_id?: string
+  ingest_state?: string
+  approved_by?: string
+  approved_at?: string
+  clauses: number
+  obligations: number
+  relations: CircularRelation[] | null
+  amendment?: {
+    counts: Record<string, number>
+    changes: ClauseLineageChange[] | null
+  }
+}
+
+export function getRegulatoryFeed(
+  asOf?: string,
+  signal?: AbortSignal,
+): Promise<{
+  as_of: string
+  count: number
+  circulars: RegulatoryFeedItem[] | null
+  runs: IngestRunSummary[] | null
+  monitoring_note: string
+}> {
+  return apiFetch(`/api/regulatory-feed${qs({ as_of: asOf })}`, { signal })
 }
 
 /** feedUrl / feedSchemaUrl are the raw endpoints (for "open raw" links). */

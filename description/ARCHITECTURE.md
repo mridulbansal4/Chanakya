@@ -487,6 +487,409 @@ tickets are drafted never filed, approval requires a human Ed25519 signature,
 and enforcement is done only by the deterministic OPA/Rego engine, staged
 audit → soft → hard.
 
+## 17. Rebuild Phase 1 - Foundation, bi-temporal versioning, ingestion core
+
+### Demo-critical fixes
+
+- **Artificial delay removed.** `lib/api.ts` had a hardcoded 3.5s `setTimeout`
+  on `/graph`, `/lineage`, `/obligations`, `/simulate`. Gone.
+- **CORS actually enforced.** `httpapi.originChecker` matches the request origin
+  exactly (scheme + host + port) against `Options.CORSOrigins`; the previous
+  `AllowOriginFunc` returned `true` unconditionally, making the configured
+  allowlist a no-op. An EMPTY allowlist preserves the permissive local-dev
+  behaviour but logs a warning ONCE at construction, not per request.
+- **`/regulatory-feed` copy is honest.** The nav hint, the screen banner, and the
+  in-screen inbox description now say "simulated ... live SEBI monitoring lands
+  in a later phase" instead of claiming CHANAKYA monitors SEBI.
+
+### Bi-temporal versioning (`0007_versioning.sql`, `store/versioning.go`)
+
+The four bi-temporal columns were decorative: every `UpsertX` did
+`ON CONFLICT(id) DO UPDATE`, and `tx_to`/`valid_to` were never assigned, so
+amending a circular DESTROYED the prior clause text.
+
+- `circular`, `clause` and `obligation` are rebuilt with a deterministic
+  surrogate primary key `row_uid = id || '@' || tx_from`; `id` becomes the
+  LOGICAL key shared by every version. A partial unique index
+  `UNIQUE(id) WHERE tx_to IS NULL` makes "at most one current version" a
+  database guarantee.
+- **Deliberate divergence from the phase prompt.** SQLite requires a foreign
+  key's parent columns to be covered by a NON-partial unique index; a partial one
+  fails with `foreign key mismatch` (verified empirically before designing the
+  migration). The prompt's fallback - a full `UNIQUE(id)` - is self-defeating,
+  since it forbids a second version. So the FK clauses on columns pointing at the
+  three versioned tables are dropped; the partial index plus store-level
+  validation replace them. FKs to the non-versioned tables (control, evidence,
+  policy) are unchanged. `TestCurrentRowUniqueness` documents and pins this.
+- The rebuild runs in the migration runner's single transaction under
+  `PRAGMA defer_foreign_keys`. `policy_eval`'s rows are parked in a
+  constraint-free table across the `policy` rebuild: dropping a parent records one
+  deferred violation per surviving child row, and that count is not cleared by
+  rebuilding the child afterwards.
+- `store.SupersedeAndInsert(ctx, tx, table, id, next, at)` closes the current
+  row's system-time interval and inserts the new version as current knowledge.
+  The table name is resolved through a CLOSED lookup (a table name cannot be a
+  `?` placeholder), a nonexistent id is an explicit error rather than a silent
+  insert, and an obligation version is re-validated for mandatory provenance.
+  Existing `UpsertX` call sites are untouched; they now target the current
+  version via `ON CONFLICT(id) WHERE tx_to IS NULL`.
+
+### PDF ingestion core - `internal/ingest`, Stages 0-2 (`0008_ingest.sql`)
+
+Deterministic front-end; no LLM. Its only output contract is `[]domain.Clause`
+(+ a minimal `Circular`), exactly what `compiler.CompileClause` consumes.
+
+- **Stage 0 - intake.** `RawDoc{SHA256, Bytes, Filename, PageCount, MIME}`.
+  Rejects >25 MiB, non-PDF, and encrypted documents with DISTINCT sentinel errors
+  (encryption is detected from pdfcpu's `/Encrypt` entry, never inferred from a
+  parse failure, so "encrypted" and "damaged" are never confused). A document
+  with under 50 extractable characters is rejected as scanned - a product
+  decision, since OCR output cannot support the verbatim-citation guarantee.
+  Bytes are stored content-addressed in `document_blob`.
+- **Stage 1 - layout.** `PageExtractor` interface with three registered
+  implementations: `RSCExtractor` (default, `rsc.io/pdf`, pure Go, gives
+  positions + font sizes; each page read under `recover` so one malformed page
+  degrades instead of failing the document), `ExternalCmdExtractor`
+  (`pdftotext -layout`, opt-in via `CHANAKYA_PDF_EXTRACTOR`, clear error when the
+  binary is absent, never a silent fallback), and `OCRExtractor` returning
+  `ErrNotEnabled`. Text is NFKC-normalised and typographic quotes/dashes folded
+  to ASCII; glyph fragments are coalesced into line runs, with a wide gap ending
+  a run so table columns survive.
+- **Stage 2 - structure.** Modal-font-size body baseline, a precedence-ordered
+  numbering lexer (deepest-first, so "3.1.1" is not read as "3"), roman-vs-alpha
+  `(i)` resolved by sequence continuity and defaulted to alpha at REDUCED
+  confidence when there is no preceding sibling, independent numbering-vs-indent
+  level votes with disagreement RECORDED as `Confidence`, a stack machine
+  emitting parents before children, provisos/explanations/illustrations as
+  siblings under the clause they qualify, footnotes attached to their host
+  clause, and table detection gated on BOTH >=3 rows AND consistent aligned
+  columns (a table's serialised text stays a verbatim superset of the page runs).
+  An unrecognisable document degrades to a flat `p{page}.¶{n}` list rather than
+  failing.
+
+**Proven:** `go vet`/`build`/`test` all green; frontend `typecheck` + `build`
+green. Store tests: superseding a clause then querying as-of a system time
+*before* the supersession still returns the ORIGINAL text (the regression guard
+for the destroyed-history defect); exactly one current version survives; a
+nonexistent id, an unknown table name, and a wrong `next` type are all rejected.
+CORS tests: an allowlisted origin is echoed back, a non-allowlisted one is not,
+and neither trailing slashes nor case are implicitly normalised. Ingest tests:
+a 21-node golden clause tree (chapters, clauses, a proviso, a lettered list, an
+explanation, a table) reproduced byte-for-byte and stable across repeated runs;
+clause ordering satisfies the parent-before-child FK requirement. The migration
+was applied to a copy of the real `chanakya.db` and every existing endpoint
+(`/api/posture`, `/api/evidence`, `/api/lineage`, `/api/tickets`, `/api/feed`,
+`/api/policies`) still serves correctly.
+
+**Known limitation, recorded rather than worked around:** neither
+`Documents/MITC_Circular_17Feb2025.pdf` nor `Documents/IA_Master_Circular_2025.pdf`
+can be a parsing fixture - both are image-only "Microsoft: Print To PDF" scans
+with zero font objects, i.e. exactly the class Stage 0 refuses.
+`TestMITCIsRejectedAsScanned` pins that refusal. The remaining `Documents/*.pdf`
+are ReportLab output using the `ASCII85Decode` stream filter, which `rsc.io/pdf`
+does not implement (it panics), so they also yield no text. The golden fixture is
+therefore a digitally-generated circular built in `pdffixture_test.go` from the
+repo's own `ia_master_circular.json` clause text, so the golden input is
+reviewable as source rather than committed as a binary.
+
+**Safety invariants preserved:** ingestion produces a faithful transcription -
+normalised for Unicode form and whitespace only, never rewritten - because the
+downstream citation gate proves an obligation is real by substring-matching
+against this text. No LLM runs in Stages 0-2. Nothing is enforced, no evidence is
+touched, and superseding preserves history instead of overwriting it.
+
+## 18. Rebuild Phase 2 - Async ingestion runtime, Stages 3-6, the approval gate
+
+**The invariant this phase adds: an uploaded circular does not enter the graph
+until a human approves it.** Everything the pipeline produces is a PROPOSAL,
+held in `ingest_run.proposal_json`, outside `circular`/`clause`/`obligation`.
+
+### Job queue + worker pool (`0011_jobs.sql`, `internal/jobs`)
+
+- A real run with a live model is 40-150s. It cannot live in an HTTP request:
+  the client would time out and, because `store.go` pins `MaxOpenConns(1)`, a
+  long handler would block every other request behind it.
+- `job` is a queue inside SQLite - no broker, so the job history lives in the
+  same file as the audit trail it belongs to. Rows are NEVER deleted.
+- `store.ClaimJob` is a single `UPDATE ... RETURNING` so two workers cannot take
+  the same job. The pool runs `N = min(4, NumCPU)` workers.
+- **Every stage runs under `recover()`**: a panic marks THAT job failed, naming
+  the stage it died in, and leaves the pool and other in-flight jobs untouched.
+- `AcquireLLM`/`ReleaseLLM` bound concurrent model calls (4) across ALL workers,
+  so a 40-clause circular does not open 40 connections to a rate-limited API.
+- Progress fan-out is **non-blocking**: a browser tab that closed mid-ingestion
+  cannot stall the pipeline. `Subscribe` replays the last known state, so a
+  reconnecting client catches up instead of restarting anything.
+
+### Stages 3-6 (`0012_ingest_pipeline.sql`)
+
+- **Stage 3 - metadata.** Deterministic regex pass (circular number, dates,
+  department, "in supersession of" / "read with" / "stands modified", applies-to,
+  `DocKind`), then an LLM pass for gaps only. **Precedence is fixed**: the regex
+  pass always wins - a model cannot overwrite a circular number read off the
+  page. `DocKind` is never taken from the model, because it decides how the rest
+  of the pipeline treats the document (an `faq` produces no obligations at all).
+  LLM output is schema-validated (`meta_schema.json`, `additionalProperties:false`)
+  before any field is used; with no model configured Stage 3 is regex-only and
+  fully correct. `llm.JSONCompleter` adds a general strict-JSON completion behind
+  the same safety model as `Extractor`.
+- **Stage 4 - normalization.** Whitespace/quote/dash canonicalisation and Indian
+  numeric forms (`₹3,00,00,000` / `Rs. 3,00,00,000` / `INR 3 crore` → 30000000
+  INR). The Indian digit grouping is not the international one: read with a
+  Western thousands assumption, three crore becomes three hundred thousand.
+  Output goes to a **parallel** field - `Clause.Text` is never touched, because
+  the citation gate substring-matches against it. The whitespace rule is
+  identical to `compiler.normalizeWS`, not wider.
+- **Stage 5 - semantic segmentation.** Splits clauses on discourse markers
+  (`provided that`, `unless`, `except`, `subject to`, `notwithstanding`, ...)
+  into units tagged `norm|condition|exception|deadline|penalty|definition|
+  cross_ref|scope`. Each unit keeps **character offsets into its parent clause**,
+  so it is provably a slice and not a paraphrase. Overlapping markers do not
+  compound (`provided further that` is not also cut at `provided that`), and
+  sentence boundaries no longer split on `3.1` or `Rs.` the way
+  `llm.splitSentences` did.
+- **Stage 6 - cross references.** Resolves `clause 3.1` intra-document (reusing
+  `normalizeClauseRef`'s vocabulary); `regulation 15` is external and
+  `the said circular` is anaphoric, so both become **`dangling_reference` rows**
+  rather than guessed edges. Cycles record each edge once and stop. Nothing is
+  silently dropped: a graph that looks complete but is not is worse than one
+  that admits its gaps.
+
+### Preview + approval gate
+
+- `POST /api/ingest` runs Stage 0 synchronously (its rejections are answers the
+  user needs now) and returns **202 with an ingest_id immediately**. Content
+  addressing makes duplicate handling exact: the same bytes already queued or
+  running return the EXISTING run.
+- `GET /api/ingest/:id/events` is SSE. It is exempted from the router's 30s
+  timeout, and a dropped connection never cancels the run - the reconnect path is
+  `GET /api/ingest/:id`.
+- `POST /api/ingest/:id/approve` is the gate: named approver + >=20-char
+  justification, then **one transaction** commits circular, clauses, obligations,
+  embeddings, semantic units, relations, dangling references and the audit
+  record. On failure nothing partial enters the graph and the run is recorded as
+  failed with its stage. A second approve, or an approve after discard, is a
+  409 - never a silent no-op, never a second commit.
+
+**Proven:** `go vet`/`build`/`test` and web `typecheck`/`build` all green.
+Store tests: the graph is empty before approve and holds 1 circular / 2 clauses /
+1 obligation after; a forced mid-commit failure leaves it **completely**
+unchanged and records the run failed; double-approve and approve-after-discard
+both return `ErrRunSettled`; a duplicate upload reuses the run; `ClaimJob` is
+exclusive; job rows are retained. Pool tests: a panicking job is marked failed
+**naming its stage** while a sibling job completes normally; an unread subscriber
+does not stall the pipeline. Stage tests cover the fixed metadata precedence
+(a stub model's fabricated circular number does NOT overwrite the regex value),
+schema rejection of an unknown `"exec"` field, six Indian-numeral forms, unit
+offsets that literally slice their parent, nested provisos, dangling references
+and reference cycles.
+
+**Live, against a running server with a real Gemini extractor:** upload → 202 in
+milliseconds; a duplicate upload returns the same `ingest_id`; SSE streamed all
+nine stages (`intake → layout → structure → metadata → normalize → segment →
+cross_reference → compile → ready_for_review`); the run produced 22 clauses, 20
+obligations, 25 semantic units, 1 resolved and 2 dangling references, and
+correctly identified the document as a `master_circular`
+(`SEBI/HO/IMD/IMD-PoD-1/P/CIR/2024/49`, issued 2024-05-15); `/api/posture`
+showed **10 obligations before approve and 26 after**; a 19-character
+justification returned 400; a second approve returned 409; and a blast-radius
+query against a newly-ingested clause returned 200, confirming the embeddings
+committed inside the approval transaction are live.
+
+**Two defects found by that live run and fixed:**
+1. The Phase 1 table rebuild silently dropped `obligation.embedding_json`, a
+   column `0003` had added by `ALTER TABLE`. `TestRebuiltTablesKeepEveryColumn`
+   now asserts the full column list of every rebuilt table.
+2. Document front matter (issuing authority, circular number, date line) sits
+   before the first numbered clause and was being discarded, leaving Stage 3
+   nothing to read. It is now captured as an explicit `preamble` node.
+
+**Safety invariants preserved:** the pipeline writes NO graph data; only
+`ApproveIngestRun` does, and only a human calls it. Extractor and completer output
+is schema-validated DATA. Every proposed obligation carries its verbatim source
+sentence, and the store re-validates mandatory provenance one last time inside
+the commit transaction.
+
+## 19. Rebuild Phase 3 - Enterprise graph, projection, amendment matching
+
+This is where the product's central claim stops being an assertion: a real
+company changes when a regulation changes.
+
+### The firm as data (`0009_enterprise.sql`, `internal/fixtures/enterprise/`)
+
+- 15 new bi-temporal tables (`department`, `employee`, `client`, `agreement`,
+  `document`, `register`, `system`, `workflow`, `task`, `approval`, `risk`,
+  `training`, `communication`, `calendar_event`, plus `binds_to`). Workflow/task/
+  approval get their final shape now so Phase 4 needs no migration.
+- **Two namespaces, one seam.** The regulatory graph (external, immutable,
+  regulator-authored) and the enterprise graph (internal, mutable, firm-authored)
+  stay separate. They join at `control` and at `binds_to` - and `binds_to`
+  carries a confidence and a `human_confirmed` flag, because a guess about which
+  internal policy governs a clause must never be indistinguishable from the
+  clause itself.
+- 12 embedded fixture files (Alpha Wealth Advisors, SEBI reg INA000000001,
+  Mumbai, inc. 2019): 8 departments, 24 employees incl. Priya Menon as Principal
+  Officer & Compliance Officer, 140 clients, 22 documents, 7 registers, 7
+  systems, 14 risks, ~90 communications.
+- **Recency is stored as an OFFSET, not a date.** "Reviewed 14 months ago" is the
+  fact; the calendar date depends on when you look. This was found the hard way -
+  with absolute dates baked in, every policy in the firm went overdue once a year
+  passed and the single deliberate annual-review breach was buried under 21
+  accidental ones.
+
+### The deliberate gaps - all discovered BY QUERY
+
+None is recorded anywhere as a problem; each is what a traversal returns.
+
+| Gap | How it is found |
+| --- | --- |
+| 118 clients on the superseded agreement template | `client ⋈ agreement` filtered to the in-force agreement |
+| 3 employees without current training | `training` rows in the latest period with no completion date |
+| 1 adviser serving both advisory and distribution clients | group `client` by adviser, count distinct service kinds |
+| complaint register 90 days stale | register freshness |
+| cybersecurity policy 14 months since review | document review recency |
+
+The 22 re-papered clients hold **two** agreement rows - the original, closed in
+world time on the re-papering date, and its replacement. Modelling it as a
+supersession rather than "these clients were always on v2" is what makes the
+time-travel claim real.
+
+### Projection (`internal/enterprise`)
+
+- `Project` scores an obligation's clause text against firm objects using a
+  small, readable topic table rather than an embedding lookup: a compliance
+  officer must be able to see WHY a binding was proposed, and "cosine 0.41" does
+  not tell them. Bindings below 0.25 confidence are not recorded at all.
+- `ImpactOf` traverses obligation → {control, binds_to} → {department, system} →
+  named head, and resolves the affected client population as-of the query date.
+  It returns **names, not counts**. An unbound obligation is reported as unbound -
+  an empty blast radius is a real answer, not a failed query.
+- New endpoints: `GET /api/enterprise/summary`, `GET /api/enterprise/impact`,
+  `GET /api/clients` (incl. `?impacted_by=`), `GET /api/documents?stale=true`.
+- New screen `app/enterprise/page.tsx`.
+
+### Stage 9 - the amendment matcher (`internal/ingest/amendment.go`)
+
+`score = 0.45·cosine + 0.35·jaccard(word trigrams) + 0.20·refEquality`, with the
+thresholds applied exactly: `≥0.92` **and byte-identical text** → unchanged;
+`0.55 ≤ score < 0.92` → modified; `<0.55` → added. **Both conditions are required
+for `unchanged`** - two clauses can score 0.95 and still differ by the one word
+that changes what the firm must do. `deleted` requires the document to actually
+supersede its predecessor; inferring a deletion from a document that merely
+references another would retire live regulation. Many-to-one takes the single
+best match with a deterministic tie-break (ref equality, then lowest `row_uid`) -
+never a multi-way merge.
+
+Every classification is a PROPOSAL. It lands in the Phase 2 preview queue with
+old and new text side by side, and only approval applies it - at which point a
+`modified` clause goes through `SupersedeAndInsert` rather than being overwritten.
+
+**Proven:** `go vet`/`test` and web `typecheck`/`build` green. Tests pin the exact
+fixture counts (140 clients, 22 on v2 → 118 on v1, 3 training gaps, 14 risks, 24
+employees), assert each gap is found by query, prove the org-chart CTE terminates
+**with a manager cycle deliberately introduced**, and check that as-of a
+pre-re-papering date all 140 clients come back on v1 and none on v2.
+
+**Live, against a running server:** `/api/enterprise/summary` returns Alpha Wealth
+with exactly 6 gaps - 118 clients, 3 named employees (Aditya Joshi, Deepa Shetty,
+Nikhil Bose), Vikram Rao's segregation breach, 1 stale register, 1 stale policy.
+`/api/enterprise/impact` for clause 5.1 returns **118 named clients with their
+named advisers**, three owning departments each with its named head (Arjun Desai,
+Farida Merchant, Manish Gupta), and the Records Retention System control.
+Uploading an amended circular produced **20 unchanged / 2 modified / 1 added,
+with 20 obligations reused without re-extraction**; clause 5.1 scored **0.928 -
+above the unchanged threshold - and was still classified `modified` because the
+text differs (5 years → 8 years)**, exactly the safety property. After approval
+the database holds two versions of clause 5.1, and the superseded one still reads
+"5 years".
+
+**Safety invariants preserved:** the projection layer INFERS and says so
+(confidence + `human_confirmed`, which only a person can set and which a re-run
+never clears). Nothing here enforces anything or writes to a firm system. The
+amendment matcher proposes; the human gate applies.
+
+## 20. Rebuild Phase 4 - Workflows, the real feed, connectors, testing corpus
+
+### Workflow synthesis (`0010_workflow.sql`, `internal/workflow`)
+
+- **Verb-driven, not free generation.** A closed vocabulary of 25 regulatory
+  verbs (`maintain`, `retain`, `disclose`, `notify`, ...) selects one of 8
+  reviewed templates through a fixed LOOKUP TABLE. The mapping from a regulatory
+  act to an operational response is a decision a compliance professional made
+  once and can review - not something inferred per obligation. Synthesis needs no
+  LLM at all, which is what makes it unit-testable.
+- **An unrecognised verb goes to the review queue as unclassified.** It is not
+  mapped to the nearest-looking template and not silently dropped.
+- `owners.go` resolves each task's role to a **real employee** through Phase 3's
+  enterprise graph. A role with no resolvable department head leaves the task
+  UNASSIGNED and flagged - assigning an arbitrary employee to satisfy a non-null
+  column would put a real person's name against work nobody agreed they own.
+- **Everything is `state='draft'`**, enforced again at the store boundary
+  regardless of what the synthesis layer produced. Approving a workflow records a
+  human decision and dispatches NOTHING: no email, no ticket, no calendar invite.
+- New endpoints `GET /api/workflows`, `GET /api/workflows/:id/tasks`,
+  `POST /api/workflows/:id/approve`; new screen `app/workflows/page.tsx`.
+
+### `/regulatory-feed` rewritten on real data
+
+`lib/amendment-sim.ts` (281 lines of hardcoded MITC data) and the 668-line
+`components/amendment/steps.tsx` that consumed it are **deleted**. The screen now
+renders `GET /api/regulatory-feed`: which circulars the graph holds, how each
+arrived (ingested upload vs seeded fixture), its `circular_relation` edges, and -
+for an amendment - the `clause_lineage` diff with both texts, where the OLD text
+comes from the superseded clause version. The "CHANAKYA does not poll SEBI"
+statement is served by the API rather than written into the page, so it cannot
+drift from what the system does.
+
+### Connectors (`internal/connect`)
+
+**Read-only enforced by the TYPE SYSTEM, not by convention.** The `Connector`
+interface exposes exactly three methods - `Descriptor`, `Health`, `Fetch`. There
+is no `Write`, no `Send`, no `Delete`: not unimplemented, ABSENT. A connector
+cannot write to a customer system because the vocabulary to do so does not exist
+in the interface it must satisfy. `TestConnectorInterfaceHasNoWriteMethod`
+asserts this reflectively, so adding one would fail CI.
+
+14 adapters plus a webhook receiver (Gmail, Outlook, both calendars, Drive,
+OneDrive, SharePoint, Dropbox, Jira, Slack, Teams, Notion, Confluence, internal
+REST), all `mode: mock` reading Phase 3's seeded data with **zero network calls**.
+`SelectConnector` mirrors `llm.SelectExtractor`; a configured live credential
+returns an **explicit error** rather than silently serving mock data as though it
+came from the firm's real systems. An unsupported query kind returns a typed
+error and an unwired data source returns an empty STALE result - neither
+fabricates records, because invented evidence in a compliance audit trail is the
+worst failure this system could have.
+
+### Testing corpus (`testdata/`, `internal/corpus`)
+
+~20 documents, not 45. `manifest.json` carries one entry per document
+(`governed_by`, `provides_evidence_for`, `stale_if_clause_amended`) plus the
+**expected value of every deliberate gap**, so CI regression-tests the demo
+NARRATIVE: if a fixture refactor turns the 118-client gap into 117, everything
+still compiles and every other test passes while the product's central claim has
+silently changed. Assertions: every manifest document exists, every
+obligation-bearing clause has a mapped document, every control has evidence, and
+every seeded gap still reports its exact expected value.
+
+**Adversarial test.** A corpus document embeds a prompt-injection payload. Three
+independent guards are asserted: the strict schema rejects the requested shape
+(`additionalProperties:false` kills `exec`), the citation gate makes a fabricated
+obligation impossible, and nothing arrives approved. Documented in the README -
+including the honest finding that the extractor DOES quote the injected sentence,
+because it is genuinely in the document, and that this is the citation gate
+working rather than failing.
+
+**Proven live:** `/api/connectors` → **15/15 read-only**, all mock, all healthy.
+`/api/workflows` → **10 draft workflows / 40 draft tasks**, verb-selected
+(`certify`→Attestation, `disclose`→Policy update + Client notification), owners
+resolved to Priya Menon and Manish Gupta by name. A 2-character note → 400; a
+valid approval → 200 with `dispatched:false` and **0 tasks moved out of draft**;
+a second approval → 409. After ingesting an amended circular, `/api/regulatory-feed`
+shows three circulars with their real relations and the actual recorded diff
+(`added: 1, modified: 2, unchanged: 20`; clause 5.1 at score 0.928).
+`go vet ./...`, `go test ./...` and the frontend `typecheck`/`build` all pass with
+`amendment-sim.ts` gone.
+
 ---
 
 ## Build & test summary

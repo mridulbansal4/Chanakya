@@ -202,6 +202,14 @@ func EnsureSeeded(ctx context.Context, st *store.Store) (bool, error) {
 		}
 	}
 
+	// The enterprise graph is seeded independently of the regulatory one: it is
+	// the FIRM's state, not the regulator's, and it must be present even on a
+	// database that already has circulars (an upgrade from a pre-Phase-3 build).
+	// SeedEnterprise is idempotent, so running it every boot is safe.
+	if err := SeedEnterprise(ctx, st, now); err != nil {
+		return false, fmt.Errorf("seed enterprise graph: %w", err)
+	}
+
 	// If obligations already exist, the store is fully bootstrapped - nothing to
 	// do. Otherwise (fresh, or a prior partial seed) run the compile step.
 	obls, err := st.ListObligations(ctx, store.ObligationQuery{AsOf: now})
@@ -209,6 +217,18 @@ func EnsureSeeded(ctx context.Context, st *store.Store) (bool, error) {
 		return false, fmt.Errorf("check obligations: %w", err)
 	}
 	if seededData && len(obls) > 0 {
+		// Obligations exist but the projection may not (an upgrade from a
+		// pre-Phase-3 database), so make sure the firm-side bindings are there.
+		if n, err := st.CountBindings(ctx); err != nil {
+			return false, fmt.Errorf("count bindings: %w", err)
+		} else if n == 0 {
+			if _, err := ProjectObligations(ctx, st, now); err != nil {
+				return false, err
+			}
+			if _, err := GenerateWorkflows(ctx, st, now); err != nil {
+				return false, err
+			}
+		}
 		return false, nil
 	}
 
@@ -220,5 +240,19 @@ func EnsureSeeded(ctx context.Context, st *store.Store) (bool, error) {
 	if _, err := Compile(ctx, st, extractor, now); err != nil {
 		return false, err
 	}
+	if _, err := ProjectObligations(ctx, st, now); err != nil {
+		return false, err
+	}
+	wf, err := GenerateWorkflows(ctx, st, now)
+	if err != nil {
+		return false, err
+	}
+	if len(wf.Unclassified) > 0 {
+		// Surfaced, never silent: these obligations had no act in the closed
+		// verb vocabulary and need a human to classify them.
+		log.Printf("chanakya: %d obligation(s) unclassified for workflow synthesis (clauses %v) - routed to review",
+			len(wf.Unclassified), wf.Unclassified)
+	}
+	log.Printf("chanakya: generated %d draft workflows / %d draft tasks", wf.Workflows, wf.Tasks)
 	return true, nil
 }
