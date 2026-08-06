@@ -118,21 +118,6 @@ export default function ConnectorsPage() {
       {connectors.isLoading && (
         <p className="mt-4 text-sm text-fg-muted">Loading the registry...</p>
       )}
-
-      {connectors.isError && (
-        <div className="mt-4 rounded-md border border-risk/40 bg-risk/10 p-4 text-sm text-risk">
-          <p className="font-medium">Failed to load connectors</p>
-          <p className="mt-1 text-xs text-fg-muted">
-            {(connectors.error as Error)?.message || "Could not connect to the CHANAKYA API server."}
-          </p>
-          <button
-            onClick={() => connectors.refetch()}
-            className="mt-3 rounded bg-risk/20 px-3 py-1 text-xs font-medium text-risk hover:bg-risk/30 cursor-pointer"
-          >
-            Retry
-          </button>
-        </div>
-      )}
     </div>
   )
 }

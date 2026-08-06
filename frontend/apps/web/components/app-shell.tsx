@@ -2,12 +2,10 @@
 
 import * as React from "react"
 import type { ReactNode } from "react"
-import { createPortal } from "react-dom"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
-import { motion, useReducedMotion, AnimatePresence } from "framer-motion"
-import { ChevronDown, Zap, ShieldCheck, Code2, History, FileCode } from "lucide-react"
+import { motion, useReducedMotion } from "framer-motion"
 
 import { AsOfControl } from "@/components/as-of-control"
 import { HelpMenu } from "@/components/help-menu"
@@ -29,23 +27,20 @@ const OFFICER = {
   firm: "Acme Investment Advisers",
 }
 
-const PRIMARY_NAV = [
+const NAV = [
   { href: "/", label: "Overview", hint: "Your compliance dashboard at a glance." },
-  { href: "/ingest", label: "Ingest", hint: "Upload a SEBI circular and watch the pipeline run." },
-  { href: "/regulatory-feed", label: "Feed", hint: "Every circular in the corpus and clause diffs." },
-  { href: "/workflows", label: "Workflows", hint: "Draft task DAGs with named owners." },
-  { href: "/connectors", label: "Connectors", hint: "Read-only evidence connectors." },
-  { href: "/enterprise", label: "Enterprise", hint: "Your firm as queryable data." },
-  { href: "/register", label: "Register", hint: "Obligations extracted from regulations." },
-  { href: "/review", label: "Review Queue", hint: "Obligations awaiting human sign-off." },
-]
-
-const MORE_NAV = [
-  { href: "/amendments", label: "Blast Radius", hint: "Compute impact of clause amendments.", icon: Zap },
-  { href: "/evidence", label: "Evidence & Gaps", hint: "Evidence coverage and remediation tickets.", icon: ShieldCheck },
-  { href: "/policy", label: "Policy", hint: "Compile signed obligations to Rego rules.", icon: Code2 },
-  { href: "/audit", label: "Audit", hint: "Reconstruct full compliance trail as of any date.", icon: History },
-  { href: "/feed", label: "Regulator Feed API", hint: "Machine-readable feed for regulators.", icon: FileCode },
+  { href: "/ingest", label: "Ingest", hint: "Upload a SEBI circular and watch the pipeline run - approval required." },
+  { href: "/regulatory-feed", label: "Regulatory Feed", hint: "Every circular in the corpus, how it arrived, and what an amendment changed." },
+  { href: "/workflows", label: "Workflows", hint: "Draft task DAGs generated from approved obligations, with named owners." },
+  { href: "/connectors", label: "Connectors", hint: "Every evidence connector - all read-only, enforced by the type system." },
+  { href: "/enterprise", label: "Enterprise", hint: "Your firm as data - people, clients, documents, systems - and where the gaps are." },
+  { href: "/register", label: "Register", hint: "Every obligation extracted from the regulation, with its source." },
+  { href: "/amendments", label: "Blast Radius", hint: "See everything a regulation change affects." },
+  { href: "/evidence", label: "Evidence & Gaps", hint: "Which obligations are backed by evidence, and where the gaps are." },
+  { href: "/review", label: "Review Queue", hint: "Obligations awaiting your approval - your daily inbox." },
+  { href: "/policy", label: "Policy", hint: "Turn approved obligations into automated compliance checks." },
+  { href: "/audit", label: "Audit", hint: "Reconstruct the full compliance trail as of any date." },
+  { href: "/feed", label: "Feed", hint: "The machine-readable feed a regulator's systems can consume." },
 ]
 
 const BANNER: Record<string, ReactNode> = {
@@ -75,40 +70,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { asOf } = useAsOf()
   const reduce = useReducedMotion()
 
-  const [moreOpen, setMoreOpen] = React.useState(false)
-  const [coords, setCoords] = React.useState<{ top: number; right: number } | null>(null)
-  const buttonRef = React.useRef<HTMLButtonElement>(null)
-  const menuRef = React.useRef<HTMLDivElement>(null)
-
-  const toggleMore = () => {
-    if (!moreOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect()
-      setCoords({
-        top: rect.bottom + 6,
-        right: window.innerWidth - rect.right,
-      })
-      setMoreOpen(true)
-    } else {
-      setMoreOpen(false)
-    }
-  }
-
-  React.useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (
-        moreOpen &&
-        buttonRef.current &&
-        !buttonRef.current.contains(e.target as Node) &&
-        menuRef.current &&
-        !menuRef.current.contains(e.target as Node)
-      ) {
-        setMoreOpen(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [moreOpen])
-
   const reviewCount = useQuery({
     queryKey: ["review-queue", asOf],
     queryFn: ({ signal }) => getReviewQueue(asOf, signal),
@@ -129,45 +90,48 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const banner = bannerFor(pathname)
   const pending = reviewCount.data ?? 0
-  const isMoreActive = MORE_NAV.some((item) =>
-    item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
-  )
 
   return (
     <div className="flex h-svh flex-col overflow-hidden bg-canvas text-fg">
-      <header className="z-30 relative flex h-14 shrink-0 items-center justify-between border-b border-line-subtle bg-sunken/90 backdrop-blur-md px-3 lg:px-4 shadow-elev-2 gap-2">
-        {/* Glowing bottom border accent */}
-        <div className="absolute inset-x-0 bottom-0 h-[1.5px] bg-gradient-to-r from-transparent via-accent to-transparent opacity-80 pointer-events-none" />
+      {/*
+        The header uses bg-sunken/90 backdrop-blur-md with high-contrast text and icons
+        matching both dark and light modes.
+      */}
+      <header className="z-30 relative flex h-14 shrink-0 items-center gap-4 border-b border-line-subtle bg-sunken/90 backdrop-blur-md px-4 lg:px-5 shadow-elev-2">
+        {/* Animated rotating/glowing bottom border accent line */}
+        <div className="absolute inset-x-0 bottom-0 h-[1.5px] bg-gradient-to-r from-transparent via-accent to-transparent opacity-80 animate-pulse pointer-events-none" />
 
-        {/* Logo */}
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2 rounded transition-opacity hover:opacity-90 pr-3 border-r border-line-subtle/50"
+          className="flex shrink-0 items-center gap-2.5 rounded group transition-opacity hover:opacity-90"
           aria-label="CHANAKYA - go to overview"
         >
+          {/* Dark mode logo */}
           <img
             src="/logo-dark.png"
             alt="CHANAKYA"
-            className="hidden dark:block h-6 w-auto object-contain"
+            className="hidden dark:block h-7 w-auto object-contain"
           />
+          {/* Light mode logo */}
           <img
             src="/logo-light.png"
             alt="CHANAKYA"
-            className="block dark:hidden h-6 w-auto object-contain"
+            className="block dark:hidden h-7 w-auto object-contain"
           />
-          <span className="text-sm tracking-tight font-bold text-fg">CHANAKYA</span>
+          <span className="text-headline-sm tracking-tight font-bold text-fg">CHANAKYA</span>
         </Link>
 
-        {/* Navigation Bar */}
+        {/*
+          Nine destinations with active indicator and badges
+        */}
         <nav
           aria-label="Primary"
-          className="no-scrollbar flex min-w-0 flex-1 items-center gap-1 overflow-x-auto py-1"
+          className="no-scrollbar flex min-w-0 flex-1 items-center justify-center gap-0.5 overflow-x-auto"
         >
-          {PRIMARY_NAV.map((item) => {
+          {NAV.map((item) => {
             const active =
               item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
             const badge = item.href === "/review" && pending > 0 ? pending : null
-
             return (
               <Link
                 key={item.href}
@@ -175,24 +139,29 @@ export function AppShell({ children }: { children: ReactNode }) {
                 title={item.hint}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative inline-flex h-8 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-xs font-medium tracking-tight border transition-all duration-200",
+                  "relative inline-flex h-8.5 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-[13px] font-medium tracking-tight border",
+                  "transition-all duration-200 ease-out",
                   active
                     ? "text-fg font-semibold border-line-strong dark:border-white/25 shadow-xs"
-                    : "text-fg-muted border-transparent hover:text-fg hover:bg-elevated hover:border-line-subtle"
+                    : "text-fg-muted border-transparent hover:text-fg hover:bg-elevated hover:border-line-subtle",
                 )}
               >
                 {active && (
                   <motion.span
+                    // Shared layoutId lets the indicator travel between tabs
                     layoutId={reduce ? undefined : "nav-active"}
                     aria-hidden
                     className="absolute inset-0 rounded-full bg-raised dark:bg-[#1A1D28] border border-line-strong dark:border-white/25 shadow-sm"
                     transition={SPRING_LAYOUT}
                   />
                 )}
-                <span className="relative z-10">{item.label}</span>
+                <WaveText
+                  className="relative z-10 text-[13px]"
+                  text={item.label}
+                />
                 {badge != null && (
                   <span
-                    className="relative z-10 tnum inline-flex min-w-[16px] h-4 items-center justify-center rounded-full bg-warn px-1.5 text-[10px] font-bold text-[var(--warn-foreground)] shadow-elev-1"
+                    className="relative z-10 tnum inline-flex min-w-[17px] h-4.5 items-center justify-center rounded-full bg-warn px-1.5 text-[10px] font-bold text-[var(--warn-foreground)] shadow-elev-1"
                     aria-label={`${badge} awaiting review`}
                   >
                     {badge}
@@ -201,31 +170,9 @@ export function AppShell({ children }: { children: ReactNode }) {
               </Link>
             )
           })}
-
-          {/* More Tools Button (Positioned right after Review Queue) */}
-          <button
-            ref={buttonRef}
-            type="button"
-            onClick={toggleMore}
-            className={cn(
-              "relative inline-flex h-8 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-xs font-medium tracking-tight border transition-all duration-200 cursor-pointer select-none",
-              isMoreActive
-                ? "text-fg font-semibold border-line-strong dark:border-white/25 shadow-xs bg-raised dark:bg-[#1A1D28]"
-                : "text-fg-muted border-transparent hover:text-fg hover:bg-elevated hover:border-line-subtle"
-            )}
-          >
-            <WaveText text="More Tools" className="relative z-10" />
-            <ChevronDown
-              className={cn(
-                "size-3.5 transition-transform duration-200 relative z-10 text-fg-muted",
-                moreOpen && "rotate-180 text-fg"
-              )}
-            />
-          </button>
         </nav>
 
-        {/* Right-side Controls */}
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2.5">
           <CommandPalette />
           <AsOfControl />
           <ThemeToggle />
@@ -243,60 +190,6 @@ export function AppShell({ children }: { children: ReactNode }) {
           </button>
         </div>
       </header>
-
-      {/* Dropdown Menu Portaled Directly to document.body to Prevent Any Overflow Clipping */}
-      {moreOpen &&
-        coords &&
-        typeof window !== "undefined" &&
-        createPortal(
-          <AnimatePresence>
-            <motion.div
-              ref={menuRef}
-              initial={{ opacity: 0, y: 6, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 4, scale: 0.96 }}
-              transition={{ duration: 0.15 }}
-              style={{
-                position: "fixed",
-                top: `${coords.top}px`,
-                right: `${coords.right}px`,
-              }}
-              className="z-[9999] w-64 rounded-xl border border-line-strong bg-raised dark:bg-[#131622] p-1.5 shadow-2xl backdrop-blur-2xl ring-1 ring-black/20 dark:ring-white/10"
-            >
-              <div className="px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-fg-muted">
-                Analysis & Tools
-              </div>
-              <div className="space-y-0.5 mt-0.5">
-                {MORE_NAV.map((item) => {
-                  const Icon = item.icon
-                  const active = pathname.startsWith(item.href)
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMoreOpen(false)}
-                      className={cn(
-                        "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-xs font-medium transition-colors",
-                        active
-                          ? "bg-accent/15 text-accent font-semibold"
-                          : "text-fg-muted hover:bg-elevated hover:text-fg"
-                      )}
-                    >
-                      <Icon className="size-4 shrink-0 text-accent/80" />
-                      <div className="flex flex-col">
-                        <span className="text-fg font-medium leading-tight">{item.label}</span>
-                        <span className="text-[10px] text-fg-muted font-normal line-clamp-1 mt-0.5">
-                          {item.hint}
-                        </span>
-                      </div>
-                    </Link>
-                  )
-                })}
-              </div>
-            </motion.div>
-          </AnimatePresence>,
-          document.body
-        )}
 
       {banner && <ScreenBanner id={banner.id}>{banner.text}</ScreenBanner>}
 
