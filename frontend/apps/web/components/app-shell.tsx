@@ -30,7 +30,7 @@ const OFFICER = {
 
 const NAV = [
   { href: "/", label: "Overview", hint: "Your compliance dashboard at a glance." },
-  { href: "/ingest", label: "Ingest", hint: "Upload a SEBI circular and watch the pipeline run - approval required." },
+  { href: "/ingest", label: "Regulatory Intake", hint: "Upload a SEBI circular and watch the pipeline run - approval required." },
   { href: "/regulatory-feed", label: "Regulatory Feed", hint: "Every circular in the corpus, how it arrived, and what an amendment changed." },
   { href: "/workflows", label: "Workflows", hint: "Draft task DAGs generated from approved obligations, with named owners." },
   { href: "/register", label: "Register", hint: "Every obligation extracted from the regulation, with its source." },

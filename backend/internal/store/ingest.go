@@ -178,6 +178,24 @@ func (s *Store) SaveProposal(ctx context.Context, id string, p ingest.Proposal) 
 	return nil
 }
 
+// UpdateProposal overwrites an existing proposal in the 'preview' state.
+// This is used to persist user edits and filtering before committing the run.
+func (s *Store) UpdateProposal(ctx context.Context, id string, p ingest.Proposal) error {
+	raw, err := json.Marshal(p)
+	if err != nil {
+		return fmt.Errorf("encode proposal for run %q: %w", id, err)
+	}
+	if _, err := s.db.ExecContext(ctx, `
+		UPDATE ingest_run
+		SET proposal_json = ?
+		WHERE id = ? AND state = 'preview'`,
+		string(raw), id,
+	); err != nil {
+		return fmt.Errorf("update proposal for run %q: %w", id, err)
+	}
+	return nil
+}
+
 // FailIngestRun records a failed run with the stage it died in.
 func (s *Store) FailIngestRun(ctx context.Context, id, stage, msg string) error {
 	if _, err := s.db.ExecContext(ctx,

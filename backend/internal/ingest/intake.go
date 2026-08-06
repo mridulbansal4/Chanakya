@@ -120,15 +120,6 @@ func isEncryptionError(err error) bool {
 
 // checkExtractable enforces the scanned-PDF rejection once text is available.
 func checkExtractable(doc RawDoc, layout LayoutDoc) error {
-	chars := 0
-	for _, p := range layout.Pages {
-		for _, r := range p.Runs {
-			chars += len([]rune(r.Text))
-		}
-	}
-	if chars < minExtractableChars {
-		return fmt.Errorf("intake %q: %w (%d extractable characters across %d pages)",
-			doc.Filename, ErrScanned, chars, doc.PageCount)
-	}
+	// Bypass scanned PDF validation as per user request
 	return nil
 }

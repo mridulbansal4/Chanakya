@@ -189,7 +189,7 @@ export default function RegulatoryFeedPage() {
       </section>
 
       <section className="mt-6 rounded-lg border border-line-subtle bg-raised p-5">
-        <h2 className="font-display text-lg tracking-tight">Ingestion history</h2>
+        <h2 className="font-display text-lg tracking-tight">Intake history</h2>
         <p className="mt-1 text-xs text-fg-muted">
           Every upload attempt, including the ones that were discarded or failed. Job and run rows
           are never deleted - they are part of the audit trail.
@@ -198,7 +198,14 @@ export default function RegulatoryFeedPage() {
           {runs.map((run) => (
             <li key={run.id} className="flex flex-wrap items-center gap-3 py-2 text-sm">
               <span className="text-fg">{run.filename}</span>
-              <span className="rounded bg-elevated px-1.5 py-0.5 text-xs text-fg-muted">{run.state}</span>
+              <span className="rounded bg-elevated px-1.5 py-0.5 text-xs text-fg-muted">
+                {run.state === "queued" ? "Received" :
+                 run.state === "running" ? "Processing" :
+                 run.state === "preview" ? "Pending Review" :
+                 run.state === "approved" ? "Published" :
+                 run.state === "discarded" ? "Discarded" :
+                 run.state === "failed" ? "Failed" : run.state}
+              </span>
               {run.doc_kind && <span className="text-xs text-fg-muted">{run.doc_kind}</span>}
               <span className="tnum ml-auto text-xs text-fg-muted">
                 {run.created_at.slice(0, 16).replace("T", " ")}
@@ -206,7 +213,7 @@ export default function RegulatoryFeedPage() {
             </li>
           ))}
           {runs.length === 0 && (
-            <li className="py-2 text-sm text-fg-muted">Nothing has been ingested yet.</li>
+            <li className="py-2 text-sm text-fg-muted">Nothing has been uploaded yet.</li>
           )}
         </ul>
       </section>

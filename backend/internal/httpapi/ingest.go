@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"chanakya/internal/bootstrap"
+	"chanakya/internal/domain"
 	"chanakya/internal/ingest"
 	"chanakya/internal/jobs"
 	"chanakya/internal/store"
@@ -280,8 +281,9 @@ func (h *handlers) ingestPreview(w http.ResponseWriter, r *http.Request) {
 }
 
 type ingestApproveInput struct {
-	SignedBy      string `json:"signed_by"`
-	Justification string `json:"justification"`
+	SignedBy            string              `json:"signed_by"`
+	Justification       string              `json:"justification"`
+	ReviewedObligations []domain.Obligation `json:"reviewed_obligations,omitempty"`
 }
 
 // approveIngest: POST /api/ingest/:id/approve - THE HUMAN GATE.
@@ -314,8 +316,47 @@ func (h *handlers) approveIngest(w http.ResponseWriter, r *http.Request) {
 			fmt.Sprintf("justification must be at least %d characters", minJustificationLen))
 		return
 	}
+	ctx := r.Context()
 
-	run, err := h.store.ApproveIngestRun(r.Context(), id, strings.TrimSpace(in.SignedBy))
+	// If the user reviewed obligations, filter the proposal first.
+	if len(in.ReviewedObligations) > 0 {
+		run, err := h.store.GetIngestRun(ctx, id)
+		if err != nil {
+			if notFound(err) {
+				writeError(w, http.StatusNotFound, "unknown ingest id")
+				return
+			}
+			writeError(w, http.StatusInternalServerError, "failed to load the ingest run")
+			return
+		}
+		
+		if run.State != store.RunPreview {
+			writeError(w, http.StatusConflict, "run is not in preview state")
+			return
+		}
+
+		byID := make(map[string]domain.Obligation, len(in.ReviewedObligations))
+		for _, o := range in.ReviewedObligations {
+			byID[o.ID] = o
+		}
+
+		var filtered []ingest.ProposedObligation
+		for _, po := range run.Proposal.Obligations {
+			if userO, ok := byID[po.Obligation.ID]; ok {
+				userO.Status = domain.StatusApproved // Force status
+				po.Obligation = userO
+				filtered = append(filtered, po)
+			}
+		}
+		run.Proposal.Obligations = filtered
+		
+		if err := h.store.UpdateProposal(ctx, id, run.Proposal); err != nil {
+			writeError(w, http.StatusInternalServerError, "failed to persist reviewed obligations: "+err.Error())
+			return
+		}
+	}
+
+	run, err := h.store.ApproveIngestRun(ctx, id, strings.TrimSpace(in.SignedBy))
 	switch {
 	case err == nil:
 	case notFound(err):
@@ -330,6 +371,34 @@ func (h *handlers) approveIngest(w http.ResponseWriter, r *http.Request) {
 	default:
 		writeError(w, http.StatusInternalServerError, "commit failed; nothing was written to the graph: "+err.Error())
 		return
+	}
+
+	// Generate and record sign-offs for all newly approved obligations.
+	now := domain.RFC3339UTC(time.Now())
+	validFrom := run.Proposal.Circular.ValidFrom
+	if validFrom == "" {
+		validFrom = now
+	}
+	for _, po := range run.Proposal.Obligations {
+		ob, err := h.store.GetObligationDomain(ctx, po.Obligation.ID)
+		if err != nil {
+			continue // Should not happen since we just committed them
+		}
+		hash, sig, err := h.signer.Sign(ob)
+		if err != nil {
+			continue
+		}
+		rec := store.SignoffRecord{
+			ID:             "so:" + ob.ID,
+			ObligationID:   ob.ID,
+			Action:         "approve",
+			SignedBy:       in.SignedBy,
+			Justification:  in.Justification,
+			ObligationHash: hash,
+			Signature:      sig,
+			PublicKey:      h.signer.PublicKeyB64(),
+		}
+		_ = h.store.UpsertSignoff(ctx, rec, validFrom, now)
 	}
 
 	writeJSON(w, http.StatusOK, map[string]any{

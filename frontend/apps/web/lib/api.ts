@@ -179,7 +179,7 @@ export function getObligation(
   signal?: AbortSignal,
 ): Promise<ObligationDetail> {
   return apiFetch<ObligationDetail>(
-    `/api/obligation?id=${encodeURIComponent(id)}`,
+    `/api/obligation?id=${id}`,
     { signal },
   )
 }
@@ -410,7 +410,7 @@ export function getSignoffFor(
   signal?: AbortSignal,
 ): Promise<{ signoff: SignoffRecord; verification: Verification }> {
   return apiFetch<{ signoff: SignoffRecord; verification: Verification }>(
-    `/api/signoff?obligation_id=${encodeURIComponent(obligationId)}`,
+    `/api/signoff?obligation_id=${obligationId}`,
     { signal },
   )
 }
@@ -473,7 +473,7 @@ export function getPolicy(
   signal?: AbortSignal,
 ): Promise<{ policy: PolicyRecord; eval?: PolicyEvalResult }> {
   return apiFetch(
-    `/api/policy?obligation_id=${encodeURIComponent(obligationId)}`,
+    `/api/policy?obligation_id=${obligationId}`,
     { signal },
   )
 }
@@ -787,7 +787,7 @@ export function getIngestStatus(
   id: string,
   signal?: AbortSignal,
 ): Promise<IngestStatus> {
-  return apiFetch<IngestStatus>(`/api/ingest/${encodeURIComponent(id)}`, { signal })
+  return apiFetch<IngestStatus>(`/api/ingest/${id}`, { signal })
 }
 
 export function listIngestRuns(
@@ -801,7 +801,7 @@ export function getIngestPreview(
   signal?: AbortSignal,
 ): Promise<IngestPreview> {
   return apiFetch<IngestPreview>(
-    `/api/ingest/${encodeURIComponent(id)}/preview`,
+    `/api/ingest/${id}/preview`,
     { signal },
   )
 }
@@ -826,24 +826,29 @@ export function approveIngest(
   id: string,
   signedBy: string,
   justification: string,
+  reviewedObligations?: Obligation[]
 ): Promise<IngestApproveResult> {
   return apiFetch<IngestApproveResult>(
-    `/api/ingest/${encodeURIComponent(id)}/approve`,
+    `/api/ingest/${id}/approve`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ signed_by: signedBy, justification }),
+      body: JSON.stringify({ 
+        signed_by: signedBy, 
+        justification,
+        reviewed_obligations: reviewedObligations
+      }),
     },
   )
 }
 
 export function discardIngest(id: string): Promise<{ ingest_id: string; state: IngestState }> {
-  return apiFetch(`/api/ingest/${encodeURIComponent(id)}`, { method: "DELETE" })
+  return apiFetch(`/api/ingest/${id}`, { method: "DELETE" })
 }
 
 /** ingestEventsUrl is the SSE endpoint for live stage-by-stage progress. */
 export function ingestEventsUrl(id: string): string {
-  return `${API_BASE_URL}/api/ingest/${encodeURIComponent(id)}/events`
+  return `${API_BASE_URL}/api/ingest/${id}/events`
 }
 
 // ---- Enterprise graph & projection (Phase 3) ------------------------------

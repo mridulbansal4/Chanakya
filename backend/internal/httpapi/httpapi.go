@@ -15,6 +15,7 @@ import (
 
 	"chanakya/internal/domain"
 	"chanakya/internal/enterprise"
+	"chanakya/internal/ingest"
 	"chanakya/internal/store"
 
 	"github.com/go-chi/chi/v5"
@@ -59,6 +60,7 @@ type Store interface {
 	ListIngestRuns(ctx context.Context, limit int) ([]store.IngestRun, error)
 	ApproveIngestRun(ctx context.Context, id, approvedBy string) (store.IngestRun, error)
 	DiscardIngestRun(ctx context.Context, id string) error
+	UpdateProposal(ctx context.Context, id string, p ingest.Proposal) error
 	EnqueueJob(ctx context.Context, id, kind, payloadJSON string) error
 
 	// Enterprise graph (Phase 3). Strictly read-only: the projection layer
