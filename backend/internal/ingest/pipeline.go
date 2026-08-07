@@ -150,8 +150,7 @@ func RunPipeline(ctx context.Context, doc RawDoc, opts Options) (Proposal, strin
 		Extractor: base.Extractor,
 	}
 
-	// Stage 3 - metadata. Runs BEFORE obligation extraction because DocKind
-	// changes what extraction means.
+	// Stage 3 - metadata. Sequential.
 	report(StageMetadata, 0, 1, "")
 	docText := documentText(base)
 	meta, err := ExtractMeta(ctx, docText, doc.Filename, opts.Completer)
@@ -204,7 +203,7 @@ func RunPipeline(ctx context.Context, doc RawDoc, opts Options) (Proposal, strin
 		report(StageCompile, 0, len(p.Clauses), p.Compiler)
 
 		eg, egCtx := errgroup.WithContext(ctx)
-		eg.SetLimit(30)
+		eg.SetLimit(100)
 
 		var mu sync.Mutex
 		var doneCount int32

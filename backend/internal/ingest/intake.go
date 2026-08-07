@@ -122,23 +122,32 @@ func isEncryptionError(err error) bool {
 
 // checkExtractable enforces the scanned-PDF rejection once text is available.
 func checkExtractable(doc RawDoc, layout LayoutDoc) error {
-	// Bypass scanned PDF validation as per user request
+	chars := 0
+	for _, p := range layout.Pages {
+		for _, r := range p.Runs {
+			chars += len([]rune(r.Text))
+		}
+	}
+	if chars < minExtractableChars {
+		return fmt.Errorf("intake %q: %w (%d extractable characters across %d pages)",
+			doc.Filename, ErrScanned, chars, doc.PageCount)
+	}
 	return nil
 }
 
 // checkRelevance ensures the document is related to SEBI, banking, or circulars
-// by checking the first few pages of text for relevant keywords.
+// by checking a large portion of the text for relevant keywords.
 func checkRelevance(layout LayoutDoc) error {
 	var sb strings.Builder
 	for _, p := range layout.Pages {
 		for _, r := range p.Runs {
 			sb.WriteString(r.Text)
 			sb.WriteString(" ")
-			if sb.Len() > 4000 {
+			if sb.Len() > 50000 {
 				break
 			}
 		}
-		if sb.Len() > 4000 {
+		if sb.Len() > 50000 {
 			break
 		}
 	}
@@ -148,7 +157,8 @@ func checkRelevance(layout LayoutDoc) error {
 		"sebi", "securities and exchange board", "rbi", "reserve bank", 
 		"circular", "notification", "bank", "financial", "regulation", 
 		"compliance", "investment adviser", "mutual fund", "master direction",
-		"guideline", "statutory", "stock exchange",
+		"guideline", "statutory", "stock exchange", "act", "rule", "provision",
+		"authority", "market", "trading", "investor", "advisory", "portfolio",
 	}
 	
 	for _, kw := range keywords {

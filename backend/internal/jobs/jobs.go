@@ -26,7 +26,7 @@ import (
 
 // DefaultLLMConcurrency caps simultaneous model calls. The retry/backoff shape
 // in llm/gemini.go handles a 429 gracefully, but not asking for one is better.
-const DefaultLLMConcurrency = 4
+const DefaultLLMConcurrency = 50
 
 // pollInterval is how often an idle worker looks for new work. A queue in
 // SQLite has no push notification, and polling this cheaply (one indexed UPDATE)

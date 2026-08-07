@@ -310,9 +310,12 @@ export default function IngestPage() {
                     {isFailedStep && <span className="text-red-500 font-bold">[FAILED]</span>}
                     {isProcessing && (
                       <span className="flex items-center gap-1 text-yellow-400">
-                        {progress && progress.stage === step.id && progress.total > 0
-                          ? `Working... ${Math.round((progress.done / progress.total) * 100)}%`
-                          : "Working..."}
+                        {(() => {
+                          const p = progress ?? status.data?.progress
+                          return p && p.stage === step.id && p.total > 0
+                            ? `Working... ${Math.round((p.done / p.total) * 100)}%`
+                            : "Working..."
+                        })()}
                         <motion.span
                           animate={{ opacity: [1, 0] }}
                           transition={{ repeat: Infinity, duration: 0.8 }}
