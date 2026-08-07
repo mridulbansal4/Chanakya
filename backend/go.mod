@@ -9,6 +9,7 @@ require (
 	github.com/open-policy-agent/opa v1.18.2
 	github.com/pdfcpu/pdfcpu v0.11.0
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
+	golang.org/x/sync v0.21.0
 	golang.org/x/text v0.38.0
 	modernc.org/sqlite v1.34.4
 	rsc.io/pdf v0.1.1
@@ -54,7 +55,6 @@ require (
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.52.0 // indirect
 	golang.org/x/image v0.27.0 // indirect
-	golang.org/x/sync v0.21.0 // indirect
 	golang.org/x/sys v0.45.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	modernc.org/gc/v3 v3.0.0-20240107210532-573471604cb6 // indirect

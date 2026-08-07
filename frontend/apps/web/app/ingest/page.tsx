@@ -73,6 +73,7 @@ export default function IngestPage() {
   const [ingestId, setIngestId] = React.useState<string | null>(null)
   const [uploadError, setUploadError] = React.useState<string | null>(null)
   const [accepted, setAccepted] = React.useState<IngestAccepted | null>(null)
+  const [previewDemoPdf, setPreviewDemoPdf] = React.useState<string | null>(null)
 
   const { progress, streamClosed } = useIngestStream(ingestId)
 
@@ -169,6 +170,38 @@ export default function IngestPage() {
     }
   }
 
+  async function handleDemoUpload(filename: string) {
+    setPreviewDemoPdf(filename)
+  }
+
+  async function confirmDemoUpload() {
+    if (!previewDemoPdf) return
+    setUploadError(null)
+    setAnimIndex(0)
+    setAnimationCompleted(false)
+    const filename = previewDemoPdf
+    setPreviewDemoPdf(null) // close modal immediately
+    try {
+      // Fetch the actual PDF from the demo folder so pdfcpu can parse it correctly
+      const req = await fetch(`/docs/demo/${filename}`)
+      if (!req.ok) throw new Error("Demo PDF not found")
+      const blob = await req.blob()
+      const file = new File([blob], filename, { type: "application/pdf" })
+      const res = await uploadPdf(file)
+      setAccepted(res)
+      
+      void queryClient.invalidateQueries({ queryKey: ["ingest-status", res.ingest_id] })
+      void queryClient.invalidateQueries({ queryKey: ["ingest-preview", res.ingest_id] })
+      
+      setIngestId(res.ingest_id)
+      if (res.duplicate) {
+         void queryClient.invalidateQueries({ queryKey: ["ingest-runs"] })
+      }
+    } catch (cause) {
+      setUploadError((cause as Error).message)
+    }
+  }
+
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-6">
       <PageHeader
@@ -188,6 +221,32 @@ export default function IngestPage() {
             className="block w-full max-w-md text-sm text-fg-muted file:mr-3 file:rounded-md file:border file:border-line-strong file:bg-elevated file:px-3 file:py-1.5 file:text-sm file:text-fg hover:file:bg-raised transition-colors focus:outline-none focus:ring-2 focus:ring-accent/50"
           />
         </label>
+
+        <div className="mt-5 flex flex-col gap-3">
+          <span className="text-sm font-medium text-fg">Or select a demo document for evaluation:</span>
+          <div className="flex flex-wrap gap-2">
+            {[
+              "SEBI_Circular_Feb_2025.pdf",
+              "SEBI_Master_Circular_Jun_2025.pdf",
+              "SEBI_IA_Regulations_2013_Amended_2025.pdf",
+              "Shopping_Receipt.pdf",
+              "College_Marksheet.pdf"
+            ].map(name => (
+              <Button
+                key={name}
+                variant="outline"
+                size="sm"
+                onClick={() => handleDemoUpload(name)}
+                className={cn(
+                  "text-xs bg-elevated hover:bg-raised transition-colors",
+                  name.startsWith("SEBI") ? "text-accent hover:text-accent/80 border-accent/30 hover:border-accent/50" : "text-fg-muted hover:text-fg"
+                )}
+              >
+                {name}
+              </Button>
+            ))}
+          </div>
+        </div>
         
         {uploadError && (
           <p className="mt-3 rounded-md border border-risk/40 bg-risk/10 px-3 py-2 text-sm text-risk">
@@ -384,6 +443,57 @@ export default function IngestPage() {
           )}
         </ul>
       </section>
+
+      {/* PDF Preview Modal */}
+      <AnimatePresence>
+        {previewDemoPdf && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+              onClick={() => setPreviewDemoPdf(null)}
+            />
+            
+            {/* Modal Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative flex w-full max-w-5xl flex-col overflow-hidden rounded-xl border border-line-subtle bg-surface shadow-2xl h-[85vh]"
+            >
+              <div className="flex items-center justify-between border-b border-line-subtle bg-elevated px-4 py-3">
+                <h3 className="font-semibold text-fg">Document Preview: {previewDemoPdf}</h3>
+                <button
+                  onClick={() => setPreviewDemoPdf(null)}
+                  className="rounded-md p-1 text-fg-muted hover:bg-raised hover:text-fg transition-colors"
+                >
+                  <X className="size-5" />
+                </button>
+              </div>
+              
+              <div className="flex-1 bg-white/5 p-4">
+                <iframe
+                  src={`/docs/demo/${previewDemoPdf}#toolbar=0&navpanes=0`}
+                  className="w-full h-full rounded-md border border-line-subtle bg-white"
+                  title="PDF Preview"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 border-t border-line-subtle bg-elevated px-4 py-3">
+                <Button variant="outline" onClick={() => setPreviewDemoPdf(null)}>
+                  Cancel
+                </Button>
+                <Button onClick={confirmDemoUpload}>
+                  <Check className="mr-2 size-4" /> Use this Document
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
