@@ -3,6 +3,7 @@
 import * as React from "react"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useCompletion } from "@ai-sdk/react"
+import DOMPurify from "isomorphic-dompurify"
 import { Zap, AlertTriangle, Layers, Sparkles, Loader2 } from "lucide-react"
 
 import { useAsOf } from "@/components/as-of-provider"
@@ -159,7 +160,7 @@ export default function AmendmentsPage() {
                       <Loader2 className="size-3 animate-spin" /> Analyzing blast radius impact...
                     </div>
                   ) : (
-                    <div className="leading-relaxed whitespace-pre-wrap space-y-2 font-medium">{completion}</div>
+                    <div className="leading-relaxed whitespace-pre-wrap space-y-2 font-medium" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(completion) }} />
                   )}
                 </div>
               )}
