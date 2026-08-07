@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { QueryClient } from "@tanstack/react-query"
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister"
 
@@ -20,18 +20,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }),
   )
 
-  const [persister] = React.useState(() => {
-    if (typeof window !== "undefined") {
-      return createSyncStoragePersister({
-        storage: window.localStorage,
-      })
-    }
-    return undefined;
-  });
-
-  if (!persister) {
-    return <QueryClientProvider client={client}>{children}</QueryClientProvider>
-  }
+  // The persister is created unconditionally so the provider tree is identical
+  // on the server and the client. Passing `storage: undefined` during SSR makes
+  // it a no-op; branching on `typeof window` here instead would swap the
+  // provider component between render passes and break hydration.
+  const [persister] = React.useState(() =>
+    createSyncStoragePersister({
+      storage: typeof window !== "undefined" ? window.localStorage : undefined,
+    }),
+  )
 
   return (
     <PersistQueryClientProvider client={client} persistOptions={{ persister }}>
