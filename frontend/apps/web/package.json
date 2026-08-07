@@ -12,11 +12,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ai-sdk/google": "^4.0.37",
+    "@ai-sdk/react": "^4.0.59",
     "@dagrejs/dagre": "^3.0.0",
     "@tanstack/react-query": "^5.101.2",
     "@tanstack/react-table": "^8.21.3",
     "@workspace/ui": "*",
     "@xyflow/react": "^12.11.2",
+    "ai": "^7.0.56",
     "date-fns": "^4.4.0",
     "framer-motion": "^12.42.2",
     "lucide-react": "^1.24.0",

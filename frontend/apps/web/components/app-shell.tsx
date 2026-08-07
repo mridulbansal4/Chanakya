@@ -21,22 +21,31 @@ import { getReviewQueue } from "@/lib/api"
 import { WaveText } from "@/components/ui/wave-text"
 import { SPRING_LAYOUT } from "@/lib/motion"
 import { cn } from "@workspace/ui/lib/utils"
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@workspace/ui/components/dropdown-menu"
+import { ChevronDown } from "lucide-react"
 const OFFICER = {
   name: "Priya Menon",
   role: "Compliance Officer",
   firm: "Acme Investment Advisers",
 }
 
-const NAV = [
+const PRIMARY_NAV = [
   { href: "/", label: "Overview", hint: "Your compliance dashboard at a glance." },
   { href: "/ingest", label: "Regulatory Intake", hint: "Upload a SEBI circular and watch the pipeline run - approval required." },
-  { href: "/regulatory-feed", label: "Regulatory Feed", hint: "Every circular in the corpus, how it arrived, and what an amendment changed." },
-  { href: "/workflows", label: "Workflows", hint: "Draft task DAGs generated from approved obligations, with named owners." },
-  { href: "/register", label: "Register", hint: "Every obligation extracted from the regulation, with its source." },
-  { href: "/amendments", label: "Blast Radius", hint: "See everything a regulation change affects." },
-  { href: "/evidence", label: "Evidence & Gaps", hint: "Which obligations are backed by evidence, and where the gaps are." },
   { href: "/review", label: "Review Queue", hint: "Obligations awaiting your approval - your daily inbox." },
+  { href: "/workflows", label: "Workflows", hint: "Draft task DAGs generated from approved obligations, with named owners." },
+  { href: "/evidence", label: "Evidence & Gaps", hint: "Which obligations are backed by evidence, and where the gaps are." },
+]
+
+const SECONDARY_NAV = [
+  { href: "/register", label: "Regulatory Register", hint: "Every obligation extracted from the regulation, with its source." },
+  { href: "/regulatory-feed", label: "Regulatory Feed", hint: "Every circular in the corpus, how it arrived, and what an amendment changed." },
+  { href: "/amendments", label: "Blast Radius", hint: "See everything a regulation change affects." },
   { href: "/policy", label: "Policy", hint: "Turn approved obligations into automated compliance checks." },
   { href: "/audit", label: "Audit", hint: "Reconstruct the full compliance trail as of any date." },
   { href: "/feed", label: "Feed", hint: "The machine-readable feed a regulator's systems can consume." },
@@ -96,7 +105,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         The header uses bg-sunken/90 backdrop-blur-md with high-contrast text and icons
         matching both dark and light modes.
       */}
-      <header className="z-30 relative flex h-14 shrink-0 items-center gap-4 border-b border-line-subtle bg-sunken/90 backdrop-blur-md px-4 lg:px-5 shadow-elev-2">
+      <header className="z-30 relative flex h-14 shrink-0 items-center gap-6 border-b border-line-subtle bg-sunken/90 backdrop-blur-md px-4 lg:px-6 shadow-elev-2">
         {/* Animated rotating/glowing bottom border accent line */}
         <div className="absolute inset-x-0 bottom-0 h-[1.5px] bg-gradient-to-r from-transparent via-accent to-transparent opacity-80 animate-pulse pointer-events-none" />
 
@@ -125,9 +134,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         */}
         <nav
           aria-label="Primary"
-          className="no-scrollbar flex min-w-0 flex-1 items-center justify-center gap-0.5 overflow-x-auto"
+          className="no-scrollbar flex min-w-0 flex-1 items-center justify-center gap-1 overflow-x-auto"
         >
-          {NAV.map((item) => {
+          {PRIMARY_NAV.map((item) => {
             const active =
               item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
             const badge = item.href === "/review" && pending > 0 ? pending : null
@@ -171,7 +180,21 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-2.5">
+        <div className="flex shrink-0 items-center gap-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="inline-flex h-8 items-center justify-center rounded-md px-3 text-xs font-semibold uppercase tracking-wider text-fg-muted bg-surface/50 border border-line-subtle transition-all hover:bg-elevated hover:text-fg hover:border-line-strong outline-none focus:ring-2 focus:ring-accent/20">
+              Tools & Reports
+              <ChevronDown className="ml-1.5 h-3.5 w-3.5 opacity-70" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {SECONDARY_NAV.map((item) => (
+                <DropdownMenuItem key={item.href} render={<Link href={item.href} title={item.hint} className="w-full cursor-pointer" />}>
+                  {item.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <CommandPalette />
           <AsOfControl />
           <ThemeToggle />

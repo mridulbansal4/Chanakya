@@ -1,7 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useCompletion } from "@ai-sdk/react"
+import { Sparkles, Loader2, FileText, Server, Send, Database } from "lucide-react"
 
 import { useAsOf } from "@/components/as-of-provider"
 import { PageHeader } from "@/components/page-header"
@@ -16,15 +18,68 @@ import {
 const REVIEWER = "Priya Menon"
 const MIN_NOTE = 20
 
+const highlightJson = (jsonString: string) => {
+  const parts = jsonString.split(/("(?:[^"\\]|\\.)*"\s*:|".*?"|\btrue\b|\bfalse\b|\bnull\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/)
+  return parts.map((part, i) => {
+    if (part.match(/^"(?:[^"\\]|\\.)*"\s*:$/)) {
+      return <span key={i} className="text-[#79c0ff]">{part}</span>
+    } else if (part.match(/^".*?"$/)) {
+      return <span key={i} className="text-[#a5d6ff]">{part}</span>
+    } else if (part.match(/^(true|false|null|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)$/)) {
+      return <span key={i} className="text-[#ff7b72]">{part}</span>
+    }
+    return <span key={i} className="text-[#c9d1d9]">{part}</span>
+  })
+}
+
 function TaskRow({ task, byId }: { task: WorkflowTask; byId: Map<string, WorkflowTask> }) {
   const deps = (task.depends_on ?? [])
     .map((id) => byId.get(id)?.title)
     .filter(Boolean) as string[]
 
+  const { completion, complete, isLoading: isAIThinking } = useCompletion({
+    api: "/api/ai/stream",
+    streamProtocol: "text",
+  })
+
+  const [expandedSOP, setExpandedSOP] = React.useState(false)
+
+  const handleGenerateSOP = () => {
+    if (!expandedSOP) setExpandedSOP(true)
+    if (!completion && !isAIThinking) {
+      complete(`Generate a detailed Standard Operating Procedure (SOP) or Jira ticket description for the following compliance task: ${task.title}. Details: ${task.detail}. Role responsible: ${task.owner_role}. Keep it extremely professional and actionable. Use markdown formatting.`)
+    }
+  }
+
+  const lowerDetail = task.detail.toLowerCase()
+  let connector = null
+  if (lowerDetail.includes("jira") || lowerDetail.includes("ticket")) {
+    connector = {
+      title: "Jira Epic Creation",
+      icon: Server,
+      method: "POST /rest/api/2/issue",
+      code: `{\n  "fields": {\n    "project": { "key": "COMP" },\n    "summary": "${task.title}",\n    "description": "Auto-generated from Chanakya",\n    "issuetype": { "name": "Epic" }\n  }\n}`,
+    }
+  } else if (lowerDetail.includes("email") || lowerDetail.includes("dispatch") || lowerDetail.includes("communication")) {
+    connector = {
+      title: "MS Graph API: SendMail",
+      icon: Send,
+      method: "POST /v1.0/me/sendMail",
+      code: `{\n  "message": {\n    "subject": "Action Required: ${task.title}",\n    "body": {\n      "contentType": "Text",\n      "content": "Please complete your assigned task."\n    },\n    "toRecipients": [\n      { "emailAddress": { "address": "${task.owner_role.toLowerCase().replace(/ /g, '.')}@firm.com" } }\n    ]\n  }\n}`,
+    }
+  } else if (lowerDetail.includes("regulator") || lowerDetail.includes("submit")) {
+    connector = {
+      title: "SEBI e-Filing API",
+      icon: Database,
+      method: "POST https://efiling.sebi.gov.in/api/v1/submit",
+      code: `{\n  "firm_id": "FIRM-123",\n  "report_type": "Compliance",\n  "task_ref": "${task.title}",\n  "timestamp": "${new Date().toISOString()}"\n}`,
+    }
+  }
+
   return (
     <li className="rounded-md border border-line-subtle px-3 py-2.5">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <span className="text-sm text-fg">
+        <span className="text-sm text-fg font-medium">
           <span className="tnum mr-2 text-fg-muted">{task.ordinal}</span>
           {task.title}
         </span>
@@ -33,25 +88,64 @@ function TaskRow({ task, byId }: { task: WorkflowTask; byId: Map<string, Workflo
         </span>
       </div>
       <p className="mt-1 text-xs text-fg-muted">{task.detail}</p>
-      <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
-        {task.owner_unresolved ? (
-          // Flagged, never fabricated: assigning an arbitrary employee to fill a
-          // column would put a real person's name against unagreed work.
-          <span className="text-warn">
-            Unassigned - no head for {task.owner_role}
-          </span>
-        ) : (
-          <span className="text-fg">
-            {task.owner_name} <span className="text-fg-muted">({task.owner_role})</span>
-          </span>
-        )}
-        {task.deadline && (
-          <span className="tnum text-fg-muted">due {task.deadline.slice(0, 10)}</span>
-        )}
-        {deps.length > 0 && (
-          <span className="text-fg-muted">after: {deps.join(", ")}</span>
-        )}
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-xs">
+        <div className="flex items-center gap-x-4">
+          {task.owner_unresolved ? (
+            <span className="text-warn">Unassigned - no head for {task.owner_role}</span>
+          ) : (
+            <span className="text-fg">
+              {task.owner_name} <span className="text-fg-muted">({task.owner_role})</span>
+            </span>
+          )}
+          {task.deadline && (
+            <span className="tnum text-fg-muted">due {task.deadline.slice(0, 10)}</span>
+          )}
+          {deps.length > 0 && (
+            <span className="text-fg-muted">after: {deps.join(", ")}</span>
+          )}
+        </div>
+        
+        <button 
+          onClick={handleGenerateSOP}
+          className="flex items-center gap-1.5 text-accent hover:text-accent/80 font-medium transition-colors bg-accent/10 hover:bg-accent/20 px-2 py-1 rounded"
+        >
+          <Sparkles className="size-3" /> {completion ? "View SOP" : "Generate SOP"}
+        </button>
       </div>
+
+      {expandedSOP && (
+        <div className="mt-3 p-3 bg-surface border border-line rounded-md text-xs text-foreground">
+          <div className="flex items-center gap-1.5 font-bold text-accent mb-2">
+            <FileText className="size-3.5" /> AI Generated SOP / Ticket
+          </div>
+          {isAIThinking && !completion ? (
+            <div className="flex items-center gap-2 text-text-dim">
+              <Loader2 className="size-3 animate-spin" /> Drafting instructions...
+            </div>
+          ) : (
+            <div className="leading-relaxed whitespace-pre-wrap">{completion}</div>
+          )}
+        </div>
+      )}
+
+      {connector && (
+        <div className="mt-4 overflow-hidden rounded-md border border-line-subtle bg-surface">
+          <div className="flex items-center gap-2 border-b border-line-subtle bg-elevated px-3 py-2">
+            <connector.icon className="size-3.5 text-accent" />
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-fg-muted">
+              {connector.title}
+            </span>
+          </div>
+          <div className="p-3 bg-[#0d1117] overflow-x-auto">
+            <div className="text-xs font-mono whitespace-pre leading-relaxed">
+              <span className="text-[#ff7b72]">{connector.method.split(' ')[0]}</span>{" "}
+              <span className="text-[#a5d6ff]">{connector.method.split(' ')[1]}</span>
+              {"\n\n"}
+              {highlightJson(connector.code)}
+            </div>
+          </div>
+        </div>
+      )}
     </li>
   )
 }

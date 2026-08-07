@@ -4,6 +4,7 @@ import * as React from "react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Check, Loader2, X } from "lucide-react"
 
 import {
@@ -19,6 +20,7 @@ import {
 } from "@/lib/api"
 import { PageHeader } from "@/components/page-header"
 import { cn } from "@workspace/ui/lib/utils"
+import { Button } from "@workspace/ui/components/button"
 
 const ANIMATION_STEPS = [
   { id: "upload", label: "Upload Complete", time: 300 },
@@ -66,6 +68,7 @@ function useIngestStream(ingestId: string | null): {
 }
 
 export default function IngestPage() {
+  const router = useRouter()
   const queryClient = useQueryClient()
   const [ingestId, setIngestId] = React.useState<string | null>(null)
   const [uploadError, setUploadError] = React.useState<string | null>(null)
@@ -131,9 +134,9 @@ export default function IngestPage() {
     if (animIndex < targetIndex || (isFinished && animIndex < ANIMATION_STEPS.length)) {
       const timer = setTimeout(() => {
         setAnimIndex((prev) => prev + 1)
-      }, ANIMATION_STEPS[animIndex].time)
+      }, ANIMATION_STEPS[animIndex]?.time ?? 500)
       return () => clearTimeout(timer)
-    } else if (animIndex === ANIMATION_STEPS.length && !animationCompleted && isFinished) {
+    } else if (animIndex >= ANIMATION_STEPS.length && !animationCompleted && isFinished) {
       setAnimationCompleted(true)
       // Once the animation fully finishes, refresh the recent runs to show the new document
       void queryClient.invalidateQueries({ queryKey: ["ingest-runs"] })
@@ -307,7 +310,7 @@ export default function IngestPage() {
 
           {isFailed && (
             <p className="mt-4 rounded-md border border-risk/40 bg-risk/10 px-3 py-2 text-sm text-risk">
-              Failed: {status.data.error}
+              Failed: {status.data?.error}
             </p>
           )}
 
@@ -378,9 +381,9 @@ export default function IngestPage() {
                        <p className="mt-0.5 text-xs text-fg-muted">Ready for review. This document has been fully parsed and is awaiting human verification.</p>
                      </div>
                    </div>
-                   <Link href="/review" className="shrink-0 rounded-md border border-ok/50 bg-ok/15 px-4 py-2 text-sm font-medium text-ok hover:bg-ok/25 transition-colors">
-                     Review Extracted Obligations
-                   </Link>
+                   <Button className="shrink-0" onClick={() => router.push("/review")}>
+                     Proceed to Review Queue
+                   </Button>
                  </motion.div>
               </motion.div>
             )}

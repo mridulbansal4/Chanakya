@@ -2,7 +2,8 @@
 
 import * as React from "react"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { Zap, AlertTriangle, Layers } from "lucide-react"
+import { useCompletion } from "@ai-sdk/react"
+import { Zap, AlertTriangle, Layers, Sparkles, Loader2 } from "lucide-react"
 
 import { useAsOf } from "@/components/as-of-provider"
 import { BlastGraph } from "@/components/blast-graph"
@@ -71,6 +72,17 @@ export default function AmendmentsPage() {
     onSuccess: () => setRunKey((k) => k + 1),
   })
 
+  const { completion, complete, isLoading: isAIThinking } = useCompletion({
+    api: "/api/ai/stream",
+    streamProtocol: "text",
+  })
+
+  const handleGenerateReport = () => {
+    if (!blast.data) return
+    const context = JSON.stringify(blast.data.changes)
+    complete(`Based on the following blast radius changes caused by a SEBI regulation amendment, generate a high-level executive strategic impact report (max 4 bullets) predicting risk level, departments affected, and key takeaways:\n\n${context}`)
+  }
+
   return (
     <div className="flex h-full bg-background">
       {/* Left: amendment editor + change list */}
@@ -131,7 +143,28 @@ export default function AmendmentsPage() {
               <div className="rounded-xl border border-warn/40 bg-warn/10 p-3.5 text-xs leading-relaxed text-foreground font-medium shadow-2xs">
                 {blastSummary(blast.data)}
               </div>
-              <div className="eyebrow">Impact Breakdown ({blast.data.changes.length})</div>
+
+              {!completion && !isAIThinking && (
+                <Button variant="secondary" onClick={handleGenerateReport} className="w-full text-xs bg-accent/10 text-accent hover:bg-accent/20 border-accent/20">
+                  <Sparkles className="size-3 mr-1" /> Generate Executive AI Impact Report
+                </Button>
+              )}
+              {(completion || isAIThinking) && (
+                <div className="rounded-xl border border-accent/30 bg-accent/5 p-4 shadow-sm text-xs text-foreground">
+                  <div className="flex items-center gap-1.5 font-bold text-accent mb-2">
+                    <Sparkles className="size-3.5" /> AI Strategic Impact Prediction
+                  </div>
+                  {isAIThinking && !completion ? (
+                    <div className="flex items-center gap-2 text-text-dim">
+                      <Loader2 className="size-3 animate-spin" /> Analyzing blast radius impact...
+                    </div>
+                  ) : (
+                    <div className="leading-relaxed whitespace-pre-wrap space-y-2 font-medium">{completion}</div>
+                  )}
+                </div>
+              )}
+
+              <div className="eyebrow mt-4">Impact Breakdown ({blast.data.changes.length})</div>
               <ul className="space-y-2">
                 {blast.data.changes.map((c, i) => (
                   <li

@@ -2,9 +2,10 @@
 
 import * as React from "react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
+import Link from "next/link"
 import { ShieldAlert, ShieldCheck, CheckCircle2, ArrowRight, ChevronDown, ChevronUp, FileText, Check, X, Sparkles, Loader2 } from "lucide-react"
 
-import { explainClause } from "../actions"
+import { useCompletion } from "@ai-sdk/react"
 
 import { useAsOf } from "@/components/as-of-provider"
 import { DeonticBadge, StatusBadge } from "@/components/badges"
@@ -31,7 +32,16 @@ const ObligationItem = React.memo(({
   const id = o.obligation.ID
   const [isExpanded, setIsExpanded] = React.useState(false)
   const [explanation, setExplanation] = React.useState<string | null>(null)
-  const [isExplaining, setIsExplaining] = React.useState(false)
+  const { completion, complete, isLoading } = useCompletion({
+    api: "/api/ai/stream",
+    streamProtocol: "text",
+    onFinish: (prompt, completion) => {
+      setExplanation(completion)
+    },
+    onError: (err) => {
+      setExplanation("Failed to generate explanation: " + err.message)
+    }
+  })
 
   const handleExpand = async () => {
     if (isExpanded) {
@@ -40,16 +50,12 @@ const ObligationItem = React.memo(({
     }
     
     setIsExpanded(true)
-    if (!explanation && !isExplaining) {
-      setIsExplaining(true)
-      try {
-        const text = await explainClause(o.clause_text)
-        setExplanation(text)
-      } catch (err) {
-        setExplanation("Failed to generate explanation. Please ensure the GEMINI_API_KEY is configured in your environment.")
-      } finally {
-        setIsExplaining(false)
-      }
+    if (!explanation && !isLoading) {
+      complete(o.clause_text, {
+        body: {
+          system: "You are a helpful regulatory assistant. Summarize and explain this raw regulatory clause in very simple, plain English. Keep it strictly to 1 or 2 concise sentences so it's easy to understand at a glance."
+        }
+      })
     }
   }
 
@@ -86,12 +92,12 @@ const ObligationItem = React.memo(({
                 <div className="flex items-center gap-1.5 font-medium text-accent mb-1.5">
                   <Sparkles className="size-3.5" /> AI Summary
                 </div>
-                {isExplaining ? (
+                {isLoading && !completion ? (
                   <div className="flex items-center gap-2 text-text-dim">
                     <Loader2 className="size-3 animate-spin" /> Generating simple explanation...
                   </div>
                 ) : (
-                  <p className="leading-relaxed">{explanation}</p>
+                  <p className="leading-relaxed whitespace-pre-wrap">{completion || explanation}</p>
                 )}
               </div>
             )}
@@ -350,11 +356,29 @@ export default function ReviewPage() {
       )}
 
       {packages.length === 0 && items.length === 0 && !runsQuery.isLoading && !queue.isLoading && (
-        <EmptyState
-          icon="sparkles"
-          title="Inbox Zero - All Caught Up"
-          description={`Every regulatory change package has been reviewed and published, and all obligations have been signed off.`}
-        />
+        <div className="mx-auto my-12 flex max-w-2xl flex-col items-center text-center rounded-2xl border border-ok/30 bg-ok/5 p-12 shadow-sm">
+          <div className="flex size-16 items-center justify-center rounded-full bg-ok/20 text-ok mb-6">
+            <Sparkles className="size-8" />
+          </div>
+          <h2 className="text-2xl font-display font-bold text-foreground mb-3">
+            Inbox Zero - All Caught Up!
+          </h2>
+          <p className="text-base text-text-dim max-w-[46ch] mb-8">
+            Every regulatory change package has been reviewed and published, and all obligations have been signed off.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4 w-full">
+            <Link href="/amendments" tabIndex={-1}>
+              <Button size="lg" className="px-8">
+                Analyze Impact (Blast Radius)
+              </Button>
+            </Link>
+            <Link href="/workflows" tabIndex={-1}>
+              <Button variant="outline" size="lg" className="px-8 border-line">
+                Assign Workflows
+              </Button>
+            </Link>
+          </div>
+        </div>
       )}
 
       {packages.length > 0 && (
