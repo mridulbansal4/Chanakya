@@ -1,0 +1,16 @@
+.git
+.gitignore
+.claude
+.turbo
+**/node_modules
+**/.next
+**/.turbo
+backend/api.exe
+*.db*
+*.log
+LOGO_DARK_MODE.png
+LOGO_LIGHT_MODE.png
+Documents
+sample_pdf
+backups
+audit
