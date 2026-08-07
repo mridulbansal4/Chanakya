@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useCompletion } from "@ai-sdk/react"
-import DOMPurify from "isomorphic-dompurify"
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer"
 import { Zap, AlertTriangle, Layers, Sparkles, Loader2, Download } from "lucide-react"
 import jsPDF from "jspdf"
 import html2canvas from "html2canvas"
@@ -225,7 +225,7 @@ export default function AmendmentsPage() {
                         <Loader2 className="size-3 animate-spin" /> Analyzing blast radius impact...
                       </div>
                     ) : (
-                      <div className="leading-relaxed whitespace-pre-wrap space-y-2 font-medium" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(completion) }} />
+                      <MarkdownRenderer content={completion} />
                     )}
                   </div>
                 )}

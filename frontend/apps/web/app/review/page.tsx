@@ -6,6 +6,7 @@ import Link from "next/link"
 import { ShieldAlert, ShieldCheck, CheckCircle2, ArrowRight, ChevronDown, ChevronUp, FileText, Check, X, Sparkles, Loader2 } from "lucide-react"
 
 import { useCompletion } from "@ai-sdk/react"
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer"
 
 import { useAsOf } from "@/components/as-of-provider"
 import { DeonticBadge, StatusBadge } from "@/components/badges"
@@ -97,7 +98,7 @@ const ObligationItem = React.memo(({
                     <Loader2 className="size-3 animate-spin" /> Generating simple explanation...
                   </div>
                 ) : (
-                  <p className="leading-relaxed whitespace-pre-wrap">{completion || explanation}</p>
+                  <MarkdownRenderer content={completion || explanation || ""} />
                 )}
               </div>
             )}

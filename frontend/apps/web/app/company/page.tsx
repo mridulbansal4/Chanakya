@@ -3,6 +3,7 @@
 import * as React from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useCompletion } from "@ai-sdk/react"
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer"
 import { useAsOf } from "@/components/as-of-provider"
 import {
   getEnterpriseSummary,
@@ -276,6 +277,48 @@ export default function CompanyProfilePage() {
               <p className="text-sm text-fg-muted">No gaps as of this date.</p>
             )}
           </div>
+        </section>
+
+        {/* AI Compliance Advisor Assistant */}
+        <section className="rounded-2xl border border-accent/30 bg-accent/5 p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-2 font-display text-lg font-semibold text-accent">
+            <Sparkles className="size-5" /> AI Compliance Assistant
+          </div>
+          <p className="text-sm text-fg-muted mb-4">
+            Ask CHANAKYA any questions about firm posture, gaps, or regulatory obligations for Acme Investment Advisers.
+          </p>
+          <form onSubmit={handleChat} className="flex gap-2 mb-4">
+            <input
+              type="text"
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+              placeholder="e.g. Summarize our SEBI compliance gaps and recommended actions..."
+              className="flex-1 rounded-xl border border-line bg-background px-4 py-2.5 text-xs text-foreground placeholder:text-text-dim outline-none focus:border-accent"
+            />
+            <button
+              type="submit"
+              disabled={isAIThinking || !chatInput.trim()}
+              className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-xs font-semibold text-white hover:bg-accent-hover disabled:opacity-50 transition-colors"
+            >
+              {isAIThinking ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
+              <span>Ask AI</span>
+            </button>
+          </form>
+
+          {(hasSubmitted || completion) && (
+            <div className="rounded-xl border border-line bg-surface p-5 mt-3 shadow-2xs">
+              <div className="flex items-center gap-2 text-xs font-bold text-accent mb-3">
+                <Bot className="size-4" /> Response from CHANAKYA:
+              </div>
+              {isAIThinking && !completion ? (
+                <div className="flex items-center gap-2 text-xs text-text-dim">
+                  <Loader2 className="size-3.5 animate-spin text-accent" /> Analyzing compliance graph...
+                </div>
+              ) : (
+                <MarkdownRenderer content={completion} />
+              )}
+            </div>
+          )}
         </section>
 
 

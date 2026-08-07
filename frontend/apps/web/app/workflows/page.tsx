@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useCompletion } from "@ai-sdk/react"
-import DOMPurify from "isomorphic-dompurify"
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer"
 import { Sparkles, Loader2, FileText, Server, Send, Database } from "lucide-react"
 
 import { useAsOf } from "@/components/as-of-provider"
@@ -124,7 +124,7 @@ function TaskRow({ task, byId }: { task: WorkflowTask; byId: Map<string, Workflo
               <Loader2 className="size-3 animate-spin" /> Drafting instructions...
             </div>
           ) : (
-            <div className="leading-relaxed whitespace-pre-wrap" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(completion) }} />
+            <MarkdownRenderer content={completion} />
           )}
         </div>
       )}
