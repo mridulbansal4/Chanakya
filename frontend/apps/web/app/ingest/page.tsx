@@ -219,91 +219,50 @@ export default function IngestPage() {
       {/* Live pipeline */}
       {ingestId && (
         <section className="mt-5 rounded-lg border border-line-subtle bg-raised p-5 overflow-hidden">
-          <div className="flex items-baseline justify-between">
-            <h2 className="font-display text-lg tracking-tight">Pipeline</h2>
-            <span className="tnum text-xs text-fg-muted">{ingestId}</span>
+          <div className="flex items-baseline justify-between mb-4">
+            <h2 className="font-display text-lg tracking-tight">Pipeline Terminal</h2>
+            <span className="tnum text-xs text-fg-muted">session: {ingestId}</span>
           </div>
 
-          <div className="mt-5 space-y-1">
+          <div className="bg-[#0d1117] text-green-400 font-mono text-xs p-4 rounded-md h-64 overflow-y-auto space-y-1">
             {ANIMATION_STEPS.map((step, i) => {
               const isCompleted = animIndex > i
               const isFailedStep = isFailed && animIndex === i
               const isProcessing = animIndex === i && !isFailed
               const isIdle = animIndex < i
 
+              if (isIdle) return null;
+
+              // Generate some fake logs for completed/processing steps
+              const fakeLogs = isCompleted || isProcessing ? [
+                `> Initiating ${step.id} sequence...`,
+                `> Allocating memory for ${step.label.toLowerCase()}...`,
+                `> Chunking processing units...`,
+              ] : []
+
               return (
-                <motion.div
-                  key={step.id}
-                  className={cn(
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-all duration-300",
-                    isIdle ? "opacity-50" : "opacity-100",
-                  )}
-                  animate={
-                    isFailedStep
-                      ? { backgroundColor: "rgba(239, 68, 68, 0.1)" }
-                      : isCompleted
-                        ? { backgroundColor: ["rgba(16, 185, 129, 0.1)", "rgba(16, 185, 129, 0)"] }
-                        : isProcessing
-                          ? { backgroundColor: "rgba(139, 92, 246, 0.05)" }
-                          : { backgroundColor: "rgba(0,0,0,0)" }
-                  }
-                  transition={{ duration: 0.6 }}
-                >
-                  <div className="relative flex size-5 shrink-0 items-center justify-center">
-                    {isIdle && (
-                      <div className="size-2.5 rounded-full border border-line-strong" />
-                    )}
+                <div key={step.id} className="mb-2">
+                  {fakeLogs.map((log, logIdx) => (
+                    <div key={logIdx} className="opacity-70">{`[${new Date().toISOString().substring(11, 19)}] ${log}`}</div>
+                  ))}
+                  <div className="flex items-center gap-2">
+                    <span>{`[${new Date().toISOString().substring(11, 19)}] -> ${step.label}...`}</span>
+                    {isCompleted && <span className="text-green-500 font-bold">[OK]</span>}
+                    {isFailedStep && <span className="text-red-500 font-bold">[FAILED]</span>}
                     {isProcessing && (
-                      <Loader2 className="size-4 animate-spin text-accent" />
-                    )}
-                    {isCompleted && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="flex size-5 items-center justify-center rounded-full bg-ok/15 text-ok"
-                      >
-                        <Check className="size-3" strokeWidth={3} />
-                      </motion.div>
-                    )}
-                    {isFailedStep && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="flex size-5 items-center justify-center rounded-full bg-risk/15 text-risk"
-                      >
-                        <X className="size-3" strokeWidth={3} />
-                      </motion.div>
+                      <span className="flex items-center gap-1 text-yellow-400">
+                        {progress && progress.stage === step.id && progress.total > 0
+                          ? `Working... ${Math.round((progress.done / progress.total) * 100)}%`
+                          : "Working..."}
+                        <motion.span
+                          animate={{ opacity: [1, 0] }}
+                          transition={{ repeat: Infinity, duration: 0.8 }}
+                          className="inline-block w-2 h-3 bg-yellow-400"
+                        />
+                      </span>
                     )}
                   </div>
-                  
-                  <span className={cn(
-                    "transition-colors duration-300",
-                    isFailedStep ? "text-risk font-medium" : isProcessing ? "text-fg font-medium" : isCompleted ? "text-fg-muted" : "text-fg-muted"
-                  )}>
-                    {step.label}
-                  </span>
-
-                  {isProcessing && (
-                    <motion.span 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="ml-2 text-xs font-medium text-accent"
-                    >
-                      {progress && progress.stage === step.id && progress.total > 0
-                        ? `Working... ${Math.round((progress.done / progress.total) * 100)}%`
-                        : "Working..."}
-                    </motion.span>
-                  )}
-                  {isFailedStep && (
-                    <motion.span 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="ml-2 text-xs font-medium text-risk"
-                    >
-                      Failed
-                    </motion.span>
-                  )}
-                </motion.div>
+                </div>
               )
             })}
           </div>

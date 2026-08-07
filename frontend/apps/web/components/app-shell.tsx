@@ -6,6 +6,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
 import { motion, useReducedMotion } from "framer-motion"
+import { toast } from "sonner"
 
 import { AsOfControl } from "@/components/as-of-control"
 import { HelpMenu } from "@/components/help-menu"
@@ -91,6 +92,17 @@ export function AppShell({ children }: { children: ReactNode }) {
       setWelcomeOpen(true)
     }
   }, [])
+  
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      toast("🚨 SEBI Alert", { 
+        description: "New circular regarding Mutual Funds released. Blast radius analysis is ready.", 
+        action: { label: "View", onClick: () => console.log("Viewed") } 
+      })
+    }, 5000)
+    return () => clearTimeout(timer)
+  }, [])
+
   const closeWelcome = () => {
     window.localStorage.setItem("chanakya.welcomed", "1")
     setWelcomeOpen(false)

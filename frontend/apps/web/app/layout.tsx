@@ -7,6 +7,7 @@ import { Providers } from "@/components/providers"
 import { AsOfProvider } from "@/components/as-of-provider"
 import { AppShell } from "@/components/app-shell"
 import { cn } from "@workspace/ui/lib/utils"
+import { Toaster } from "sonner"
 
 /**
  * Three families, three jobs. See the TYPE SCALE block in globals.css for
@@ -110,6 +111,7 @@ export default function RootLayout({
             </AsOfProvider>
           </Providers>
         </ThemeProvider>
+        <Toaster theme="dark" position="bottom-right" />
       </body>
     </html>
   )
