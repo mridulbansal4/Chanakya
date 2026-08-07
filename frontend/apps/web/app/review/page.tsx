@@ -2,7 +2,9 @@
 
 import * as React from "react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { ShieldAlert, ShieldCheck, CheckCircle2, ArrowRight, ChevronDown, ChevronUp, FileText, Check, X } from "lucide-react"
+import { ShieldAlert, ShieldCheck, CheckCircle2, ArrowRight, ChevronDown, ChevronUp, FileText, Check, X, Sparkles, Loader2 } from "lucide-react"
+
+import { explainClause } from "../actions"
 
 import { useAsOf } from "@/components/as-of-provider"
 import { DeonticBadge, StatusBadge } from "@/components/badges"
@@ -15,12 +17,124 @@ import { listIngestRuns, getIngestPreview, approveIngest, getReviewQueue, type I
 import { durationDays } from "@/lib/format"
 import { cn } from "@workspace/ui/lib/utils"
 
+const ObligationItem = React.memo(({
+  o,
+  isApproved,
+  isRejected,
+  onToggle
+}: {
+  o: any
+  isApproved: boolean
+  isRejected: boolean
+  onToggle: (id: string, status: "approve" | "reject") => void
+}) => {
+  const id = o.obligation.ID
+  const [isExpanded, setIsExpanded] = React.useState(false)
+  const [explanation, setExplanation] = React.useState<string | null>(null)
+  const [isExplaining, setIsExplaining] = React.useState(false)
+
+  const handleExpand = async () => {
+    if (isExpanded) {
+      setIsExpanded(false)
+      return
+    }
+    
+    setIsExpanded(true)
+    if (!explanation && !isExplaining) {
+      setIsExplaining(true)
+      try {
+        const text = await explainClause(o.clause_text)
+        setExplanation(text)
+      } catch (err) {
+        setExplanation("Failed to generate explanation. Please ensure the GEMINI_API_KEY is configured in your environment.")
+      } finally {
+        setIsExplaining(false)
+      }
+    }
+  }
+
+  return (
+    <li className={cn("rounded-lg border p-5 transition-colors", isRejected ? "bg-raised border-line opacity-60" : "bg-surface border-primary/20")}>
+      <div className="flex items-start gap-4">
+        <div className="flex-1 space-y-3 min-w-0">
+          <div className="flex items-center gap-2.5">
+            <span className="tnum font-bold text-primary bg-primary/10 px-2 py-0.5 rounded text-[10px] shrink-0">
+              {o.clause_ref}
+            </span>
+            <DeonticBadge deontic={o.obligation.DeonticType as any} />
+            <ConfidenceMeter value={o.obligation.Confidence} />
+          </div>
+          
+          <p className="text-sm font-medium text-foreground leading-relaxed break-words">
+            {o.obligation.Condition}
+          </p>
+          
+          <div 
+            className="cursor-pointer group"
+            onClick={handleExpand}
+          >
+            <blockquote className={cn("border-l-2 border-line pl-3 text-xs italic text-text-dim break-words transition-all duration-300", !isExpanded && "line-clamp-3")}>
+              "{o.clause_text}"
+            </blockquote>
+            {!isExpanded && (
+              <div className="mt-1 text-[10px] font-medium text-accent opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                <Sparkles className="size-3" /> Click to expand and explain
+              </div>
+            )}
+            {isExpanded && (
+              <div className="mt-3 rounded-md bg-accent/5 border border-accent/20 p-3 text-xs text-foreground cursor-auto" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center gap-1.5 font-medium text-accent mb-1.5">
+                  <Sparkles className="size-3.5" /> AI Summary
+                </div>
+                {isExplaining ? (
+                  <div className="flex items-center gap-2 text-text-dim">
+                    <Loader2 className="size-3 animate-spin" /> Generating simple explanation...
+                  </div>
+                ) : (
+                  <p className="leading-relaxed">{explanation}</p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex shrink-0 flex-col gap-2">
+          <button 
+            className={cn(
+              "flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors w-24",
+              isApproved 
+                ? "bg-ok/10 border-ok/50 text-ok" 
+                : "bg-transparent border-line text-fg-muted hover:bg-raised hover:text-fg"
+            )}
+            onClick={() => onToggle(id, "approve")}
+          >
+            <Check className="size-4" /> Approve
+          </button>
+          <button 
+            className={cn(
+              "flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors w-24",
+              isRejected 
+                ? "bg-risk/10 border-risk/50 text-risk" 
+                : "bg-transparent border-line text-fg-muted hover:bg-raised hover:text-fg"
+            )}
+            onClick={() => onToggle(id, "reject")}
+          >
+            <X className="size-4" /> Reject
+          </button>
+        </div>
+      </div>
+    </li>
+  )
+})
+ObligationItem.displayName = "ObligationItem"
+
 function ChangePackage({ run }: { run: IngestRunSummary }) {
   const queryClient = useQueryClient()
   const [expanded, setExpanded] = React.useState(false)
   const [approvedIds, setApprovedIds] = React.useState<Set<string>>(new Set())
   const [rejectedIds, setRejectedIds] = React.useState<Set<string>>(new Set())
   const [publishing, setPublishing] = React.useState(false)
+  const [visibleCount, setVisibleCount] = React.useState(20)
 
   const preview = useQuery({
     queryKey: ["ingest-preview", run.id],
@@ -39,7 +153,7 @@ function ChangePackage({ run }: { run: IngestRunSummary }) {
 
   const obligations = preview.data?.proposal.obligations ?? []
   
-  const toggleStatus = (id: string, status: "approve" | "reject") => {
+  const toggleStatus = React.useCallback((id: string, status: "approve" | "reject") => {
     if (status === "approve") {
       setApprovedIds((prev) => {
         const next = new Set(prev)
@@ -63,7 +177,7 @@ function ChangePackage({ run }: { run: IngestRunSummary }) {
         return next
       })
     }
-  }
+  }, [])
 
   const handlePublish = async () => {
     if (!preview.data?.proposal.obligations) return
@@ -149,56 +263,31 @@ function ChangePackage({ run }: { run: IngestRunSummary }) {
               {obligations.length === 0 ? (
                 <div className="py-8 text-center text-sm text-text-dim">No obligations were extracted from this document.</div>
               ) : (
-                <ul className="space-y-4">
-                  {obligations.map((o) => {
-                    const id = o.obligation.ID
-                    const isApproved = approvedIds.has(id)
-                    const isRejected = rejectedIds.has(id)
-
-                    return (
-                      <li key={id} className={cn("rounded-lg border p-5 transition-colors", isRejected ? "bg-raised border-line opacity-60" : "bg-surface border-primary/20")}>
-                        <div className="flex items-start gap-4">
-                          <div className="flex-1 space-y-3">
-                            <div className="flex items-center gap-2.5">
-                              <span className="tnum font-bold text-primary bg-primary/10 px-2 py-0.5 rounded text-[10px]">
-                                {o.clause_ref}
-                              </span>
-                              <DeonticBadge deontic={o.obligation.DeonticType as any} />
-                              <ConfidenceMeter value={o.obligation.Confidence} />
-                            </div>
-                            
-                            <p className="text-sm font-medium text-foreground leading-relaxed">
-                              {o.obligation.Condition}
-                            </p>
-                            
-                            <blockquote className="border-l-2 border-line pl-3 text-xs italic text-text-dim">
-                              "{o.clause_text}"
-                            </blockquote>
-                          </div>
-
-                          <div className="flex shrink-0 flex-col gap-2">
-                            <Button 
-                              variant={isApproved ? "default" : "outline"}
-                              size="sm" 
-                              className="w-24 justify-start gap-2"
-                              onClick={() => toggleStatus(id, "approve")}
-                            >
-                              <Check className="size-4" /> Approve
-                            </Button>
-                            <Button 
-                              variant={isRejected ? "destructive" : "outline"}
-                              size="sm" 
-                              className="w-24 justify-start gap-2"
-                              onClick={() => toggleStatus(id, "reject")}
-                            >
-                              <X className="size-4" /> Reject
-                            </Button>
-                          </div>
-                        </div>
-                      </li>
-                    )
-                  })}
-                </ul>
+                <div className="space-y-4">
+                  <ul className="space-y-4">
+                    {obligations.slice(0, visibleCount).map((o, index) => {
+                      const id = o.obligation.ID
+                      const isApproved = approvedIds.has(id)
+                      const isRejected = rejectedIds.has(id)
+                      return (
+                        <ObligationItem
+                          key={`${id}-${index}`}
+                          o={o}
+                          isApproved={isApproved}
+                          isRejected={isRejected}
+                          onToggle={toggleStatus}
+                        />
+                      )
+                    })}
+                  </ul>
+                  {visibleCount < obligations.length && (
+                    <div className="pt-2 flex justify-center">
+                      <Button variant="secondary" onClick={() => setVisibleCount(v => v + 50)}>
+                        Load More Drafts ({obligations.length - visibleCount} remaining)
+                      </Button>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           )}

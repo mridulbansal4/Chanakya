@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/pdfcpu/pdfcpu/pkg/api"
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
@@ -31,6 +32,7 @@ var (
 	ErrEncrypted = errors.New("this PDF is encrypted; remove the password protection and upload it again")
 	ErrCorrupt   = errors.New("this PDF could not be parsed; it may be damaged")
 	ErrScanned   = errors.New("this PDF appears to be scanned; CHANAKYA's pipeline requires digitally-generated PDFs")
+	ErrIrrelevant = errors.New("this PDF does not appear to be a relevant financial or regulatory document (e.g. SEBI, banking, circulars)")
 )
 
 // RawDoc is Stage 0's output: the verbatim bytes plus their content address.
@@ -122,4 +124,38 @@ func isEncryptionError(err error) bool {
 func checkExtractable(doc RawDoc, layout LayoutDoc) error {
 	// Bypass scanned PDF validation as per user request
 	return nil
+}
+
+// checkRelevance ensures the document is related to SEBI, banking, or circulars
+// by checking the first few pages of text for relevant keywords.
+func checkRelevance(layout LayoutDoc) error {
+	var sb strings.Builder
+	for _, p := range layout.Pages {
+		for _, r := range p.Runs {
+			sb.WriteString(r.Text)
+			sb.WriteString(" ")
+			if sb.Len() > 4000 {
+				break
+			}
+		}
+		if sb.Len() > 4000 {
+			break
+		}
+	}
+	
+	text := strings.ToLower(sb.String())
+	keywords := []string{
+		"sebi", "securities and exchange board", "rbi", "reserve bank", 
+		"circular", "notification", "bank", "financial", "regulation", 
+		"compliance", "investment adviser", "mutual fund", "master direction",
+		"guideline", "statutory", "stock exchange",
+	}
+	
+	for _, kw := range keywords {
+		if strings.Contains(text, kw) {
+			return nil
+		}
+	}
+	
+	return ErrIrrelevant
 }

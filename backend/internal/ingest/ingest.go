@@ -54,6 +54,11 @@ func Run(ctx context.Context, doc RawDoc) (Result, error) {
 	if err := checkExtractable(doc, layout); err != nil {
 		return Result{}, err
 	}
+	
+	// Abort pipeline immediately if the document is irrelevant (e.g. random PDF upload)
+	if err := checkRelevance(layout); err != nil {
+		return Result{}, err
+	}
 
 	structured, err := ParseStructure(doc, layout)
 	if err != nil {

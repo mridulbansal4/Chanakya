@@ -286,7 +286,9 @@ export default function IngestPage() {
                       animate={{ opacity: 1 }}
                       className="ml-2 text-xs font-medium text-accent"
                     >
-                      Working...
+                      {progress && progress.stage === step.id && progress.total > 0
+                        ? `Working... ${Math.round((progress.done / progress.total) * 100)}%`
+                        : "Working..."}
                     </motion.span>
                   )}
                   {isFailedStep && (

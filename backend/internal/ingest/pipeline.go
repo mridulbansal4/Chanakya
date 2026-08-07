@@ -4,8 +4,11 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"sync"
+	"sync/atomic"
 
 	"chanakya/internal/domain"
+	"golang.org/x/sync/errgroup"
 )
 
 // Stage names, in execution order. The SSE stream and the ingest_run audit
@@ -199,29 +202,49 @@ func RunPipeline(ctx context.Context, doc RawDoc, opts Options) (Proposal, strin
 	if opts.Compiler != nil && meta.DocKind != KindFAQ && meta.DocKind != KindConsultationPaper {
 		p.Compiler = opts.Compiler.ExtractorName()
 		report(StageCompile, 0, len(p.Clauses), p.Compiler)
-		for i, c := range p.Clauses {
-			if err := ctx.Err(); err != nil {
-				return p, StageCompile, fmt.Errorf("stage compile cancelled: %w", err)
-			}
-			res, err := opts.Compiler.CompileClause(ctx, c)
-			if err != nil {
-				// One clause failing to extract must not lose the other 30.
-				// The failure is recorded as a rejection a reviewer will see.
-				p.Rejected = append(p.Rejected, RejectedExtraction{
-					ClauseRef: c.ClauseRef, Reason: err.Error(),
-				})
-				continue
-			}
-			for _, ob := range res.Obligations {
-				p.Obligations = append(p.Obligations, ProposedObligation{
-					Obligation: ob, ClauseRef: c.ClauseRef, ClauseText: c.Text,
-				})
-			}
-			for _, r := range res.Rejections {
-				p.Rejected = append(p.Rejected, RejectedExtraction{ClauseRef: c.ClauseRef, Reason: r})
-			}
-			report(StageCompile, i+1, len(p.Clauses), c.ClauseRef)
+
+		eg, egCtx := errgroup.WithContext(ctx)
+		eg.SetLimit(30)
+
+		var mu sync.Mutex
+		var doneCount int32
+
+		for _, c := range p.Clauses {
+			c := c // capture for goroutine
+			eg.Go(func() error {
+				if err := egCtx.Err(); err != nil {
+					return err
+				}
+				res, err := opts.Compiler.CompileClause(egCtx, c)
+
+				mu.Lock()
+				defer mu.Unlock()
+
+				if err != nil {
+					p.Rejected = append(p.Rejected, RejectedExtraction{
+						ClauseRef: c.ClauseRef, Reason: err.Error(),
+					})
+				} else {
+					for _, ob := range res.Obligations {
+						p.Obligations = append(p.Obligations, ProposedObligation{
+							Obligation: ob, ClauseRef: c.ClauseRef, ClauseText: c.Text,
+						})
+					}
+					for _, r := range res.Rejections {
+						p.Rejected = append(p.Rejected, RejectedExtraction{ClauseRef: c.ClauseRef, Reason: r})
+					}
+				}
+
+				completed := atomic.AddInt32(&doneCount, 1)
+				report(StageCompile, int(completed), len(p.Clauses), c.ClauseRef)
+				return nil
+			})
 		}
+
+		if err := eg.Wait(); err != nil {
+			return p, StageCompile, fmt.Errorf("stage compile cancelled: %w", err)
+		}
+
 		report(StageCompile, len(p.Clauses), len(p.Clauses), fmt.Sprintf("%d obligations", len(p.Obligations)))
 	} else {
 		report(StageCompile, len(p.Clauses), len(p.Clauses), "skipped for "+string(meta.DocKind))

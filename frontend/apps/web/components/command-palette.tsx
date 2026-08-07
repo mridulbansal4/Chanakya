@@ -14,6 +14,7 @@ import {
   Radio,
   Search,
   ShieldCheck,
+  X,
   Zap,
 } from "lucide-react"
 
@@ -149,6 +150,10 @@ export function CommandPalette() {
         e.preventDefault()
         if (open) closePalette()
         else openPalette()
+      }
+      if (e.key === "Escape" && open) {
+        e.preventDefault()
+        closePalette()
       }
     }
     window.addEventListener("keydown", onKeyDown)
@@ -298,7 +303,15 @@ export function CommandPalette() {
                     filtered[activeIndex] ? `cmd-${filtered[activeIndex].id}` : undefined
                   }
                 />
-                <kbd className="shrink-0 rounded border border-line bg-elevated px-1.5 py-0.5 font-mono text-[10px] text-fg-subtle">
+                <button
+                  type="button"
+                  onClick={closePalette}
+                  className="shrink-0 rounded-md p-1.5 text-fg-subtle transition-colors hover:bg-elevated hover:text-fg"
+                  aria-label="Close command palette"
+                >
+                  <X className="size-4" aria-hidden />
+                </button>
+                <kbd className="hidden shrink-0 rounded border border-line bg-elevated px-1.5 py-0.5 font-mono text-[10px] text-fg-subtle sm:block">
                   Esc
                 </kbd>
               </div>
