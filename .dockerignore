@@ -2,6 +2,7 @@
 .gitignore
 .claude
 .turbo
+**.env*
 **/node_modules
 **/.next
 **/.turbo

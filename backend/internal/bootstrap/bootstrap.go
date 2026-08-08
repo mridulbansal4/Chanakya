@@ -238,7 +238,11 @@ func EnsureSeeded(ctx context.Context, st *store.Store) (bool, error) {
 	}
 	log.Printf("chanakya: bootstrap compiling with %s extractor", extractor.Name())
 	if _, err := Compile(ctx, st, extractor, now); err != nil {
-		return false, err
+		log.Printf("chanakya: bootstrap compile with %s failed (%v); falling back to offline extractor", extractor.Name(), err)
+		offlineExt := llm.NewOfflineExtractor()
+		if _, err := Compile(ctx, st, offlineExt, now); err != nil {
+			return false, err
+		}
 	}
 	if _, err := ProjectObligations(ctx, st, now); err != nil {
 		return false, err

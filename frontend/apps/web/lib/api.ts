@@ -5,8 +5,7 @@
 // screens consume real, checked data - never `any`.
 
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ??
-  "http://localhost:8080"
+  process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? ""
 
 /** A single named health check (e.g. the database). */
 export interface HealthCheck {
