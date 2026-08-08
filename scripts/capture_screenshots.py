@@ -1,23 +1,37 @@
 # Capture CHANAKYA screenshots into docs/screenshots/.
-import os, sys
+#
+#   1. start the app:  .\dev.ps1     (backend :8080 + web :3000)
+#   2. py scripts/capture_screenshots.py
+#
+# Every image in the root README.md is produced by this script against a live
+# backend - nothing is mocked or hand-edited.
+import os
 from playwright.sync_api import sync_playwright
 
-OUT = r"C:\Projects\SEBI\CHANAKYA\docs\screenshots"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUT = os.path.join(ROOT, "docs", "screenshots")
 os.makedirs(OUT, exist_ok=True)
+
 BASE = "http://localhost:3000"
 VW = {"width": 1440, "height": 900}
 
-BANNER_IDS = ["/", "/register", "/amendments", "/evidence", "/review", "/policy", "/audit", "/feed", "/regulatory-feed"]
-SEED = "window.localStorage.setItem('chanakya.welcomed','1');" + \
-       "".join(f"window.localStorage.setItem('chanakya.banner.{i}','1');" for i in BANNER_IDS)
+# Routes that render a first-visit banner / welcome modal. Pre-dismissing them
+# keeps the captures showing the product rather than its onboarding.
+ROUTES = ["/", "/ingest", "/review", "/workflows", "/evidence", "/company",
+          "/register", "/regulatory-feed", "/amendments", "/policy", "/audit", "/feed"]
+SEED = ("window.localStorage.setItem('chanakya.welcomed','1');"
+        + "".join(f"window.localStorage.setItem('chanakya.banner.{r}','1');" for r in ROUTES))
 
-def shot(page, name):
+
+def shot(page, name, full=False):
     path = os.path.join(OUT, name)
-    page.screenshot(path=path)
-    print(f"  saved {name} ({os.path.getsize(path)} bytes)")
+    page.screenshot(path=path, full_page=full)
+    print(f"  saved {name} ({os.path.getsize(path) // 1024} KB)")
+
 
 def click_text(page, text, timeout=8000):
     page.get_by_role("button", name=text, exact=False).first.click(timeout=timeout)
+
 
 with sync_playwright() as p:
     b = p.chromium.launch(headless=True)
@@ -25,70 +39,68 @@ with sync_playwright() as p:
     ctx.add_init_script(SEED)
     pg = ctx.new_page()
 
-    def go(url, wait=1600):
-        pg.goto(BASE + url, wait_until="networkidle", timeout=30000)
+    def go(url, wait=2200):
+        pg.goto(BASE + url, wait_until="networkidle", timeout=45000)
         pg.wait_for_timeout(wait)
 
-    # ---- data routes (need backend) ----
-    plain = [("overview.png", "/"), ("register.png", "/register"),
-             ("evidence.png", "/evidence"), ("review.png", "/review"),
-             ("audit.png", "/audit"), ("feed.png", "/feed")]
+    # ---- plain routes: navigate, settle, capture --------------------------
+    plain = [
+        ("overview.png", "/"),
+        ("ingest.png", "/ingest"),
+        ("review.png", "/review"),
+        ("workflows.png", "/workflows"),
+        ("evidence.png", "/evidence"),
+        ("company.png", "/company"),
+        ("register.png", "/register"),
+        ("regulatory-feed.png", "/regulatory-feed"),
+        ("audit.png", "/audit"),
+        ("feed.png", "/feed"),
+    ]
     for name, url in plain:
         try:
-            go(url, 2200)
+            go(url)
             shot(pg, name)
         except Exception as e:
-            print(f"  FAIL {name}: {repr(e)[:120]}")
+            print(f"  FAIL {name}: {repr(e)[:140]}")
 
-    # overview graph view
+    # ---- overview, graph view --------------------------------------------
     try:
-        pg.add_init_script("window.sessionStorage.setItem('chanakya.overview.view','graph')")
         go("/", 1000)
         pg.evaluate("window.sessionStorage.setItem('chanakya.overview.view','graph')")
-        go("/", 2600)
+        go("/", 3000)
         shot(pg, "overview-graph.png")
     except Exception as e:
-        print(f"  FAIL overview-graph.png: {repr(e)[:120]}")
+        print(f"  FAIL overview-graph.png: {repr(e)[:140]}")
 
-    # policy: click check-rule
+    # ---- policy: compile the signed obligation to Rego, then evaluate it,
+    #      so the capture shows the deterministic verdict rather than a CTA.
     try:
-        go("/policy", 2000)
-        try: click_text(pg, "Check this rule against your firm", 5000); pg.wait_for_timeout(1200)
-        except Exception: pass
+        go("/policy")
+        for label in ("Compile to Automated Check",
+                      "Check this rule against your firm",
+                      "Evaluate"):
+            try:
+                click_text(pg, label, 6000)
+                pg.wait_for_timeout(2600)
+            except Exception:
+                continue
         shot(pg, "policy.png")
     except Exception as e:
-        print(f"  FAIL policy.png: {repr(e)[:120]}")
+        print(f"  FAIL policy.png: {repr(e)[:140]}")
 
-    # amendments: compute blast radius
+    # ---- amendments: compute the blast radius so the graph is populated ---
     try:
-        go("/amendments", 2000)
-        try: click_text(pg, "Compute blast radius", 5000); pg.wait_for_timeout(2500)
-        except Exception: pass
+        go("/amendments")
+        for label in ("Compute blast radius", "Compute"):
+            try:
+                click_text(pg, label, 5000)
+                pg.wait_for_timeout(3000)
+                break
+            except Exception:
+                continue
         shot(pg, "blast-radius.png")
     except Exception as e:
-        print(f"  FAIL blast-radius.png: {repr(e)[:120]}")
-
-    # ---- simulation (backend-free) ----
-    try:
-        go("/regulatory-feed", 1500)
-        shot(pg, "sim-inbox.png")
-        seq = ["Review & Process", "View clause diff", "Extract obligations", "Update obligation graph", "Compute blast radius"]
-        for t in seq:
-            try: click_text(pg, t, 9000); pg.wait_for_timeout(1400)
-            except Exception as e: print(f"    sim click '{t}' fail: {repr(e)[:80]}")
-        pg.wait_for_timeout(1500); shot(pg, "sim-blast.png")
-        for t in ["Generate workflows", "Send for human approval"]:
-            try: click_text(pg, t, 9000); pg.wait_for_timeout(1400)
-            except Exception as e: print(f"    sim click '{t}' fail: {repr(e)[:80]}")
-        shot(pg, "sim-approval.png")
-        try: click_text(pg, "Approve", 9000); pg.wait_for_timeout(1600)
-        except Exception as e: print(f"    sim Approve fail: {repr(e)[:80]}")
-        for t in ["Collect evidence", "Assemble audit pack"]:
-            try: click_text(pg, t, 9000); pg.wait_for_timeout(1600)
-            except Exception as e: print(f"    sim click '{t}' fail: {repr(e)[:80]}")
-        pg.wait_for_timeout(800); shot(pg, "sim-audit.png")
-    except Exception as e:
-        print(f"  FAIL sim: {repr(e)[:120]}")
+        print(f"  FAIL blast-radius.png: {repr(e)[:140]}")
 
     b.close()
 print("DONE")
