@@ -17,6 +17,8 @@ type ObligationQuery struct {
 	Bearer  string
 	Deontic string
 	Status  string
+	Limit   int
+	Offset  int
 }
 
 // ObligationView is a read model for the register: an obligation joined with
@@ -99,7 +101,14 @@ func (s *Store) ListObligations(ctx context.Context, q ObligationQuery) ([]Oblig
 		args = append(args, q.Status)
 	}
 	sqlStr += " ORDER BY c.ordinal, o.deontic_type"
-
+	if q.Limit > 0 {
+		sqlStr += " LIMIT ?"
+		args = append(args, q.Limit)
+		if q.Offset > 0 {
+			sqlStr += " OFFSET ?"
+			args = append(args, q.Offset)
+		}
+	}
 	rows, err := s.db.QueryContext(ctx, sqlStr, args...)
 	if err != nil {
 		return nil, fmt.Errorf("list obligations: %w", err)

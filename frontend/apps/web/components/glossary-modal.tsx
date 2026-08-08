@@ -58,7 +58,7 @@ export function GlossaryModal({ onClose }: { onClose: () => void }) {
         aria-modal="true"
         aria-label="Glossary - in plain English"
         tabIndex={-1}
-        className="flex max-h-[85vh] w-[580px] max-w-full flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-elev-3 outline-none"
+        className="flex max-h-[85vh] w-full max-w-[580px] mx-4 sm:mx-auto flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-elev-3 outline-none"
       >
         <header className="flex items-center justify-between border-b border-line px-6 py-4 bg-surface">
           <div className="flex items-center gap-2.5">

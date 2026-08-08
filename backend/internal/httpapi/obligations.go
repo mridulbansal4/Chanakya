@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"chanakya/internal/domain"
@@ -46,11 +47,28 @@ func (h *handlers) listObligations(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusBadRequest, "invalid as_of (use YYYY-MM-DD or RFC3339)")
 		return
 	}
+	limitStr := r.URL.Query().Get("limit")
+	offsetStr := r.URL.Query().Get("offset")
+	limit := 0
+	offset := 0
+	if limitStr != "" {
+		if l, err := strconv.Atoi(limitStr); err == nil && l > 0 {
+			limit = l
+		}
+	}
+	if offsetStr != "" {
+		if o, err := strconv.Atoi(offsetStr); err == nil && o > 0 {
+			offset = o
+		}
+	}
+	
 	q := store.ObligationQuery{
 		AsOf:    asOf,
 		Bearer:  r.URL.Query().Get("bearer"),
 		Deontic: r.URL.Query().Get("deontic"),
 		Status:  r.URL.Query().Get("status"),
+		Limit:   limit,
+		Offset:  offset,
 	}
 	if !validDeontic(q.Deontic) {
 		writeError(w, http.StatusBadRequest, "invalid deontic (MUST|MUST_NOT|MAY)")

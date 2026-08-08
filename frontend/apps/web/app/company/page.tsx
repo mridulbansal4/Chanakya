@@ -327,7 +327,7 @@ export default function CompanyProfilePage() {
         <section className="grid gap-5 lg:grid-cols-2">
           <div className="rounded-lg border border-line-subtle bg-raised p-5">
             <h2 className="font-display text-lg tracking-tight">Departments</h2>
-            <div className="w-full overflow-hidden mt-3">
+            <div className="w-full overflow-x-auto mt-3">
               <table className="w-full text-sm text-left">
                 <thead>
                   <tr className="border-b border-line-subtle text-xs uppercase tracking-wide text-fg-muted">
@@ -354,7 +354,7 @@ export default function CompanyProfilePage() {
             <p className="mt-1 text-xs text-fg-muted mb-3">
               Each is fronted by a read-only connector. CHANAKYA never writes to a firm system.
             </p>
-            <div className="w-full overflow-hidden">
+            <div className="w-full overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead>
                   <tr className="border-b border-line-subtle text-xs uppercase tracking-wide text-fg-muted">

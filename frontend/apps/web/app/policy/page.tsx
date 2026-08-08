@@ -155,9 +155,9 @@ export default function PolicyPage() {
   }, [candidates, selected])
 
   return (
-    <div className="flex h-full bg-background">
+    <div className="flex flex-col lg:flex-row h-full bg-background">
       {/* Left: approved obligations list */}
-      <div className="w-[320px] shrink-0 overflow-auto border-r border-line bg-surface/60">
+      <div className="w-full lg:w-[320px] shrink-0 overflow-auto lg:border-r border-b lg:border-b-0 border-line bg-surface/60">
         <div className="border-b border-line px-5 py-4 bg-surface">
           <div className="eyebrow mb-1">Automated Enforcement</div>
           <h1 className="font-display text-xl font-bold">Policy Rules</h1>

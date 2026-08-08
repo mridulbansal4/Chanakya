@@ -28,7 +28,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, Menu, X } from "lucide-react"
 const OFFICER = {
   name: "Priya Menon",
   role: "Compliance Officer",
@@ -87,6 +87,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const [welcomeOpen, setWelcomeOpen] = React.useState(false)
   const [glossaryOpen, setGlossaryOpen] = React.useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
   React.useEffect(() => {
     if (window.localStorage.getItem("chanakya.welcomed") !== "1") {
       setWelcomeOpen(true)
@@ -112,7 +113,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pending = reviewCount.data ?? 0
 
   return (
-    <div className="flex h-svh flex-col overflow-hidden bg-canvas text-fg">
+    <div className="flex h-svh flex-col overflow-hidden bg-canvas text-fg pb-[env(safe-area-inset-bottom)]">
       {/*
         The header uses bg-sunken/90 backdrop-blur-md with high-contrast text and icons
         matching both dark and light modes.
@@ -146,7 +147,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         */}
         <nav
           aria-label="Primary"
-          className="no-scrollbar flex min-w-0 flex-1 items-center justify-center gap-1 overflow-x-auto"
+          className="no-scrollbar hidden md:flex min-w-0 flex-1 items-center justify-center gap-1 overflow-x-auto"
         >
           {PRIMARY_NAV.map((item) => {
             const active =
@@ -215,6 +216,11 @@ export function AppShell({ children }: { children: ReactNode }) {
             onGlossary={() => setGlossaryOpen(true)}
           />
           <ProfileMenu />
+          <div className="flex md:hidden items-center ml-1">
+            <button onClick={() => setMobileMenuOpen(true)} className="p-1 text-fg-muted hover:text-fg">
+              <Menu className="size-5" />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -226,6 +232,44 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       {welcomeOpen && <WelcomeModal onClose={closeWelcome} />}
       {glossaryOpen && <GlossaryModal onClose={() => setGlossaryOpen(false)} />}
+      
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 flex">
+          <div className="fixed inset-0 bg-scrim backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+          <div className="relative flex w-full max-w-xs flex-col overflow-y-auto bg-surface py-4 pb-[env(safe-area-inset-bottom)] border-r border-line shadow-elev-3">
+            <div className="flex items-center justify-between px-6 mb-4">
+              <span className="font-display font-bold text-lg text-fg">Menu</span>
+              <button onClick={() => setMobileMenuOpen(false)} className="p-2 -mr-2 text-text-dim hover:text-fg">
+                <X className="size-5" />
+              </button>
+            </div>
+            <nav className="flex flex-col gap-1 px-4">
+              {PRIMARY_NAV.map((item) => {
+                const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
+                const badge = item.href === "/review" && pending > 0 ? pending : null
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      "flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                      active ? "bg-raised text-fg font-semibold" : "text-fg-muted hover:bg-elevated hover:text-fg"
+                    )}
+                  >
+                    <span>{item.label}</span>
+                    {badge != null && (
+                      <span className="tnum inline-flex min-w-[17px] h-4.5 items-center justify-center rounded-full bg-warn px-1.5 text-[10px] font-bold text-[var(--warn-foreground)] shadow-elev-1">
+                        {badge}
+                      </span>
+                    )}
+                  </Link>
+                )
+              })}
+            </nav>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

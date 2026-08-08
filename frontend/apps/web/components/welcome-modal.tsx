@@ -86,7 +86,7 @@ export function WelcomeModal({ onClose }: { onClose: () => void }) {
         aria-modal="true"
         aria-label="Getting started with CHANAKYA"
         tabIndex={-1}
-        className="w-[540px] max-w-full overflow-hidden rounded-lg border border-line bg-surface shadow-elev-3 outline-none"
+        className="w-full max-w-[540px] mx-4 sm:mx-auto overflow-hidden rounded-lg border border-line bg-surface shadow-elev-3 outline-none"
       >
         <header className="flex items-center justify-between border-b border-line px-6 py-4 bg-surface">
           <span className="eyebrow">

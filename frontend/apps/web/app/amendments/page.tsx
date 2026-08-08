@@ -149,9 +149,9 @@ export default function AmendmentsPage() {
         </Button>
       </div>
 
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-col lg:flex-row flex-1 min-h-0">
         {/* Left: amendment editor + change list */}
-        <div className="flex w-[420px] shrink-0 flex-col border-r border-line bg-surface/60">
+        <div className="flex w-full lg:w-[420px] shrink-0 flex-col lg:border-r border-b lg:border-b-0 border-line bg-surface/60">
           <div className="space-y-4 border-b border-line p-5 bg-surface">
             <div>
               <div className="eyebrow mb-1">Target Regulation Clause</div>

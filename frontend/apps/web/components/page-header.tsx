@@ -24,7 +24,7 @@ export function PageHeader({
   actions?: ReactNode
 }) {
   return (
-    <div className="flex shrink-0 items-start justify-between gap-6 border-b border-line-subtle px-7 py-6">
+    <div className="flex flex-col sm:flex-row flex-wrap shrink-0 sm:items-start justify-between gap-6 border-b border-line-subtle px-7 py-6">
       <div className="min-w-0">
         <p className="eyebrow mb-2">{eyebrow}</p>
         <h1 className="text-display-sm text-fg">{title}</h1>

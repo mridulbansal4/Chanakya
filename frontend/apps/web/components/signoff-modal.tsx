@@ -75,7 +75,7 @@ export function SignoffModal({
         aria-modal="true"
         aria-label={`Sign off clause ${obligation.clause_ref}`}
         tabIndex={-1}
-        className="flex max-h-[88vh] w-[580px] flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-elev-3 outline-none"
+        className="flex max-h-[88vh] w-full max-w-[580px] mx-4 sm:mx-auto flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-elev-3 outline-none"
       >
         <header className="flex items-center justify-between border-b border-line px-6 py-4 bg-surface">
           <div className="flex items-center gap-2.5">
@@ -141,7 +141,7 @@ export function SignoffModal({
                     Correct extracted fields before signing
                   </label>
                   {correct && (
-                    <div className="mt-3 grid grid-cols-2 gap-3">
+                    <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <Labeled label="Deontic Duty">
                         <select
                           value={deontic}

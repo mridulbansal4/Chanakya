@@ -31,7 +31,7 @@ export default function EvidencePage() {
   const em = evidence.data
 
   return (
-    <div className="flex h-full bg-background">
+    <div className="flex flex-col lg:flex-row h-full bg-background">
       {/* Left: evidence mapping */}
       <div className="flex min-w-0 flex-1 flex-col border-r border-line">
         <PageHeader
@@ -64,22 +64,24 @@ export default function EvidencePage() {
               description={`No active obligations requiring evidence as of ${asOf}.`}
             />
           ) : (
-            <table className="w-full border-collapse text-sm">
-              <thead className="sticky top-0 bg-surface/95 backdrop-blur-md shadow-xs z-10">
-                <tr className="border-b border-line text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                  <Th>Clause</Th>
-                  <Th>Obligation Type</Th>
-                  <Th>Control Enforceable</Th>
-                  <Th>Read-Only System Source</Th>
-                  <Th>Status</Th>
-                </tr>
-              </thead>
-              <tbody>
-                {(em?.obligations ?? []).map((o) => (
-                  <EvidenceRow key={o.id} o={o} />
-                ))}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-sm">
+                <thead className="sticky top-0 bg-surface/95 backdrop-blur-md shadow-xs z-10">
+                  <tr className="border-b border-line text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                    <Th>Clause</Th>
+                    <Th>Obligation Type</Th>
+                    <Th>Control Enforceable</Th>
+                    <Th>Read-Only System Source</Th>
+                    <Th>Status</Th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(em?.obligations ?? []).map((o) => (
+                    <EvidenceRow key={o.id} o={o} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
 
@@ -102,7 +104,7 @@ export default function EvidencePage() {
       </div>
 
       {/* Right: draft tickets */}
-      <aside className="flex w-[400px] shrink-0 flex-col bg-surface/60">
+      <aside className="flex w-full lg:w-[400px] shrink-0 flex-col bg-surface/60 border-t lg:border-t-0 lg:border-l border-line">
         <header className="flex items-center justify-between border-b border-line px-5 py-4 bg-surface">
           <span className="inline-flex items-center gap-2 text-xs font-bold tracking-wider text-foreground uppercase">
             <Ticket className="size-4 text-warn" />
