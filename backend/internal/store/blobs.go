@@ -38,7 +38,6 @@ func (s *Store) PutDocumentBlob(ctx context.Context, b DocumentBlob) error {
 	return nil
 }
 
-// GetDocumentBlob returns a stored document by content address.
 func (s *Store) GetDocumentBlob(ctx context.Context, sha string) (DocumentBlob, error) {
 	var b DocumentBlob
 	err := s.db.QueryRowContext(ctx, `

@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/assets/banner.svg" alt="CHANAKYA — Regulatory Operating System" width="100%"/>
+<img src="docs/assets/banner.svg" alt="CHANAKYA: Regulatory Operating System" width="100%"/>
 
 <br/>
 
@@ -30,7 +30,7 @@ enforces nothing until a human has cryptographically signed it.
 ---
 
 > **Nothing is enforced that a human did not sign, and nothing enters the graph without a verbatim citation.**
-> Those two sentences are not marketing copy — they are invariants enforced by database constraints,
+> Those two sentences are not marketing copy: they are invariants enforced by database constraints,
 > a substring check, a compile gate that returns `409`, and a test suite that fails if you weaken them.
 
 > **Note on figures.** Every screenshot below is captured from the running application against a live
@@ -55,7 +55,7 @@ enforces nothing until a human has cryptographically signed it.
 
 A SEBI-registered investment adviser is governed by circulars that arrive as PDFs, amend each other
 in place, and cross-reference regulations by number. Compliance teams read them by hand, translate
-them into internal policy by hand, and rediscover — usually during an inspection — that a clause
+them into internal policy by hand, and rediscover (usually during an inspection) that a clause
 amended eighteen months ago never propagated to the client agreement template.
 
 CHANAKYA is a **system of record** for that problem. It maintains a bi-temporal graph that answers
@@ -66,7 +66,7 @@ auditor-grade questions:
   and **named clients** are affected?*
 - *Who signed off on treating this sentence as this obligation, and does that signature **still verify**
   against the obligation's current content?*
-- *What was the compliant state as-of a **past** date — not what we believe today?*
+- *What was the compliant state as-of a **past** date: not what we believe today?*
 
 Because those answers must survive restarts and be independently auditable, everything persists in a
 single SQLite file. The database is not a cache; it is the product.
@@ -82,16 +82,16 @@ around the assumption that **the model is the least trustworthy component in the
 | | Typical LLM compliance tool | **CHANAKYA** |
 |---|---|---|
 | Model output | consumed directly | **untrusted DATA**, re-validated against a strict JSON schema with `additionalProperties: false` |
-| Provenance | "summarised from the circular" | **mandatory** — source clause id + verbatim source sentence, `NOT NULL` in the schema and substring-checked against the clause text |
+| Provenance | "summarised from the circular" | **mandatory**: source clause id + verbatim source sentence, `NOT NULL` in the schema and substring-checked against the clause text |
 | Enforcement | the model decides | **only** deterministic OPA/Rego, and **only** after an Ed25519 sign-off (`409` otherwise) |
 | Rollout | on/off | **staged** `audit → soft → hard`; nothing hard-blocks before a signature exists |
-| Amendments | overwrite the old text | **bi-temporal supersession** — the prior version stays queryable forever |
+| Amendments | overwrite the old text | **bi-temporal supersession**: the prior version stays queryable forever |
 | Impact analysis | a list of clause numbers | **named** clients, advisers, departments and department heads |
-| Connectors | read/write integrations | **read-only enforced by the type system** — the interface has no write method to call |
+| Connectors | read/write integrations | **read-only enforced by the type system**: the interface has no write method to call |
 | Remediation | files tickets for you | **drafts** tickets; `state='draft'` re-enforced at the store boundary |
 | Time travel | "current state" only | every screen takes an **as-of date** and reconstructs world time + system time |
 
-The thesis in one line: **the value is not in reading the regulation — it is in being able to prove,
+The thesis in one line: **the value is not in reading the regulation: it is in being able to prove,
 afterwards, exactly why the firm did what it did.**
 
 ---
@@ -111,7 +111,7 @@ flowchart LR
     HUMAN -->|"approve"| GRAPH["obligation graph"]
     GRAPH --> SIGN{"Ed25519 sign-off"}
     SIGN -->|"signed"| REGO["OPA / Rego<br/>audit → soft → hard"]
-    SIGN -->|"unsigned"| BLOCK["409 — cannot compile"]
+    SIGN -->|"unsigned"| BLOCK["409: cannot compile"]
     style VAL fill:#121317,stroke:#e0a215,color:#f2f4f7
     style HUMAN fill:#121317,stroke:#e0a215,color:#f2f4f7
     style SIGN fill:#121317,stroke:#e0a215,color:#f2f4f7
@@ -120,28 +120,28 @@ flowchart LR
     style BLOCK fill:#121317,stroke:#e5484d,color:#f2f4f7
 ```
 
-**1 — The LLM produces DATA, never code, never enforcement.**
+**1: The LLM produces DATA, never code, never enforcement.**
 Every extractor response is validated against [`compiler/schema.json`](backend/internal/compiler/schema.json)
 with `additionalProperties: false`. A model that tries to smuggle an `"exec"` field is rejected at the
 schema boundary, not at review time.
 
-**2 — Provenance is mandatory.**
+**2: Provenance is mandatory.**
 Every obligation carries `source_clause_ref` and `source_sentence`. The claim is checked three times:
 the schema `required` block, a compiler check that the sentence is a **verbatim substring** of the
 clause text, and `NOT NULL` columns in SQLite. A hallucinated citation cannot be stored.
 
-**3 — Enforcement is deterministic and gated.**
+**3: Enforcement is deterministic and gated.**
 `POST /api/policy/compile` returns **409** unless the obligation is `approved` *and* carries an
 approving Ed25519 sign-off. Only [`internal/policy`](backend/internal/policy) evaluates, via the
 embedded OPA engine.
 
-**4 — Enforcement is staged: `audit → soft → hard`.**
+**4: Enforcement is staged: `audit → soft → hard`.**
 Policies are created at `audit`. Only `hard` marks a decision `blocked`. Nothing hard-blocks before a
 signature exists.
 
-**5 — Evidence connectors are READ-ONLY, by type.**
+**5: Evidence connectors are READ-ONLY, by type.**
 The `Connector` interface exposes exactly `Descriptor`, `Health`, `Fetch`. There is no `Write`, no
-`Send`, no `Delete` — not unimplemented, **absent**. `TestConnectorInterfaceHasNoWriteMethod` asserts
+`Send`, no `Delete`: not unimplemented, **absent**. `TestConnectorInterfaceHasNoWriteMethod` asserts
 this reflectively, so adding one fails CI.
 
 ---
@@ -151,29 +151,29 @@ this reflectively, so adding one fails CI.
 Twelve screens, every one driven by a global **as-of date** control in the header. Every data value is
 monospace; the word "confirmed" never appears next to an unsigned obligation.
 
-### 1 — Overview `/`
+### 1: Overview `/`
 
 The compliance officer's status board: obligations in force, awaiting sign-off, needing review, open
-evidence gaps. Below it, the regulation itself — as a chapter hierarchy, or as the clause→obligation
+evidence gaps. Below it, the regulation itself: as a chapter hierarchy, or as the clause→obligation
 graph.
 
-![Overview — KPI strip and clause hierarchy](docs/screenshots/overview.png)
+![Overview: KPI strip and clause hierarchy](docs/screenshots/overview.png)
 
 The same data, as the provenance graph. Every obligation node hangs off the clause it was cited from;
 colour carries status, never decoration.
 
-![Overview — clause→obligation graph](docs/screenshots/overview-graph.png)
+![Overview: clause→obligation graph](docs/screenshots/overview-graph.png)
 
-### 2 — Regulatory Intake `/ingest`
+### 2: Regulatory Intake `/ingest`
 
-Upload a circular. Stage 0 runs **synchronously** — its rejections are answers you need immediately —
+Upload a circular. Stage 0 runs **synchronously** (its rejections are answers you need immediately) 
 then the request returns `202` with an ingest id and the pipeline continues on a worker, streaming
 progress over SSE.
 
-![Regulatory Intake — upload and recent runs](docs/screenshots/ingest.png)
+![Regulatory Intake: upload and recent runs](docs/screenshots/ingest.png)
 
 Note what the screen refuses: **scanned PDFs are rejected**, because OCR output cannot support the
-verbatim-citation guarantee. That is a product decision, not a limitation — and the intake history
+verbatim-citation guarantee. That is a product decision, not a limitation: and the intake history
 shows `Shopping_Receipt.pdf` and `College_Marksheet.pdf` failing, because a document that is not a
 regulation should not silently produce obligations.
 
@@ -181,14 +181,14 @@ regulation should not silently produce obligations.
   starting a second one.
 - Nothing reaches `circular` / `clause` / `obligation` until `POST /api/ingest/{id}/approve`.
 
-### 3 — Review Queue `/review`
+### 3: Review Queue `/review`
 
 The human gate, and the daily inbox. Each pending obligation is shown beside the exact sentence it
 was extracted from, with the extractor's confidence.
 
-![Review Queue — obligations awaiting sign-off](docs/screenshots/review.png)
+![Review Queue: obligations awaiting sign-off](docs/screenshots/review.png)
 
-"Review & Sign" opens a deliberate three-step modal — **Review → Decide → Sign**. The reviewer may
+"Review & Sign" opens a deliberate three-step modal: **Review → Decide → Sign**. The reviewer may
 correct the deontic type or deadline, must type a **≥20-character justification** (Continue is gated
 on it: *friction is a feature*), and only then is an Ed25519 signature produced over the obligation's
 canonical content.
@@ -197,37 +197,37 @@ Because the signature covers *content* and not status, later tampering is detect
 `GET /api/signoff` re-derives the canonical form of the **current** obligation and reports
 `valid: false` with mismatched hashes if anything material changed.
 
-### 4 — Blast Radius `/amendments`
+### 4: Blast Radius `/amendments`
 
 The question the product exists to answer. Amend a clause, and watch the impact propagate
 clause → obligation → control → evidence, layer by layer.
 
-![Blast Radius — semantic and structural propagation](docs/screenshots/blast-radius.png)
+![Blast Radius: semantic and structural propagation](docs/screenshots/blast-radius.png)
 
-Editing clause 4.1 (fee disclosure) hits its own obligation directly — and **semantically** pulls in
+Editing clause 4.1 (fee disclosure) hits its own obligation directly: and **semantically** pulls in
 3.1, 5.1, 5.2 and 5 at 41%, 36%, 49% and 38% cosine similarity, which propagate to the *IA Registration
 Monitor* and *Records Retention System* controls. That last hop is the non-obvious one: a fee-disclosure
 amendment creating work in records retention is exactly the connection a manual review misses.
 
 Nothing here is persisted. It is a read-only what-if.
 
-### 5 — Workflows `/workflows`
+### 5: Workflows `/workflows`
 
 Approved obligations become draft task DAGs. The operative verb selects a reviewed template from a
-**closed 25-verb vocabulary** through a fixed lookup table — no LLM, no similarity score.
+**closed 25-verb vocabulary** through a fixed lookup table: no LLM, no similarity score.
 
-![Workflows — task DAG with named owners](docs/screenshots/workflows.png)
+![Workflows: task DAG with named owners](docs/screenshots/workflows.png)
 
 - `disclose` → *Policy update* **and** *Client notification* (a disclosure change needs both).
-- An **unrecognised verb is routed to review as unclassified** — never mapped to the nearest-looking
+- An **unrecognised verb is routed to review as unclassified**: never mapped to the nearest-looking
   template, because a firm's operational plan should not rest on a fuzzy match.
 - Owners resolve to **real people** from the org chart (Manish Gupta, Priya Menon, Nisha Pillai above).
   A role with no resolvable department head leaves the task **unassigned and flagged**, rather than
   putting a real person's name against work nobody agreed they own.
 - Every task is `DRAFT`. `store.ApproveWorkflow` records the human decision and moves **nothing** out
-  of draft — pinned by `TestApproveWorkflowDispatchesNothing`.
+  of draft: pinned by `TestApproveWorkflowDispatchesNothing`.
 
-### 6 — Evidence & Gaps `/evidence`
+### 6: Evidence & Gaps `/evidence`
 
 Which obligations are actually backed by evidence, and where the holes are.
 
@@ -237,10 +237,10 @@ Each row traces obligation → control → the read-only system that supplies th
 (`firm_crm`, `firm_billing`, `firm_archive`, `firm_grc`, `firm_docstore`). Where no control is mapped,
 the row is a **Gap** and a remediation ticket is drafted with the obligation's citation attached.
 
-CHANAKYA **drafts** tickets. It never files them into a customer system — the `state` enum includes
+CHANAKYA **drafts** tickets. It never files them into a customer system: the `state` enum includes
 `filed`/`resolved` for lifecycle completeness, but only `draft` is ever written.
 
-### 7 — Policy `/policy`
+### 7: Policy `/policy`
 
 A signed obligation compiles to a deterministic Rego module. The obligation's numeric threshold
 becomes the **applicability gate**, so the policy is silent on firms it does not apply to.
@@ -273,36 +273,36 @@ deny contains msg if {
 }
 ```
 
-Evaluation returns `{compliant, applicable, denies, trace}` — the OPA trace included, because a
+Evaluation returns `{compliant, applicable, denies, trace}`: the OPA trace included, because a
 compliance decision a firm cannot explain is not usable. A threshold obligation with the firm below
 the threshold returns **not applicable**, which is a different answer from *compliant*.
 
-### 8 — Audit `/audit`
+### 8: Audit `/audit`
 
 The whole chain, reconstructed as of any date.
 
-![Compliance lineage graph — clause to policy](docs/screenshots/audit.png)
+![Compliance lineage graph: clause to policy](docs/screenshots/audit.png)
 
 Six columns: source clause → extracted obligation → mapped control → system evidence → officer
-sign-off → enforceable policy. The chain above terminates in `approve — Priya Menon` and a `policy`
+sign-off → enforceable policy. The chain above terminates in `approve: Priya Menon` and a `policy`
 node at stage `audit`.
 
-Set the as-of date to before the signature was made and the sign-off and policy nodes **disappear** —
+Set the as-of date to before the signature was made and the sign-off and policy nodes **disappear** :
 a signature is a world-time fact from the moment it is made, not retroactively at the circular's issue
 date. That is the entire point of the bi-temporal model.
 
-### 9 — Regulator Feed `/feed`
+### 9: Regulator Feed `/feed`
 
 The machine-readable SupTech feed a regulator's own systems could consume: every obligation with its
 verbatim provenance, extractor confidence, and the Ed25519 sign-off where one exists.
 
-![Regulator feed — schema-validated, with provenance](docs/screenshots/feed.png)
+![Regulator feed: schema-validated, with provenance](docs/screenshots/feed.png)
 
-The feed **self-validates against its own JSON Schema before emission** and returns `500` if it fails —
-an invalid feed is never served. Unsigned obligations are labelled `Unsigned — Not Enforceable` rather
+The feed **self-validates against its own JSON Schema before emission** and returns `500` if it fails :
+an invalid feed is never served. Unsigned obligations are labelled `Unsigned: Not Enforceable` rather
 than quietly omitted.
 
-### 10 — Obligation Register `/register`
+### 10: Obligation Register `/register`
 
 Every obligation extracted from the corpus, filterable by deontic type and status, with extraction
 confidence. Clicking a row reveals the full record and highlights the exact source sentence inside its
@@ -310,9 +310,9 @@ clause.
 
 ![Obligation register](docs/screenshots/register.png)
 
-### 11 — Regulatory Corpus `/regulatory-feed`
+### 11: Regulatory Corpus `/regulatory-feed`
 
-Which circulars the graph holds, how each one arrived, what it supersedes, and — for an amendment —
+Which circulars the graph holds, how each one arrived, what it supersedes, and (for an amendment) 
 the clause-level diff that was applied at approval.
 
 ![Regulatory corpus and intake history](docs/screenshots/regulatory-feed.png)
@@ -321,10 +321,10 @@ The honesty statement is **served by the API**, not written into the page: *"CHA
 SEBI. Circulars enter this corpus when a person uploads one and approves the result."* Keeping it in
 the API means the copy cannot drift from what the system actually does.
 
-Intake history retains every attempt, including failures. Job and run rows are **never deleted** —
+Intake history retains every attempt, including failures. Job and run rows are **never deleted** :
 they are part of the audit trail.
 
-### 12 — Company `/company`
+### 12: Company `/company`
 
 The firm's own record: registration certificates, governance documents, data-residency posture, and
 the OAuth scopes granted to CHANAKYA.
@@ -342,7 +342,7 @@ flowchart TB
         FIRM["Firm systems<br/>(CRM, billing, archive, GRC, docstore)"]
     end
 
-    subgraph BACK["backend/ — Go 1.26, module chanakya"]
+    subgraph BACK["backend/: Go 1.26, module chanakya"]
         ING["internal/ingest<br/>10-stage pipeline, no LLM in stages 0-2"]
         COMP["internal/compiler<br/>strict schema + citation gate"]
         LLMP["internal/llm<br/>Gemini · Anthropic · offline"]
@@ -355,15 +355,15 @@ flowchart TB
         JOBS["internal/jobs<br/>worker pool in SQLite"]
     end
 
-    subgraph DB["internal/store — bi-temporal SQLite"]
+    subgraph DB["internal/store: bi-temporal SQLite"]
         SQL["chanakya.db<br/>12 embedded migrations<br/>valid_from/to · tx_from/to · WITH RECURSIVE"]
     end
 
-    subgraph API["internal/httpapi — chi"]
+    subgraph API["internal/httpapi: chi"]
         R["~40 routes under /api<br/>rate-limited 240/min/IP · SSE exempt from timeout"]
     end
 
-    subgraph FE["frontend/ — Next.js 16 · React 19 · Turborepo"]
+    subgraph FE["frontend/: Next.js 16 · React 19 · Turborepo"]
         UI["12 screens · React Flow graphs · TanStack Query/Table"]
     end
 
@@ -383,12 +383,12 @@ flowchart TB
 
 **Modules.**
 
-- **`backend/`** — a stateless Go HTTP service (module `chanakya`). Every function returns wrapped
+- **`backend/`**: a stateless Go HTTP service (module `chanakya`). Every function returns wrapped
   errors, `context.Context` is propagated everywhere, and all SQL is parameterised.
-- **`internal/store`** — the bi-temporal core. `valid_from`/`valid_to` are **world time**;
+- **`internal/store`**: the bi-temporal core. `valid_from`/`valid_to` are **world time**;
   `tx_from`/`tx_to` are **system time**. Graph traversal uses `WITH RECURSIVE` CTEs. A partial unique
   index `UNIQUE(id) WHERE tx_to IS NULL` makes "at most one current version" a database guarantee.
-- **`frontend/`** — a Turborepo monorepo. Design tokens live in `packages/ui`; the web app is
+- **`frontend/`**: a Turborepo monorepo. Design tokens live in `packages/ui`; the web app is
   `apps/web`. Server state is TanStack Query with persistence; navigation is the App Router.
 
 ---
@@ -422,10 +422,10 @@ A few decisions worth calling out, because each one is a place the easy answer i
   are never confused.
 - **Stage 2's numbering lexer is precedence-ordered, deepest-first**, so `3.1.1` is not read as `3`.
   Roman-vs-alpha `(i)` is resolved by sequence continuity, and where there is no preceding sibling it
-  defaults to alpha at **reduced confidence** — the disagreement is recorded, not hidden. A document it
+  defaults to alpha at **reduced confidence**: the disagreement is recorded, not hidden. A document it
   cannot parse degrades to a flat `p{page}.¶{n}` list rather than failing.
 - **Stage 3's regex pass always beats the model.** A model cannot overwrite a circular number read off
-  the page, and `DocKind` is never taken from the model at all — it decides how the rest of the
+  the page, and `DocKind` is never taken from the model at all: it decides how the rest of the
   pipeline treats the document (an `faq` produces no obligations).
 - **Stage 4 writes to a parallel field.** `Clause.Text` is never touched, because the citation gate
   substring-matches against it. Indian digit grouping is handled explicitly: read with a Western
@@ -436,13 +436,13 @@ A few decisions worth calling out, because each one is a place the easy answer i
   anaphoric; both become `dangling_reference` rows rather than guessed edges. A graph that looks
   complete but is not is worse than one that admits its gaps.
 - **Stage 8 requires two conditions for `unchanged`**: `score ≥ 0.92` **and** byte-identical text.
-  Two clauses can score 0.95 and still differ by the one word that changes what the firm must do —
+  Two clauses can score 0.95 and still differ by the one word that changes what the firm must do :
   clause 5.1 scored **0.928** and was still classified `modified`, because "5 years" had become
   "8 years".
 
 Approval commits circular, clauses, obligations, embeddings, semantic units, relations, dangling
 references and the audit record in **one transaction**. On failure nothing partial enters the graph.
-A second approve, or an approve after discard, is a `409` — never a silent no-op.
+A second approve, or an approve after discard, is a `409`: never a silent no-op.
 
 ---
 
@@ -459,14 +459,14 @@ sequenceDiagram
 
     O->>W: upload circular
     W->>A: POST /api/ingest
-    A->>A: Stage 0 (sync) — reject scanned/encrypted/oversized
+    A->>A: Stage 0 (sync): reject scanned/encrypted/oversized
     A-->>W: 202 + ingest_id
     A->>P: enqueue job
     P->>P: stages 1-9 (LLM bounded to 4 concurrent)
     P-->>W: SSE progress per stage
     O->>W: review proposal
     W->>A: POST /api/ingest/{id}/approve (≥20-char justification)
-    A->>D: ONE transaction — clauses, obligations, embeddings, audit
+    A->>D: ONE transaction: clauses, obligations, embeddings, audit
     O->>W: Review & Sign
     W->>A: POST /api/signoff (Ed25519 over canonical content)
     A->>D: status → approved
@@ -481,9 +481,9 @@ sequenceDiagram
 
 ## The firm as data
 
-Impact analysis that returns a count is not actionable. CHANAKYA models the firm itself — 15
+Impact analysis that returns a count is not actionable. CHANAKYA models the firm itself: 15
 bi-temporal tables seeded with a complete fictional adviser (Alpha Wealth Advisors, SEBI reg
-`INA000000001`, Mumbai, inc. 2019) — so `ImpactOf` returns **names**.
+`INA000000001`, Mumbai, inc. 2019): so `ImpactOf` returns **names**.
 
 | Entity | Count |
 |---|---|
@@ -498,10 +498,10 @@ bi-temporal tables seeded with a complete fictional adviser (Alpha Wealth Adviso
 
 Two namespaces, one seam. The **regulatory** graph (external, regulator-authored, immutable) and the
 **enterprise** graph (internal, firm-authored, mutable) stay separate. They join at `control` and at
-`binds_to` — and `binds_to` carries a confidence score plus a `human_confirmed` flag, because a guess
+`binds_to`: and `binds_to` carries a confidence score plus a `human_confirmed` flag, because a guess
 about which internal policy governs a clause must never be indistinguishable from the clause itself.
 
-### The deliberate gaps — every one discovered *by query*
+### The deliberate gaps: every one discovered *by query*
 
 None is recorded anywhere as a problem. Each is simply what a traversal returns.
 
@@ -513,7 +513,7 @@ None is recorded anywhere as a problem. Each is simply what a traversal returns.
 | Complaint register **90 days stale** | register freshness |
 | Cybersecurity policy **14 months** since review | document review recency |
 
-The 22 re-papered clients hold **two** agreement rows — the original, closed in world time on the
+The 22 re-papered clients hold **two** agreement rows: the original, closed in world time on the
 re-papering date, and its replacement. Modelling it as a supersession rather than "these clients were
 always on v2" is what makes the time-travel claim real: set the as-of date before the re-papering and
 all 140 clients come back on v1.
@@ -535,7 +535,7 @@ CHANAKYA/
 │
 ├── backend/                      # Go 1.26 · module `chanakya` · stateless HTTP
 │   ├── cmd/
-│   │   ├── api/                  #   main — config → store → serve (graceful shutdown)
+│   │   ├── api/                  #   main: config → store → serve (graceful shutdown)
 │   │   ├── seed/ compile/ dump/  #   optional manual steps; api self-seeds on first run
 │   ├── db/migrations/            #   12 embedded .sql, applied in-process on boot
 │   └── internal/
@@ -557,7 +557,7 @@ CHANAKYA/
 │       └── httpapi/              #   chi router, middleware, ~40 handlers
 │
 ├── frontend/                     # Turborepo · npm workspaces
-│   ├── apps/web/                 #   Next.js 16 App Router — 12 screens
+│   ├── apps/web/                 #   Next.js 16 App Router: 12 screens
 │   │   ├── app/                  #     / ingest review workflows evidence company
 │   │   │                         #     register regulatory-feed amendments policy audit feed
 │   │   ├── components/           #     app-shell · graphs · signoff-modal · as-of-provider
@@ -581,8 +581,8 @@ CHANAKYA/
 | **Policy engine** | Open Policy Agent v1.18 (embedded `rego` + `topdown` tracer) |
 | **Database** | SQLite via `modernc.org/sqlite` (pure Go, no cgo) · WAL · `foreign_keys=ON` |
 | **PDF** | `pdfcpu` (encryption/page detection) · `rsc.io/pdf` (positioned text) · optional `pdftotext` |
-| **Validation** | `santhosh-tekuri/jsonschema/v6` — same schema validates output *and* drives strict tool use |
-| **Crypto** | `crypto/ed25519` (stdlib) — canonical JSON, hash + signature over obligation content |
+| **Validation** | `santhosh-tekuri/jsonschema/v6`: same schema validates output *and* drives strict tool use |
+| **Crypto** | `crypto/ed25519` (stdlib): canonical JSON, hash + signature over obligation content |
 | **LLM** | Google Gemini · Anthropic Claude (strict tool use) · deterministic offline extractor |
 | **Frontend** | Next.js 16 · React 19 · TypeScript 5 · Tailwind CSS v4 (CSS-first, no config file) |
 | **UI** | Base UI (`@base-ui/react`) · Radix primitives · Lucide · Sonner |
@@ -596,7 +596,7 @@ CHANAKYA/
 
 ## Installation
 
-Prerequisites: **Go 1.26+** and **Node 20+**. No database to install, no broker, no Docker required —
+Prerequisites: **Go 1.26+** and **Node 20+**. No database to install, no broker, no Docker required :
 the backend creates `./chanakya.db` on first run.
 
 ```bash
@@ -635,19 +635,19 @@ docker compose up --build
 
 ### Environment
 
-All configuration is environment-only — no secrets in code. Copy `.env.example` to `.env`:
+All configuration is environment-only: no secrets in code. Copy `.env.example` to `.env`:
 
 | Variable | Effect |
 |---|---|
 | `GEMINI_API_KEY` | Selects the **Gemini** extractor (`GEMINI_MODEL` optional) |
 | `CHANAKYA_LLM_API_KEY` | Selects the **Anthropic** extractor (`CHANAKYA_LLM_MODEL` optional) |
-| *(neither set)* | Falls back to the **deterministic offline extractor** — fully functional, no API key |
+| *(neither set)* | Falls back to the **deterministic offline extractor**: fully functional, no API key |
 | `CHANAKYA_SIGNING_KEY_B64` | Ed25519 seed; otherwise a gitignored key file is created on first run |
 | `CHANAKYA_PDF_EXTRACTOR` | Opt in to `pdftotext -layout`; a missing binary is a clear error, never a silent fallback |
 | `BACKEND_URL` · `PORT` | Used by the frontend, primarily inside Docker |
 
 > **The offline extractor is not a stub.** It splits clauses into verbatim sentences, classifies the
-> deontic modal with word-boundary matching (`must`/`shall` → MUST, `must not` → MUST_NOT — and
+> deontic modal with word-boundary matching (`must`/`shall` → MUST, `must not` → MUST_NOT: and
 > critically *not* "must **not**ify"), extracts numeric thresholds and `within N days` deadlines, and
 > scores confidence. Whichever extractor runs, its output is re-validated identically: the choice
 > never weakens the safety model.
@@ -682,7 +682,7 @@ RFC3339; a bare date is end-of-day UTC) and returns a bi-temporal reconstruction
 | `GET /api/obligations` · `/obligation?id=` | The register; detail with clause text and citation |
 | `GET /api/graph` · `/posture` · `/clauses` | Clause→obligation graph, status roll-up, clause picker |
 | `POST /api/ingest` | `202` + `ingest_id`; Stage 0 runs synchronously |
-| `GET /api/ingest/{id}/events` | **SSE** progress — exempt from the 30s router timeout |
+| `GET /api/ingest/{id}/events` | **SSE** progress: exempt from the 30s router timeout |
 | `GET /api/ingest/{id}/preview` | The proposal: obligations, rejections, amendment diff |
 | `POST /api/ingest/{id}/approve` | **The graph gate.** One transaction. `409` if already settled |
 | `POST /api/amendments/blast-radius` | Read-only what-if; nothing persisted |
@@ -738,18 +738,18 @@ The tests worth knowing about are the ones that exist to make a future change *f
 | `TestApproveWorkflowDispatchesNothing` | Approval silently moving tasks out of `draft` |
 | `TestNoRegoInjectionViaThresholdMetric` / `...ViaSourceClauseRef` | Extracted text reaching the Rego compiler as executable syntax |
 | `TestCurrentRowUniqueness` | Losing the "at most one current version" database guarantee |
-| `TestRebuiltTablesKeepEveryColumn` | A migration silently dropping a column (this actually happened once — `obligation.embedding_json`) |
+| `TestRebuiltTablesKeepEveryColumn` | A migration silently dropping a column (this actually happened once: `obligation.embedding_json`) |
 | `TestMITCIsRejectedAsScanned` | A scanned PDF slipping past Stage 0 |
-| Corpus assertions in `internal/corpus` | The demo *narrative* drifting — if a fixture refactor turns the 118-client gap into 117, this fails while everything else still compiles |
+| Corpus assertions in `internal/corpus` | The demo *narrative* drifting: if a fixture refactor turns the 118-client gap into 117, this fails while everything else still compiles |
 
 **Prompt injection.** A document in the testing corpus carries an injection payload. Three independent
 guards are asserted, and the finding is recorded honestly: the extractor **does quote the injected
-sentence**, because it is genuinely present in the document. That is the citation gate *working* —
+sentence**, because it is genuinely present in the document. That is the citation gate *working* :
 provenance points at real text, and the strict schema (`additionalProperties: false`) still refuses
 the requested shape, and nothing arrives approved.
 
 Signature tamper-detection is likewise pinned: mutating any of five material fields breaks
-verification, while flipping `status` to `approved` does **not** — the signature covers content, and
+verification, while flipping `status` to `approved` does **not**: the signature covers content, and
 status is deliberately excluded from the canonical form.
 
 ---
@@ -768,14 +768,14 @@ Components must not hardcode a hex value or a raw Tailwind palette class.
 | **Hairlines** | `#1c1f25` subtle · `#24282f` · `#333944` strong |
 | **Foreground** | `#f2f4f7` (17.8:1) · `#a8b0bc` (8.9:1) · `#7b8494` (5.2:1) · `#5a6373` decorative only |
 | **Accent** | `#4c82f7` on dark · `#1d4ed8` fill |
-| **Status** | ok `#3fa97a` · warn `#e0a215` · risk `#e5484d` — desaturated on purpose |
+| **Status** | ok `#3fa97a` · warn `#e0a215` · risk `#e5484d`: desaturated on purpose |
 | **Type** | Source Serif 4 (editorial) · Inter (UI) · JetBrains Mono (data) |
 
 Every foreground step above `--fg-faint` is verified at ≥4.5:1. The canvas is near-neutral with a ~4°
-cool cast — a tinted canvas reads as *tech product*, a neutral one reads as *instrument*. In an
+cool cast: a tinted canvas reads as *tech product*, a neutral one reads as *instrument*. In an
 instrument, alarm comes from contrast against a calm field, not from saturation.
 
-Motion communicates causation — blast-radius propagation, layer by layer — never decoration. Sign-off
+Motion communicates causation (blast-radius propagation, layer by layer) never decoration. Sign-off
 is a deliberate multi-step modal with a mandatory typed justification: **friction is a feature**.
 
 ---
@@ -789,7 +789,7 @@ is a deliberate multi-step modal with a mandatory typed justification: **frictio
   partial-unique-index trick needs revisiting under a real FK implementation.
 - **Live connectors.** The 15 adapters run in `mode: mock` against seeded data. A configured live
   credential currently returns an **explicit error** rather than silently serving mock data as though
-  it came from the firm's real systems — that behaviour should survive the transition.
+  it came from the firm's real systems: that behaviour should survive the transition.
 - **Client-side signing keys.** The MVP holds the reviewer's Ed25519 key server-side; the verification
   model is identical to an HSM or browser-held key, so this is a key-custody change, not a redesign.
 - **Depth in amendment matching.** Many-to-one currently takes the single best match with a
@@ -799,9 +799,9 @@ is a deliberate multi-step modal with a mandatory typed justification: **frictio
 
 ## Acknowledgements
 
-- **SEBI** — the Investment Adviser regulations and master circulars the corpus is built from.
-- **Open Policy Agent** — the deterministic engine that does all enforcement.
-- **SEBI TechSprint** — Problem Statement 2.
+- **SEBI**: the Investment Adviser regulations and master circulars the corpus is built from.
+- **Open Policy Agent**: the deterministic engine that does all enforcement.
+- **SEBI TechSprint**: Problem Statement 2.
 
 ---
 
@@ -811,5 +811,5 @@ Released under the [MIT License](LICENSE) © 2026 MindstriX Technologies LLP.
 
 <div align="center">
 <br/>
-<sub><b>CHANAKYA</b> — Regulatory Operating System · Nothing enforced that a human did not sign</sub>
+<sub><b>CHANAKYA</b>: Regulatory Operating System · Nothing enforced that a human did not sign</sub>
 </div>

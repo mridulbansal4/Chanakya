@@ -95,7 +95,6 @@ func (s *Store) CreateIngestRun(ctx context.Context, sha, filename, jobID string
 	return run, true, nil
 }
 
-// GetIngestRun loads one run.
 func (s *Store) GetIngestRun(ctx context.Context, id string) (IngestRun, error) {
 	var (
 		r                                      IngestRun

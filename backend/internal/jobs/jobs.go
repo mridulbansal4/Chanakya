@@ -141,8 +141,6 @@ func (p *Pool) Start(ctx context.Context) {
 		p.wg.Add(1)
 		go p.worker(ctx, i)
 	}
-	log.Printf("chanakya: job pool started with %d workers (llm concurrency %d)",
-		p.workers, cap(p.llmSem))
 }
 
 // Stop signals the workers and waits for them to drain.

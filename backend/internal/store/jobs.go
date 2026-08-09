@@ -80,7 +80,6 @@ func (s *Store) ClaimJob(ctx context.Context) (Job, error) {
 	return j, nil
 }
 
-// GetJob loads one job.
 func (s *Store) GetJob(ctx context.Context, id string) (Job, error) {
 	var j Job
 	var errText, startedAt, finishedAt sql.NullString

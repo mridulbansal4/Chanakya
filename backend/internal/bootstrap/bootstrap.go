@@ -254,9 +254,6 @@ func EnsureSeeded(ctx context.Context, st *store.Store) (bool, error) {
 	if len(wf.Unclassified) > 0 {
 		// Surfaced, never silent: these obligations had no act in the closed
 		// verb vocabulary and need a human to classify them.
-		log.Printf("chanakya: %d obligation(s) unclassified for workflow synthesis (clauses %v) - routed to review",
-			len(wf.Unclassified), wf.Unclassified)
 	}
-	log.Printf("chanakya: generated %d draft workflows / %d draft tasks", wf.Workflows, wf.Tasks)
 	return true, nil
 }

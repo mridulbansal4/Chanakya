@@ -73,7 +73,6 @@ type MetaCompleter interface {
 	CompleteMeta(ctx context.Context, docText string, missing []string) ([]byte, error)
 }
 
-// --- deterministic pass ------------------------------------------------------
 
 var (
 	// The canonical modern SEBI circular number, plus a looser fallback for the
@@ -351,7 +350,6 @@ func buildDate(day, month, year string) string {
 	return time.Date(y, mo, d, 0, 0, 0, 0, time.UTC).Format(time.RFC3339)
 }
 
-// --- LLM pass ----------------------------------------------------------------
 
 // MissingMetaFields lists the fields the deterministic pass did not establish.
 func MissingMetaFields(m CircularMeta) []string {
@@ -469,7 +467,6 @@ func ValidateMetaJSON(raw []byte) error {
 	return nil
 }
 
-// --- small helpers -----------------------------------------------------------
 
 func firstN(s string, n int) string {
 	if len(s) <= n {

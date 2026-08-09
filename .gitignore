@@ -68,3 +68,6 @@ backups/
 
 .cursor/
 .agents/
+
+chanakya.db*
+chanakya_signing.key

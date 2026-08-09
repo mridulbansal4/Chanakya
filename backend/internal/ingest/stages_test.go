@@ -7,7 +7,6 @@ import (
 	"testing"
 )
 
-// --- Stage 3: metadata -------------------------------------------------------
 
 const sampleCircularText = `SECURITIES AND EXCHANGE BOARD OF INDIA
 SEBI/HO/MIRSD/MIRSD-PoD/P/CIR/2025/19
@@ -126,7 +125,6 @@ func TestStage3RejectsInvalidLLMOutput(t *testing.T) {
 	}
 }
 
-// --- Stage 4: normalization --------------------------------------------------
 
 // TestStage4IndianNumerals: the Indian digit grouping is not the international
 // one. Read with a Western thousands assumption, three crore becomes three
@@ -177,7 +175,6 @@ func TestStage4NeverTouchesVerbatimText(t *testing.T) {
 	}
 }
 
-// --- Stage 5: semantic segmentation -----------------------------------------
 
 func TestStage5SplitsOnDiscourseMarkers(t *testing.T) {
 	const text = "An adviser shall apply within 30 days, provided that an existing applicant need not reapply."
@@ -260,7 +257,6 @@ func TestStage5Roles(t *testing.T) {
 	}
 }
 
-// --- Stage 6: cross references -----------------------------------------------
 
 func TestStage6ResolvesAndDangles(t *testing.T) {
 	clauses := []clauseText{
@@ -335,7 +331,6 @@ func TestStage6VagueReference(t *testing.T) {
 	}
 }
 
-// --- Pipeline ----------------------------------------------------------------
 
 // TestPipelineEndToEnd runs Stages 0-6 over the golden fixture and checks the
 // proposal is coherent. No compiler is supplied, so no obligation is produced -
